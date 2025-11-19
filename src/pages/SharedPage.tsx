@@ -287,9 +287,12 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles 
     const TimelineBunStyle : CSSProperties = {
         width : '100%',
         textAlign : 'center',
-        position : 'absolute',
         margin : 'auto',
         backgroundColor : backgroundColor,
+    }
+
+    const BoxStyle : CSSProperties = {
+        position : 'absolute',
         transform : `translate(-50%, 0%)`,
         bottom : `70px`,
         left : `50%`
@@ -440,7 +443,7 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles 
                                     { value: 'both', label: t('SELECT.BOTH') },
                             ]}/>
                             <SharedBunSettingModalComp>
-                                <Flex vertical justify='center' style={TimelineBunStyle}>
+                                <Flex vertical justify='center' style={{ ...TimelineBunStyle, marginBottom : '16px' }}>
                                 {
                                     sortFont ? 
                                     <>
@@ -477,7 +480,7 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles 
                             </SharedBunSettingModalComp>
                         </Flex>
                     </div>
-                    <Flex vertical justify='center' style={{ ...TimelineBunStyle }}>
+                    <Flex vertical justify='center' style={{ ...TimelineBunStyle, ...BoxStyle }}>
                     {
                     timeline !== null && timeline.length !== 0 &&
                     <>
