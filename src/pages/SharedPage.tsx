@@ -322,7 +322,7 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles 
 
     const boxStyle = useMemo( () => {
         return {
-            bottom : `${boxHeight+70}px`,
+            bottom : `${boxHeight}px`,
             left : `50%`
         }
     }, [boxHeight])
