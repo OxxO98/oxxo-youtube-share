@@ -1142,6 +1142,7 @@ declare global {
       DONE : string;
     }
     CONTENTS : string[];
+    FONTS_PRESETS : string[];
   }
 
   export interface SharedDictionaryComp {

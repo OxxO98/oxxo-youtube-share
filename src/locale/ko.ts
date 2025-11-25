@@ -381,6 +381,9 @@ const SharedBunSettingModalComp : Locale['SharedBunSettingModalComp'] = {
     },
     CONTENTS : [
         '한국어 일본어 순서', '폰트 프리셋', '일본어 설정', '한국어 설정', '배경 설정', '테두리 설정'
+    ],
+    FONTS_PRESETS : [
+        '각진 고딕1', '각진 고딕2', '둥근 고딕', '손글씨1', '손글씨2', '도트1', '도트2'
     ]
 }
 

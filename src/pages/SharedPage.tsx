@@ -536,13 +536,13 @@ const SharedBunSettingModalComp = ({ children } : SharedBunSettingModalCompProps
     const { backgroundColor, jaTextColor, koTextColor, jaTextFontSize, koTextFontSize, sortFont, fontShadow, jaFonts, koFonts, jaFontFamily, koFontFamily } = useSelector( (_state : RootState ) => _state.shared );
 
     const presets = [
-        { value : 0, label : '각진 고딕1', ja : jaFonts[0].value, ko : koFonts[0].value },
-        { value : 1, label : '각진 고딕2', ja : jaFonts[4].value, ko : koFonts[2].value },
-        { value : 2, label : '둥근 고딕', ja : jaFonts[1].value, ko : koFonts[3].value },
-        { value : 3, label : '손글씨1', ja : jaFonts[7].value, ko : koFonts[5].value },
-        { value : 4, label : '손글씨2', ja : jaFonts[7].value, ko : koFonts[6].value },
-        { value : 5, label : '도트1', ja : jaFonts[6].value, ko : koFonts[4].value },
-        { value : 6, label : '도트2', ja : jaFonts[6].value, ko : koFonts[7].value },
+        { value : 0, label : t('FONTS_PRESETS.0'), ja : jaFonts[0].value, ko : koFonts[0].value },
+        { value : 1, label : t('FONTS_PRESETS.1'), ja : jaFonts[4].value, ko : koFonts[2].value },
+        { value : 2, label : t('FONTS_PRESETS.2'), ja : jaFonts[1].value, ko : koFonts[3].value },
+        { value : 3, label : t('FONTS_PRESETS.3'), ja : jaFonts[7].value, ko : koFonts[5].value },
+        { value : 4, label : t('FONTS_PRESETS.4'), ja : jaFonts[7].value, ko : koFonts[6].value },
+        { value : 5, label : t('FONTS_PRESETS.5'), ja : jaFonts[6].value, ko : koFonts[4].value },
+        { value : 6, label : t('FONTS_PRESETS.6'), ja : jaFonts[6].value, ko : koFonts[7].value },
     ]
 
     //Handle
@@ -791,7 +791,7 @@ const SharedTimelineComp = ({ timeline, playerRef, state, playerHandles } : Shar
                         {
                             (v, i) => (
                                 <List.Item
-                                    style={ (currentBunId !== undefined && currentBunId === i) ? { background :  token.colorPrimaryBg } : undefined}
+                                    style={ (currentBunId !== undefined && currentBunId === i) ? { background :  token.colorPrimaryBg } : undefined }
                                 >
                                     <div style={{ width : "100%" }} onClick={() => goToTimeLine(i)}>
                                         <Flex justify="left" style={{ width : "100%" }}>

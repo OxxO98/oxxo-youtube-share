@@ -381,6 +381,9 @@ const SharedBunSettingModalComp : Locale['SharedBunSettingModalComp'] = {
     },
     CONTENTS : [
         '表示順序', 'フォントプレセット', '日本語設定', '韓国語設定', '背景設定', '縁取り設定'
+    ],
+    FONTS_PRESETS : [
+        'ゴシック１', 'ゴシック２', '丸ゴシック', '手書き１', '手書き２', 'ドット１', 'ドット２'
     ]
 }
 
