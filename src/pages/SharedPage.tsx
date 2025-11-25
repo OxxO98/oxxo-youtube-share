@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef, useMemo, CSSProperties, useCallback } from 'react';
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import { saveAs } from 'file-saver';
 
@@ -70,6 +70,7 @@ const SharedPage = () => {
     const [sharedData, setSharedData] = useState<SharedData | null>(null);
 
     const location = useLocation();
+    const navigate = useNavigate();
 
     //Hook
     const { timeToTS } = useTimeStamp()
@@ -147,6 +148,9 @@ const SharedPage = () => {
             }
             setSharedData(data);
         }
+        else{
+            navigate('/notFound');
+        }
     }, [location])
 
     return(
@@ -186,7 +190,7 @@ const SharedComp = ({ sharedData } : SharedCompProps ) => {
     return (
         <>
             <Splitter style={{ height: '100%', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)' }}>
-                <Splitter.Panel collapsible defaultSize="0%" min="25%" max="25%" resizable={false}>
+                <Splitter.Panel collapsible={{ start : true, end : true, showCollapsibleIcon : true }} defaultSize="0%" min="25%" max="25%" resizable={false}>
                     <SharedDictionaryComp />
                 </Splitter.Panel>
                 <Splitter.Panel defaultSize="100%" min="50%" max="100%">  
@@ -195,7 +199,7 @@ const SharedComp = ({ sharedData } : SharedCompProps ) => {
                         <SharedTimelineCarouselComp timeline={sharedData.timeline} playerRef={playerRef} state={state} playerHandles={playerHandles}/>
                     </Flex>
                 </Splitter.Panel>
-                <Splitter.Panel collapsible defaultSize="0%" min="30%" max="50%">
+                <Splitter.Panel collapsible={{ start : true, end : true, showCollapsibleIcon : true }} defaultSize="0%" min="30%" max="50%">
                     <SharedTimelineComp timeline={sharedData.timeline} playerRef={playerRef} state={state} playerHandles={playerHandles}/>
                 </Splitter.Panel>
             </Splitter>
