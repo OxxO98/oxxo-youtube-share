@@ -1,5 +1,5 @@
 const oracledb = require('oracledb');
-const dbConfig = require('./react-youtube-translate-share-config/dbconfig.js');
+const dbConfig = require('./react-youtube-translate-share-config/config.js');
 
 async function db_connection(req, res, func){
 
