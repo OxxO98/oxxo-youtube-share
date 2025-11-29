@@ -4,7 +4,6 @@ const router = express.Router();
 
 const db_conn = require('./core/db_connection.js');
 
-//updated 2503
 async function getTest(req, res){
     await db_conn.db_connection( req, res, async (connection) => {
     

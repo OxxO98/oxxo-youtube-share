@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 import cors from 'cors';
 import bodyParser from 'body-parser';
 
-import api_test from './Router/db_test';
+import api_test from './Router/db_test.js';
 
 app.use(cors());
 app.use(bodyParser.json());
