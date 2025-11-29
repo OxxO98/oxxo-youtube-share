@@ -1,0 +1,193 @@
+//Hon/Bun
+const express = require("express");
+const router = express.Router();
+
+const db_conn = require('./core/db_connection.js');
+
+import { nanoid } from "nanoid";
+
+async function getShortURL(connection){
+    let shortURL;
+    let checkQuery;
+    let ret;
+
+    do{
+        shortURL = nanoid(16);
+
+        checkQuery = `
+            SELECT USERID, VIDEOID
+            FROM URLS
+            WHERE SHORTURL=${shortURL}
+        `
+
+        ret = await connection.execute(checkQuery);
+    }while( ret.rows.length != 0);
+
+    console.log(shortURL);
+
+    return shortURL;
+}
+
+async function getUserId(connection) {
+    let userId;
+    let checkQuery;
+    let ret;
+
+    do{
+        userId = nanoid(16);
+
+        checkQuery = `
+            SELECT SHORTURL
+            FROM URLS
+            WHERE USERID=${userId}
+        `
+
+        ret = await connection.execute(checkQuery);
+    } while( ret.rows.length != 0);
+
+    return userId;
+}
+
+async function getTest(req, res){
+    await db_conn.db_connection( req, res, async (connection) => {
+        let { src } = req.query;
+
+        res.send({
+            data : {},
+            message : `test is working ${src}`
+        });
+    })
+}
+
+async function getLongURL(req, res){
+    await db_conn.db_connection( req, res, async (connection) => {
+        let { shortURL } = req.query;
+
+        let offset = 1;
+
+        let longUrl = '';
+        let getQuery;
+        let ret;
+
+        do{
+            getQuery = `
+                SELECT DBMS_LOG.GETLENGTH(LONGURL) AS LEN, DBMS_LOB.SUBSTR(LONGURL, 4000, ${offset}) AS STR
+                FROM URLS
+                WHERE SHORTURL=${shortURL}
+            `
+
+            ret = await connection.execute(getQuery);
+
+            longUrl.concat(ret.rows[0]['STR']);
+        }while( ret.rows.length > 0 && offset < ret.rows[0]['LEN'] );
+
+        res.send({
+            data : longUrl,
+            message : 'success'
+        });
+    })
+}
+
+async function insertLongURL(req, res){
+    await db_conn.db_connection( req, res, async (connection) => {
+
+        let { userId, videoId, string } = req.body;
+
+        let _userId = userId;
+        if( userId == undefined ){
+            _userId = getUserId(connection);
+        }
+        
+        let existQuery = `
+            SELECT SHORTURL
+            FROM URLS
+            WHERE USERID='${userId} AND VIDEOID='${videoId}'
+        `
+
+        let retExist = await connection.execute(existQuery);
+
+        let shortURL;
+        if(retExist.rows.length == 0){
+
+            shortURL = await getShortURL(connection);
+
+            //insert
+            let query = `
+                DECLARE
+                    l_clob_data CLOB;
+                    l_string VARCHAR2(32767);
+                    l_offset NUMBER := 1;
+                    l_chunk_size NUMBER := 4000;
+                BEGIN
+                    l_clob_data := EMPTY_CLOB();
+
+                    INSERT INTO URLS(USERID, VIDEOID, LONGURL, SHORTURL)
+                    VALUES ('${_userId}', '${videoId}', l_clob_data, '${shortURL}')
+
+                    l_string := '${string}';
+
+                    WHILE l_offset <= LENGTH(l_string) LOOP
+                        DBMS_LOB.WRITEAPPEND(l_clob_data, SUBSTR(l_string, l_offset, l_chunk_size) )l
+                        l_offset := l_offset + l_chunk_size;
+                    END LOOP;
+
+                    COMMIT;
+                END;
+            `
+
+            await connection.execute(query);
+        }
+        else{
+            //update
+            let query = `
+                DECLARE
+                    l_clob_data CLOB;
+                    l_string VARCHAR2(32767);
+                    l_offset NUMBER := 1;
+                    l_chunk_size NUMBER := 4000;
+                BEGIN
+                    l_clob_data := EMPTY_CLOB();
+
+                    UPDATE URLS
+                    SET LONGURL = l_clob_data
+                    WHERE USERID='${_userId}' AND VIDEOID='${videoId}'
+
+                    l_string := '${string}';
+
+                    WHILE l_offset <= LENGTH(l_string) LOOP
+                        DBMS_LOB.WRITEAPPEND(l_clob_data, SUBSTR(l_string, l_offset, l_chunk_size) )l
+                        l_offset := l_offset + l_chunk_size;
+                    END LOOP;
+
+                    COMMIT;
+                END;
+            `
+
+            await connection.execute(query);
+
+            let getShortQuery = `
+                SELECT SHORTURL
+                FROM URLS
+                WHERE USERID='${_userId}' AND VIDEOID='${videoId}'
+            `
+
+            let ret = await connection.execute(getShortQuery);
+
+            shortURL = ret.rows[0]['SHORTURL'];
+        }
+
+        await connection.execute('commit');
+
+        res.send({
+            data : { userId : _userId, shortURL : shortURL },
+            message : 'success'
+        });
+    })
+}
+
+router.get('/test', getTest);
+
+router.get('/longUrl', getLongURL);
+router.post('/longUrl', insertLongURL);
+
+module.exports = router;

@@ -9,13 +9,13 @@ const __dirname = path.dirname(__filename);
 import cors from 'cors';
 import bodyParser from 'body-parser';
 
-import api_test from './Router/db_test.js';
+import api from './Router/db_api.js';
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended : false }));
 
-app.use("/api", api_test);
+app.use("/api", api);
 
 const port = 5000;
 
