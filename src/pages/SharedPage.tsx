@@ -74,7 +74,7 @@ const SharedPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const { response, setParams } = useAxiosGet<any, any>('/test', true, null);
+    const { response, setParams } = useAxiosGet<any, any>('/longUrl', true, null);
 
     //Hook
     const { timeToTS } = useTimeStamp()
