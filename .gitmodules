@@ -1,0 +1,3 @@
+[submodule "server/Router/core/react-youtube-translate-share-config"]
+	path = server/Router/core/react-youtube-translate-share-config
+	url = https://github.com/OxxO98/react-youtube-translate-share-config.git
