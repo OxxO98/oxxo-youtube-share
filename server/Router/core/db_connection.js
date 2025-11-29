@@ -6,8 +6,6 @@ async function db_connection(req, res, func){
   return await (async (req, res) => {
     let connection;
     try{
-      console.log(dbConfig);
-
       connection = await oracledb.getConnection({
         user : dbConfig.user,
         password : dbConfig.password,

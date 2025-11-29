@@ -6,8 +6,7 @@ const db_conn = require('./core/db_connection.js');
 
 async function getTest(req, res){
     await db_conn.db_connection( req, res, async (connection) => {
-        console.log('api test is working');
-        console.log(`connectString : ${connection.connectString}`)
+        res.send('test is working')
     })
 }
 

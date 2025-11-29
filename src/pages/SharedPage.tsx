@@ -23,6 +23,8 @@ import { useHandleKeyboard, useVideoPlayHook } from 'hooks/VideoPlayHook';
 import { useJaText } from 'hooks/JaTextHook';
 import { useHandleSelection } from 'hooks/SelectionHook';
 
+import { useAxiosGet } from 'hooks/AxiosHook';
+
 import { useTimeStamp } from 'hooks/VideoPlayHook';
 
 //Redux
@@ -71,6 +73,8 @@ const SharedPage = () => {
 
     const location = useLocation();
     const navigate = useNavigate();
+
+    const { response, setParams } = useAxiosGet<null, any>('/api/test', true, null);
 
     //Hook
     const { timeToTS } = useTimeStamp()
@@ -149,7 +153,13 @@ const SharedPage = () => {
             setSharedData(data);
         }
         else{
-            navigate('/notFound');
+            let long_encode = params.get('l');
+            if( long_encode !== null ){
+                setParams({ test : 'test' });
+            }
+            else{
+                navigate('/notFound');
+            }
         }
     }, [location])
 
