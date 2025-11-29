@@ -15,7 +15,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended : false }));
 
-app.use("/test", api_test);
+app.use("/api", api_test);
 
 const port = 5000;
 
