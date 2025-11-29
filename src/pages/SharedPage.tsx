@@ -74,7 +74,7 @@ const SharedPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const { response, setParams } = useAxiosGet<null, any>('/api/test', true, null);
+    const { response, setParams } = useAxiosGet<null, any>('/test', true, null);
 
     //Hook
     const { timeToTS } = useTimeStamp()
@@ -155,7 +155,7 @@ const SharedPage = () => {
         else{
             let long_encode = params.get('l');
             if( long_encode !== null ){
-                setParams({ test : 'test' });
+                setParams({ src : long_encode });
             }
             else{
                 navigate('/notFound');
