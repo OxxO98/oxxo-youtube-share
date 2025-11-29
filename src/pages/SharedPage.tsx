@@ -74,7 +74,7 @@ const SharedPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const { response, setParams } = useAxiosGet<null, any>('/test', true, null);
+    const { response, setParams } = useAxiosGet<any, any>('/test', true, null);
 
     //Hook
     const { timeToTS } = useTimeStamp()
@@ -101,67 +101,80 @@ const SharedPage = () => {
         saveAs(blob, `${filename}.srt`);
     }
 
+    const decode = ( encode : string ) => {
+        let _decode = LZstring.decompressFromEncodedURIComponent(encode);
+        let _decodedData : RES_SHARED_DATA = JSON.parse(_decode);
+
+        let data = {
+            videoId : _decodedData.v,
+            timeline : _decodedData.t.map( (v, i) => {
+                return {
+                    startTime : v.s,
+                    endTime : v.e,
+                    jaText : v.j === undefined ? 
+                        [{
+                            data : '',
+                            ruby : null,
+                            offset : 0
+                        }]
+                        :
+                        typeof v.j === 'string' ?  
+                            [{
+                                data : v.j,
+                                ruby : null,
+                                offset : 0
+                            }]
+                        : 
+                            v.j.map( (t) => {
+                                return {
+                                    data : t.d,
+                                    ruby : t.r,
+                                    offset : t.o
+                                }
+                            })
+                        ,
+                    koText : v.k === undefined ? 
+                        ''
+                        :
+                        v.k
+                    ,
+                    id : i.toString()
+                }
+            }),
+        }
+        return data;
+    }
+
     useEffect( () => {
         let search = location.search;
         let params = new URLSearchParams(search);
         let encode = params.get('a');
 
         if(encode !== null){
-            let decode = LZstring.decompressFromEncodedURIComponent(encode);
-            let decodedData : RES_SHARED_DATA = JSON.parse(decode);
-            
-            console.log(decodedData.t[0].j !== undefined)
-            console.log(decodedData.t[0].k !== undefined)
+            let data = decode(encode);
 
-            let data = {
-                videoId : decodedData.v,
-                timeline : decodedData.t.map( (v, i) => {
-                    return {
-                        startTime : v.s,
-                        endTime : v.e,
-                        jaText : v.j === undefined ? 
-                            [{
-                                data : '',
-                                ruby : null,
-                                offset : 0
-                            }]
-                            :
-                            typeof v.j === 'string' ?  
-                                [{
-                                    data : v.j,
-                                    ruby : null,
-                                    offset : 0
-                                }]
-                            : 
-                                v.j.map( (t) => {
-                                    return {
-                                        data : t.d,
-                                        ruby : t.r,
-                                        offset : t.o
-                                    }
-                                })
-                            ,
-                        koText : v.k === undefined ? 
-                            ''
-                            :
-                            v.k
-                        ,
-                        id : i.toString()
-                    }
-                }),
-            }
             setSharedData(data);
         }
         else{
             let long_encode = params.get('l');
             if( long_encode !== null ){
-                setParams({ src : long_encode });
+                setParams({ shortURL : long_encode });
             }
             else{
                 navigate('/notFound');
             }
         }
     }, [location])
+
+    useEffect( () => {
+        let res = response;
+        if(res !== null){
+            let data = decode(res.data);
+
+            setSharedData(data);
+        }
+    }, [response])
+
 
     return(
         <>
