@@ -2,7 +2,7 @@
 import express from 'express'
 const router = express.Router();
 
-import db_conn from './core/db_connection.js'
+import db_connection from './core/db_connection.js'
 
 import { nanoid } from "nanoid";
 
@@ -49,7 +49,7 @@ async function getUserId(connection) {
 }
 
 async function getTest(req, res){
-    await db_conn.db_connection( req, res, async (connection) => {
+    await db_connection( req, res, async (connection) => {
         let { src } = req.query;
 
         res.send({
@@ -60,7 +60,7 @@ async function getTest(req, res){
 }
 
 async function getLongURL(req, res){
-    await db_conn.db_connection( req, res, async (connection) => {
+    await db_connection( req, res, async (connection) => {
         let { shortURL } = req.query;
 
         console.log('getLongURL...')
@@ -91,7 +91,7 @@ async function getLongURL(req, res){
 }
 
 async function insertLongURL(req, res){
-    await db_conn.db_connection( req, res, async (connection) => {
+    await db_connection( req, res, async (connection) => {
 
         let { userId, videoId, string } = req.body;
 
