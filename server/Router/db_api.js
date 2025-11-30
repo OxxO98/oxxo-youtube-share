@@ -124,6 +124,7 @@ async function insertLongURL(req, res){
             shortURL = await getShortURL(connection);
 
             //insert
+            /*
             let query = `
                 DECLARE
                     l_clob_data CLOB;
@@ -147,7 +148,22 @@ async function insertLongURL(req, res){
                     COMMIT;
                 END;
             `
+            */
+            let _len = string.length;
+            let _chunk = [];
+            let _index = 0;
+            let _chunk_size = 4000;
+            while( _index < _len ){
+                _chunk.push( `TO_CLOB('${string.slice(_index, _index+_chunk_size)}')` );
+                _index += _chunk_size; 
+            }
+            console.log(_chunk);
 
+            let query = `
+                INSERT INTO URLS(USERID, VIDEOID, LONGURL, SHORTURL)
+                VALUES ('${_userId}', '${videoId}', ${_chunk.join('||')}, ${shortURL})
+            `
+            
             let _ret = await connection.execute(query);
 
             console.log(_ret);
