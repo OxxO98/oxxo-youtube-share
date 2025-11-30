@@ -134,7 +134,8 @@ async function insertLongURL(req, res){
                     l_clob_data := EMPTY_CLOB();
 
                     INSERT INTO URLS(USERID, VIDEOID, LONGURL, SHORTURL)
-                    VALUES ('${_userId}', '${videoId}', l_clob_data, '${shortURL}');
+                    VALUES ('${_userId}', '${videoId}', l_clob_data, '${shortURL}')
+                    RETURNING LONGURL INTO l_clob_data;
 
                     l_string := '${string}';
 
@@ -164,7 +165,8 @@ async function insertLongURL(req, res){
 
                     UPDATE URLS
                     SET LONGURL = l_clob_data
-                    WHERE USERID='${_userId}' AND VIDEOID='${videoId}'
+                    WHERE USERID='${_userId}' AND VIDEOID='${videoId}
+                    RETURNING LONGURL INTO l_clob_data;
 
                     l_string := '${string}';
 
