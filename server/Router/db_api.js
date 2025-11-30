@@ -63,6 +63,8 @@ async function getLongURL(req, res){
     await db_conn.db_connection( req, res, async (connection) => {
         let { shortURL } = req.query;
 
+        console.log('getLongURL...')
+
         let offset = 1;
 
         let longUrl = '';
@@ -190,4 +192,4 @@ router.get('/test', getTest);
 router.get('/longUrl', getLongURL);
 router.post('/longUrl', insertLongURL);
 
-module.exports = router;
+export default router;
