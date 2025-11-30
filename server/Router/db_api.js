@@ -17,7 +17,7 @@ async function getShortURL(connection){
         checkQuery = `
             SELECT USERID, VIDEOID
             FROM URLS
-            WHERE SHORTURL='${shortURL}';
+            WHERE SHORTURL='${shortURL}'
         `
 
         ret = await connection.execute(checkQuery);
@@ -39,7 +39,7 @@ async function getUserId(connection) {
         checkQuery = `
             SELECT SHORTURL
             FROM URLS
-            WHERE USERID='${userId}';
+            WHERE USERID='${userId}'
         `;
 
         ret = await connection.execute(checkQuery);
@@ -77,7 +77,7 @@ async function getLongURL(req, res){
             getQuery = `
                 SELECT DBMS_LOG.GETLENGTH(LONGURL) AS LEN, DBMS_LOB.SUBSTR(LONGURL, 4000, ${offset}) AS STR
                 FROM URLS
-                WHERE SHORTURL='${shortURL}';
+                WHERE SHORTURL='${shortURL}'
             `
 
             ret = await connection.execute(getQuery);
@@ -111,7 +111,7 @@ async function insertLongURL(req, res){
         let existQuery = `
             SELECT SHORTURL
             FROM URLS
-            WHERE USERID='${userId} AND VIDEOID='${videoId}';
+            WHERE USERID='${userId} AND VIDEOID='${videoId}'
         `
 
         let retExist = await connection.execute(existQuery);
@@ -182,7 +182,7 @@ async function insertLongURL(req, res){
             let getShortQuery = `
                 SELECT SHORTURL
                 FROM URLS
-                WHERE USERID='${_userId}' AND VIDEOID='${videoId}';
+                WHERE USERID='${_userId}' AND VIDEOID='${videoId}'
             `;
 
             let ret = await connection.execute(getShortQuery);
