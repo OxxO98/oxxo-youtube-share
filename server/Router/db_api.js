@@ -40,7 +40,7 @@ async function getUserId(connection) {
             SELECT SHORTURL
             FROM URLS
             WHERE USERID='${userId}';
-        `
+        `;
 
         ret = await connection.execute(checkQuery);
     } while( ret.rows.length != 0);
@@ -134,12 +134,12 @@ async function insertLongURL(req, res){
                     l_clob_data := EMPTY_CLOB();
 
                     INSERT INTO URLS(USERID, VIDEOID, LONGURL, SHORTURL)
-                    VALUES ('${_userId}', '${videoId}', l_clob_data, '${shortURL}')
+                    VALUES ('${_userId}', '${videoId}', l_clob_data, '${shortURL}');
 
                     l_string := '${string}';
 
                     WHILE l_offset <= LENGTH(l_string) LOOP
-                        DBMS_LOB.WRITEAPPEND(l_clob_data, SUBSTR(l_string, l_offset, l_chunk_size) )l
+                        DBMS_LOB.WRITEAPPEND(l_clob_data, SUBSTR(l_string, l_offset, l_chunk_size) );
                         l_offset := l_offset + l_chunk_size;
                     END LOOP;
 
@@ -169,7 +169,7 @@ async function insertLongURL(req, res){
                     l_string := '${string}';
 
                     WHILE l_offset <= LENGTH(l_string) LOOP
-                        DBMS_LOB.WRITEAPPEND(l_clob_data, SUBSTR(l_string, l_offset, l_chunk_size) )l
+                        DBMS_LOB.WRITEAPPEND(l_clob_data, SUBSTR(l_string, l_offset, l_chunk_size) );
                         l_offset := l_offset + l_chunk_size;
                     END LOOP;
 
@@ -183,7 +183,7 @@ async function insertLongURL(req, res){
                 SELECT SHORTURL
                 FROM URLS
                 WHERE USERID='${_userId}' AND VIDEOID='${videoId}';
-            `
+            `;
 
             let ret = await connection.execute(getShortQuery);
 
