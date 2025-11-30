@@ -97,7 +97,7 @@ async function insertLongURL(req, res){
 
         let { userId, videoId, string } = req.body;
 
-        console.log(req.body);
+        console.log(string.length);
 
         let _userId = userId;
         if( userId == undefined ){
