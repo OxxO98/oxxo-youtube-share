@@ -11,8 +11,6 @@ import bodyParser from 'body-parser';
 
 import api from './Router/db_api.js';
 
-//{ origin : 'http://localhost:3000' }
-app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended : false }));
 
