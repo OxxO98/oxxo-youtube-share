@@ -111,7 +111,7 @@ async function insertLongURL(req, res){
         let existQuery = `
             SELECT SHORTURL
             FROM URLS
-            WHERE USERID='${userId} AND VIDEOID='${videoId}'
+            WHERE USERID='${userId}' AND VIDEOID='${videoId}'
         `
 
         let retExist = await connection.execute(existQuery);
