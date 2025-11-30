@@ -169,7 +169,6 @@ const SharedPage = () => {
     useEffect( () => {
         let res = response;
         if(res !== null){
-            console.log(res.data);
             let data = decode(res.data);
 
             setSharedData(data);

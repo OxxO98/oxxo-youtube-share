@@ -23,8 +23,6 @@ async function getShortURL(connection){
         ret = await connection.execute(checkQuery);
     }while( ret.rows.length != 0);
 
-    console.log(shortURL);
-
     return shortURL;
 }
 
@@ -76,8 +74,6 @@ async function getLongURL(req, res){
     await db_connection( req, res, async (connection) => {
         let { shortURL } = req.query;
 
-        console.log('getLongURL...', shortURL);
-
         if( shortURL == undefined ){ return }
 
         let offset = 1;
@@ -99,8 +95,6 @@ async function getLongURL(req, res){
             offset += 4000;
         }while( ret.rows.length > 0 && offset < ret.rows[0]['LEN'] );
 
-        console.log(longUrl);
-
         res.send({
             data : longUrl,
             message : 'success'
@@ -113,14 +107,10 @@ async function insertLongURL(req, res){
 
         let { userId, videoId, string } = req.body;
 
-        console.log(string.length);
-
         let _userId = userId;
         if( userId == undefined ){
             _userId = await getUserId(connection);
         }
-
-        console.log(_userId);
 
         if( videoId == undefined || string == undefined ) return;
         
@@ -131,8 +121,6 @@ async function insertLongURL(req, res){
         `
 
         let retExist = await connection.execute(existQuery);
-
-        console.log(retExist);
 
         let shortURL;
         if(retExist.rows.length == 0){
@@ -167,8 +155,6 @@ async function insertLongURL(req, res){
             `;
 
             let ret = await connection.execute(getShortQuery);
-
-            console.log(ret);
 
             shortURL = ret.rows[0]['SHORTURL'];
         }
