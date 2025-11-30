@@ -6,7 +6,7 @@ import db_connection from './core/db_connection.js'
 
 import { nanoid } from "nanoid";
 
-async function getShortURL(connection){
+async function _getShortURL(connection){
     let shortURL;
     let checkQuery;
     let ret;
@@ -26,7 +26,7 @@ async function getShortURL(connection){
     return shortURL;
 }
 
-async function getUserId(connection) {
+async function _getUserId(connection) {
     let userId;
     let checkQuery;
     let ret;
@@ -46,7 +46,7 @@ async function getUserId(connection) {
     return userId;
 }
 
-async function getChunk(string){
+async function _getChunk(string){
     let _len = string.length;
     let _chunk = [];
     let _index = 0;
@@ -115,7 +115,7 @@ async function insertLongURL(req, res){
 
         let _userId = userId;
         if( userId == undefined ){
-            _userId = await getUserId(connection);
+            _userId = await _getUserId(connection);
         }
 
         if( videoId == undefined || string == undefined ){
@@ -137,9 +137,9 @@ async function insertLongURL(req, res){
         let shortURL;
         if(retExist.rows.length == 0){
 
-            shortURL = await getShortURL(connection);
+            shortURL = await _getShortURL(connection);
 
-            let _chunk = await getChunk(string);
+            let _chunk = await _getChunk(string);
 
             let query = `
                 INSERT INTO URLS(USERID, VIDEOID, LONGURL, SHORTURL)
@@ -150,7 +150,7 @@ async function insertLongURL(req, res){
         }
         else{
             //update
-            let _chunk = await getChunk(string);
+            let _chunk = await _getChunk(string);
             
             let query = `
                 UPDATE URLS
