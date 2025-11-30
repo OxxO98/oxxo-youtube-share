@@ -48,6 +48,19 @@ async function getUserId(connection) {
     return userId;
 }
 
+async function getChunk(string){
+    let _len = string.length;
+    let _chunk = [];
+    let _index = 0;
+    let _chunk_size = 4000;
+    while( _index < _len ){
+        _chunk.push( `TO_CLOB('${string.slice(_index, _index+_chunk_size)}')` );
+        _index += _chunk_size; 
+    }
+
+    return _chunk;
+}
+
 async function getTest(req, res){
     await db_connection( req, res, async (connection) => {
         let { src } = req.query;
@@ -75,7 +88,7 @@ async function getLongURL(req, res){
 
         do{
             getQuery = `
-                SELECT DBMS_LOG.GETLENGTH(LONGURL) AS LEN, DBMS_LOB.SUBSTR(LONGURL, 4000, ${offset}) AS STR
+                SELECT DBMS_LOB.GETLENGTH(LONGURL) AS LEN, DBMS_LOB.SUBSTR(LONGURL, 4000, ${offset}) AS STR
                 FROM URLS
                 WHERE SHORTURL='${shortURL}'
             `
@@ -123,41 +136,7 @@ async function insertLongURL(req, res){
 
             shortURL = await getShortURL(connection);
 
-            //insert
-            /*
-            let query = `
-                DECLARE
-                    l_clob_data CLOB;
-                    l_string VARCHAR2(32767);
-                    l_offset NUMBER := 1;
-                    l_chunk_size NUMBER := 4000;
-                BEGIN
-                    l_clob_data := EMPTY_CLOB();
-
-                    INSERT INTO URLS(USERID, VIDEOID, LONGURL, SHORTURL)
-                    VALUES ('${_userId}', '${videoId}', l_clob_data, '${shortURL}')
-                    RETURNING LONGURL INTO l_clob_data;
-
-                    l_string := '${string}';
-
-                    WHILE l_offset <= LENGTH(l_string) LOOP
-                        DBMS_LOB.WRITEAPPEND(l_clob_data, l_chunk_size, SUBSTR(l_string, l_offset, l_chunk_size) );
-                        l_offset := l_offset + l_chunk_size;
-                    END LOOP;
-
-                    COMMIT;
-                END;
-            `
-            */
-            let _len = string.length;
-            let _chunk = [];
-            let _index = 0;
-            let _chunk_size = 4000;
-            while( _index < _len ){
-                _chunk.push( `TO_CLOB('${string.slice(_index, _index+_chunk_size)}')` );
-                _index += _chunk_size; 
-            }
-            console.log(_chunk);
+            let _chunk = await getChunk(string);
 
             let query = `
                 INSERT INTO URLS(USERID, VIDEOID, LONGURL, SHORTURL)
@@ -165,34 +144,15 @@ async function insertLongURL(req, res){
             `
             
             let _ret = await connection.execute(query);
-
-            console.log(_ret);
         }
         else{
             //update
+            let _chunk = await getChunk(string);
+            
             let query = `
-                DECLARE
-                    l_clob_data CLOB;
-                    l_string VARCHAR2(32767);
-                    l_offset NUMBER := 1;
-                    l_chunk_size NUMBER := 4000;
-                BEGIN
-                    l_clob_data := EMPTY_CLOB();
-
-                    UPDATE URLS
-                    SET LONGURL = l_clob_data
-                    WHERE USERID='${_userId}' AND VIDEOID='${videoId}
-                    RETURNING LONGURL INTO l_clob_data;
-
-                    l_string := '${string}';
-
-                    WHILE l_offset <= LENGTH(l_string) LOOP
-                        DBMS_LOB.WRITEAPPEND(l_clob_data, l_chunk_size, SUBSTR(l_string, l_offset, l_chunk_size) );
-                        l_offset := l_offset + l_chunk_size;
-                    END LOOP;
-
-                    COMMIT;
-                END;
+                UPDATE URLS
+                SET LONGURL=${_chunk.join('||')}
+                WHERE USERID='${_userId}' AND VIDEOID='${videoId}'
             `
 
             await connection.execute(query);

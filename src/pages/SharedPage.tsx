@@ -156,9 +156,9 @@ const SharedPage = () => {
             setSharedData(data);
         }
         else{
-            let long_encode = params.get('l');
-            if( long_encode !== null ){
-                setParams({ shortURL : long_encode });
+            let shortURL = params.get('l');
+            if( shortURL !== null ){
+                setParams({ shortURL : shortURL });
             }
             else{
                 navigate('/notFound');
@@ -169,6 +169,7 @@ const SharedPage = () => {
     useEffect( () => {
         let res = response;
         if(res !== null){
+            console.log(res.data);
             let data = decode(res.data);
 
             setSharedData(data);
