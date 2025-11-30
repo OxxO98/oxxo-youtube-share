@@ -161,7 +161,7 @@ async function insertLongURL(req, res){
 
             let query = `
                 INSERT INTO URLS(USERID, VIDEOID, LONGURL, SHORTURL)
-                VALUES ('${_userId}', '${videoId}', ${_chunk.join('||')}, ${shortURL})
+                VALUES ('${_userId}', '${videoId}', ${_chunk.join('||')}, '${shortURL}')
             `
             
             let _ret = await connection.execute(query);
