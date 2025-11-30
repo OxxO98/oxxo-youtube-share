@@ -139,7 +139,7 @@ async function insertLongURL(req, res){
                     l_string := '${string}';
 
                     WHILE l_offset <= LENGTH(l_string) LOOP
-                        DBMS_LOB.WRITEAPPEND(l_clob_data, SUBSTR(l_string, l_offset, l_chunk_size) );
+                        DBMS_LOB.WRITEAPPEND(l_clob_data, l_chunk_size, SUBSTR(l_string, l_offset, l_chunk_size) );
                         l_offset := l_offset + l_chunk_size;
                     END LOOP;
 
@@ -169,7 +169,7 @@ async function insertLongURL(req, res){
                     l_string := '${string}';
 
                     WHILE l_offset <= LENGTH(l_string) LOOP
-                        DBMS_LOB.WRITEAPPEND(l_clob_data, SUBSTR(l_string, l_offset, l_chunk_size) );
+                        DBMS_LOB.WRITEAPPEND(l_clob_data, l_chunk_size, SUBSTR(l_string, l_offset, l_chunk_size) );
                         l_offset := l_offset + l_chunk_size;
                     END LOOP;
 
