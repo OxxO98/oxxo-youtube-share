@@ -168,13 +168,15 @@ const SharedPage = () => {
 
     useEffect( () => {
         let res = response;
-        if(res !== null && res.message === 'success' ){
-            let data = decode(res.data);
+        if(res !== null ){
+            if( res.message === 'success'){
+                let data = decode(res.data);
 
-            setSharedData(data);
-        }
-        else {
-            navigate('/notFound');
+                setSharedData(data);
+            }
+            else{
+                navigate('/notFound');
+            }
         }
     }, [response])
 
