@@ -95,6 +95,8 @@ async function getLongURL(req, res){
 
             ret = await connection.execute(getQuery);
 
+            console.log(ret.rows);
+
             longUrl.concat(ret.rows[0]['STR']);
         }while( ret.rows.length > 0 && offset < ret.rows[0]['LEN'] );
 
