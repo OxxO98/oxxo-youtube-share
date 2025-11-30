@@ -74,7 +74,13 @@ async function getLongURL(req, res){
     await db_connection( req, res, async (connection) => {
         let { shortURL } = req.query;
 
-        if( shortURL == undefined ){ return }
+        if( shortURL == undefined ){
+            res.send({
+                data : {},
+                message : 'error'
+            })
+            return 
+        }
 
         let offset = 1;
 
@@ -112,7 +118,13 @@ async function insertLongURL(req, res){
             _userId = await getUserId(connection);
         }
 
-        if( videoId == undefined || string == undefined ) return;
+        if( videoId == undefined || string == undefined ){
+            res.send({
+                data : {},
+                message : 'error'
+            })
+            return;
+        }
         
         let existQuery = `
             SELECT SHORTURL
@@ -168,7 +180,39 @@ async function insertLongURL(req, res){
     })
 }
 
+async function getShortURL(req, res){
+    await db_connection( req, res, async (connection) => {
+
+        let { userId, videoId } = req.query;
+
+        if( videoId == undefined || userId == undefined ) return;
+        
+        let existQuery = `
+            SELECT SHORTURL
+            FROM URLS
+            WHERE USERID='${userId}' AND VIDEOID='${videoId}'
+        `
+
+        let retExist = await connection.execute(existQuery);
+
+        if(retExist.rows.length == 0){
+            res.send({
+                data : {},
+                message : 'error'
+            });
+            return;
+        }
+
+        res.send({
+            data : { shortURL : retExist.rows[0]['SHORTURL'] },
+            message : 'success'
+        });
+    })
+}
+
 router.get('/test', getTest);
+
+router.get('/shortUrl', getShortURL);
 
 router.get('/longUrl', getLongURL);
 router.post('/longUrl', insertLongURL);
