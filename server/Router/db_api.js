@@ -187,15 +187,17 @@ async function getShortURL(req, res){
 
         if( videoId == undefined || userId == undefined ) return;
         
-        let existQuery = `
+        let query = `
             SELECT SHORTURL
             FROM URLS
             WHERE USERID='${userId}' AND VIDEOID='${videoId}'
         `
 
-        let retExist = await connection.execute(existQuery);
+        let ret = await connection.execute(query);
 
-        if(retExist.rows.length == 0){
+        console.log(ret.rows);
+
+        if(ret.rows.length == 0){
             res.send({
                 data : {},
                 message : 'error'
@@ -204,7 +206,7 @@ async function getShortURL(req, res){
         }
 
         res.send({
-            data : { shortURL : retExist.rows[0]['SHORTURL'] },
+            data : { shortURL : ret.rows[0]['SHORTURL'] },
             message : 'success'
         });
     })
