@@ -76,7 +76,7 @@ async function getLongURL(req, res){
     await db_connection( req, res, async (connection) => {
         let { shortURL } = req.query;
 
-        console.log('getLongURL...')
+        console.log('getLongURL...', shortURL);
 
         if( shortURL == undefined ){ return }
 
