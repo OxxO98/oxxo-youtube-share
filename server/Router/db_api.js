@@ -194,9 +194,7 @@ async function getShortURL(req, res){
         `
 
         let ret = await connection.execute(query);
-
-        console.log(ret.rows);
-
+        
         if(ret.rows.length == 0){
             res.send({
                 data : {},
