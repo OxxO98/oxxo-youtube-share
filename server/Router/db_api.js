@@ -98,6 +98,7 @@ async function getLongURL(req, res){
             console.log(ret.rows);
 
             longUrl.concat(ret.rows[0]['STR']);
+            offset += 4000;
         }while( ret.rows.length > 0 && offset < ret.rows[0]['LEN'] );
 
         res.send({
