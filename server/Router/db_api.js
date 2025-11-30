@@ -65,6 +65,8 @@ async function getLongURL(req, res){
 
         console.log('getLongURL...')
 
+        if( shortURL == undefined ){ return }
+
         let offset = 1;
 
         let longUrl = '';
@@ -99,6 +101,8 @@ async function insertLongURL(req, res){
         if( userId == undefined ){
             _userId = getUserId(connection);
         }
+
+        if( videoId == undefined || string == undefined ) return;
         
         let existQuery = `
             SELECT SHORTURL
