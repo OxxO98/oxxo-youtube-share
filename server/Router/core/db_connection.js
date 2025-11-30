@@ -1,5 +1,5 @@
-const oracledb = require('oracledb');
-const dbConfig = require('./react-youtube-translate-share-config/config.js');
+import oracledb from 'oracledb';
+import dbConfig from './react-youtube-translate-share-config/config.js';
 
 async function db_connection(req, res, func){
 
@@ -36,6 +36,4 @@ async function db_connection(req, res, func){
   })(req, res);
 }
 
-module.exports = {
-  db_connection
-}
+export default db_connection;

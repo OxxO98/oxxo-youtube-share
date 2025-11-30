@@ -1,8 +1,8 @@
 //Hon/Bun
-const express = require("express");
+import express from 'express'
 const router = express.Router();
 
-const db_conn = require('./core/db_connection.js');
+import db_conn from './core/db_connection.js'
 
 import { nanoid } from "nanoid";
 
