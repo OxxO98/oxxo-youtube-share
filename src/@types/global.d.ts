@@ -365,6 +365,11 @@ declare global {
     ytBId : string;
   }
 
+  export type RES_GET_LONGURL = string;
+  export type REQ_GET_LONGURL = {
+    shortURL : string;
+  }
+
   //REQUEST : POST, PUT, DELETE
   export type REQ_POST_TRANSLATE = {
     videoId : string;

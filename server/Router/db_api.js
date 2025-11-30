@@ -76,7 +76,7 @@ async function getLongURL(req, res){
 
         if( shortURL == undefined ){
             res.send({
-                data : {},
+                data : '',
                 message : 'error'
             })
             return 

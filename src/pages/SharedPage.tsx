@@ -74,7 +74,7 @@ const SharedPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const { response, setParams } = useAxiosGet<any, any>('/longUrl', true, null);
+    const { response, setParams } = useAxiosGet<RES_GET_LONGURL, REQ_GET_LONGURL>('/longUrl', true, null);
 
     //Hook
     const { timeToTS } = useTimeStamp()
@@ -168,10 +168,13 @@ const SharedPage = () => {
 
     useEffect( () => {
         let res = response;
-        if(res !== null){
+        if(res !== null && res.message === 'success' ){
             let data = decode(res.data);
 
             setSharedData(data);
+        }
+        else {
+            navigate('/notFound');
         }
     }, [response])
 
