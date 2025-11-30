@@ -102,6 +102,8 @@ async function insertLongURL(req, res){
             _userId = getUserId(connection);
         }
 
+        console.log(_userId);
+
         if( videoId == undefined || string == undefined ) return;
         
         let existQuery = `
@@ -111,6 +113,8 @@ async function insertLongURL(req, res){
         `
 
         let retExist = await connection.execute(existQuery);
+
+        console.log(retExist);
 
         let shortURL;
         if(retExist.rows.length == 0){
@@ -141,7 +145,9 @@ async function insertLongURL(req, res){
                 END;
             `
 
-            await connection.execute(query);
+            let _ret = await connection.execute(query);
+
+            console.log(_ret);
         }
         else{
             //update
@@ -178,6 +184,8 @@ async function insertLongURL(req, res){
             `
 
             let ret = await connection.execute(getShortQuery);
+
+            console.log(ret);
 
             shortURL = ret.rows[0]['SHORTURL'];
         }
