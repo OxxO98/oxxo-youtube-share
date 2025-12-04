@@ -51,8 +51,8 @@ const initialState : SharedInitial = {
     jaTextColor : '#ffe600',
     koTextColor : '#FFFFFF',
 
-    jaTextFontSize : 30,
-    koTextFontSize : 20,
+    jaTextFontSize : 20,
+    koTextFontSize : 30,
 
     jaFontFamily : jaFonts[0].value,
     jaFontWeight : jaFonts[0].weight,

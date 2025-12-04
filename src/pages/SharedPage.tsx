@@ -679,13 +679,15 @@ const SharedBunSettingModalComp = ({ children } : SharedBunSettingModalCompProps
                     <Col span={4}>
                         {t('CONTENTS.2')}
                     </Col>
-                    <Col span={12}>    
+                    <Col span={8}>    
                         <Slider
                             min={10}
                             max={60}
                             onChange={onJaFontSizeChange}
                             value={jaTextFontSize}
                         />
+                    </Col>
+                    <Col span={4}>
                         <InputNumber
                             min={10}
                             max={60}
@@ -713,13 +715,15 @@ const SharedBunSettingModalComp = ({ children } : SharedBunSettingModalCompProps
                     <Col span={4}>
                         {t('CONTENTS.3')}
                     </Col>
-                    <Col span={12}>  
+                    <Col span={8}>  
                         <Slider
                             min={10}
                             max={60}
                             onChange={onKoFontSizeChange}
                             value={koTextFontSize}
                         />
+                    </Col>
+                    <Col span={4}>
                         <InputNumber
                             min={10}
                             max={60}
