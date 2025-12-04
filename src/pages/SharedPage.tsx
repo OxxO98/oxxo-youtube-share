@@ -37,7 +37,7 @@ import { sharedActions } from 'reducers/sharedReducer';
 
 //CSS@antd
 import { Layout, Splitter, Flex, Row, Col, Button, List, theme, Space, Select, Modal, Slider, Switch, ColorPicker, Divider, Empty, Typography, InputNumber, FloatButton } from 'antd';
-import { SettingOutlined, FullscreenOutlined, FullscreenExitOutlined, PlayCircleOutlined, PauseCircleOutlined, ArrowLeftOutlined, ArrowRightOutlined, } from '@ant-design/icons'
+import { SettingOutlined, FullscreenOutlined, FullscreenExitOutlined, PlayCircleOutlined, PauseCircleOutlined, BackwardOutlined, ForwardOutlined } from '@ant-design/icons'
 import type { ColorPickerProps, GetProp } from 'antd';
     
 type Color = GetProp<ColorPickerProps, 'value'>;
@@ -494,13 +494,13 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles,
                         isCollapsed === false &&
                         <div style={TimelineControlstyle}>
                             <Flex justify='center' align='center' gap='middle'>
-                                <Button onClick={prevTimeLine} icon={<ArrowLeftOutlined />} iconPosition='end'>
+                                <Button onClick={prevTimeLine} icon={<BackwardOutlined />} iconPosition='end'>
                                     {!isMobile && t('BUTTON.PREV')}
                                 </Button>
-                                <Button onClick={playTimeline} icon={ playing ? <PlayCircleOutlined/> : <PauseCircleOutlined />} iconPosition='end'>
-                                    {!isMobile && t('BUTTON.CURR')}
+                                <Button onClick={playTimeline} icon={ playing ? <PauseCircleOutlined /> : <PlayCircleOutlined/> } iconPosition='end'>
+                                    {!isMobile && t('BUTTON.PLAY')}
                                 </Button>
-                                <Button onClick={nextTimeLine} icon={<ArrowRightOutlined />} iconPosition='end'>
+                                <Button onClick={nextTimeLine} icon={<ForwardOutlined />} iconPosition='end'>
                                     {!isMobile && t('BUTTON.NEXT')}
                                 </Button>
                                 <Select
@@ -550,6 +550,14 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles,
                                 </SharedBunSettingModalComp>
                             </Flex>
                         </div>
+                    }
+                    {
+                        isCollapsed === true && isMobile &&
+                        <>
+                            <FloatButton onClick={prevTimeLine} icon={<BackwardOutlined />}/>
+                            <FloatButton onClick={playTimeline} icon={ playing ? <PauseCircleOutlined /> : <PlayCircleOutlined/> }/>
+                            <FloatButton onClick={nextTimeLine} icon={<ForwardOutlined />}/>
+                        </>
                     }
                     <Flex vertical justify='center' style={{ ...TimelineBunStyle, ...BoxStyle }}>
                     {
