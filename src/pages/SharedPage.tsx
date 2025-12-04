@@ -9,8 +9,11 @@ import LZstring from 'lz-string'
 
 import VirtualList, { ListRef } from 'rc-virtual-list';
 
+import { useMediaQuery } from 'react-responsive';
+
 //Context
 import { VideoContext } from 'contexts/VideoContext';
+import { MediaQueryContext } from 'contexts/MediaQueryContext';
 
 //Components
 import { ComplexText } from 'components/Bun';
@@ -34,7 +37,7 @@ import { sharedActions } from 'reducers/sharedReducer';
 
 //CSS@antd
 import { Layout, Splitter, Flex, Row, Col, Button, List, theme, Space, Select, Modal, Slider, Switch, ColorPicker, Divider, Empty, Typography, InputNumber, FloatButton } from 'antd';
-import { SettingOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons'
+import { SettingOutlined, FullscreenOutlined, FullscreenExitOutlined, PlayCircleOutlined, PauseCircleOutlined, ArrowLeftOutlined, ArrowRightOutlined, } from '@ant-design/icons'
 import type { ColorPickerProps, GetProp } from 'antd';
     
 type Color = GetProp<ColorPickerProps, 'value'>;
@@ -70,6 +73,12 @@ const TimelineControlstyle : CSSProperties = {
 const SharedPage = () => {
     const { t } = useTranslation('SharedPage');
 
+    //Context
+    const isMobile = useMediaQuery({
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
+    });
+
+    //State
     const [sharedData, setSharedData] = useState<SharedData | null>(null);
     
     const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
@@ -192,8 +201,13 @@ const SharedPage = () => {
                         isCollapsed === false &&
                         <Header style={{ padding: 0 }}>
                                 <Flex align='center' gap={16} justify='right' style={{ height : '100%', margin : '0 16px'}}>
-                                    <Button onClick={() => handleSaveByCaption()}>{t('BUTTON.SAVE_CAPTION_JA')}</Button>
-                                    <Button onClick={() => handleSaveByCaption('ko')}>{t('BUTTON.SAVE_CAPTION_KO')}</Button>
+                                    {
+                                        !isMobile && 
+                                        <>
+                                            <Button onClick={() => handleSaveByCaption()}>{t('BUTTON.SAVE_CAPTION_JA')}</Button>
+                                            <Button onClick={() => handleSaveByCaption('ko')}>{t('BUTTON.SAVE_CAPTION_KO')}</Button>
+                                        </>
+                                    }
                                     <SelectLocaleComp/>
                                 </Flex>
                         </Header>
@@ -214,9 +228,6 @@ const SharedPage = () => {
 const SharedComp = ({ sharedData, isCollapsed } : SharedCompProps ) => {
     //Context
     const { videoId } = useContext(VideoContext); 
-
-    //State
-
 
     //Hook
     const { state, playerRef, setPlayerRef, playerHandles } = useReactPlayerHook(videoId);
@@ -328,6 +339,11 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles,
 
     const { t } = useTranslation('SharedTimelineCarouselComp');
 
+    //Context
+    const isMobile = useMediaQuery({
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
+    });
+
     //Redux
     const { backgroundColor, jaTextColor, koTextColor,  jaTextFontSize, koTextFontSize, jaFontFamily, koFontFamily, sortFont, fontShadow, jaFontWeight, koFontWeight } = useSelector( (_state : RootState) => _state.shared );
 
@@ -341,8 +357,9 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles,
     const BoxStyle : CSSProperties = {
         position : 'absolute',
         transform : `translate(-50%, 0%)`,
-        bottom : `${ isCollapsed ? '0px' : '70px'}`,
-        left : `50%`
+        bottom : `${ isCollapsed ? '0px' : '70px' }`,
+        left : `50%`,
+        paddingBottom : '1dvw'
     }
 
     const textShadow = fontShadow ? '-1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black' : '';
@@ -371,7 +388,7 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles,
     
     const [bunSelect, setBunSelect] = useState({ ja : true, ko : true });
 
-    const { setScratch, gotoTime, keyboard } = useVideoPlayHook( playing, handlePausePlay, state, handleSeek );
+    const { gotoTime, keyboard } = useVideoPlayHook( playing, handlePausePlay, state, handleSeek );
     
     const customKeyBoard = [
         { key : 'ArrowRight', action : () => { nextTimeLine() } },
@@ -397,7 +414,6 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles,
 
         if(currentBunId > 0){
             let curr = timeline[currentBunId-1];
-            //setScratch(true, curr.startTime, curr.endTime, false);
             gotoTime(curr.startTime, true);
 
             setCurrentBunId(currentBunId-1);
@@ -411,20 +427,18 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles,
         
         if(currentBunId+1 < timeline.length){
             let curr = timeline[currentBunId+1];
-            //setScratch(true, curr.startTime, curr.endTime, false);
             gotoTime(curr.startTime, true);
 
             setCurrentBunId(currentBunId+1);
         }
     }
 
-    const currentTimeLine = () => {
+    const playTimeline = () => {
         if( timeline === null ){
             return;
         }
         
-        let curr = timeline[currentBunId];
-        setScratch(true, curr.startTime, curr.endTime, false);
+        handlePausePlay(!playing);
     }
     
     const getCurrentTimeLine = useCallback( () => {
@@ -480,10 +494,17 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles,
                         isCollapsed === false &&
                         <div style={TimelineControlstyle}>
                             <Flex justify='center' align='center' gap='middle'>
-                                <Button onClick={prevTimeLine}>{t('BUTTON.PREV')}</Button>
-                                <Button onClick={currentTimeLine}>{t('BUTTON.CURR')}</Button>
-                                <Button onClick={nextTimeLine}>{t('BUTTON.NEXT')}</Button>
-                                <Select defaultValue="both"
+                                <Button onClick={prevTimeLine} icon={<ArrowLeftOutlined />} iconPosition='end'>
+                                    {!isMobile && t('BUTTON.PREV')}
+                                </Button>
+                                <Button onClick={playTimeline} icon={ playing ? <PlayCircleOutlined/> : <PauseCircleOutlined />} iconPosition='end'>
+                                    {!isMobile && t('BUTTON.CURR')}
+                                </Button>
+                                <Button onClick={nextTimeLine} icon={<ArrowRightOutlined />} iconPosition='end'>
+                                    {!isMobile && t('BUTTON.NEXT')}
+                                </Button>
+                                <Select
+                                    defaultValue="both"
                                     style={{ minWidth : 120 }}
                                     onChange={handelSelectChange}
                                     options={[

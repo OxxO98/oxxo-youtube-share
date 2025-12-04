@@ -363,7 +363,7 @@ const SharedPage : Locale['SharedPage'] = {
 const SharedTimelineCarouselComp : Locale['SharedTimelineCarouselComp'] = {
     BUTTON : {
         PREV : '前へ',
-        CURR : '現在の時間に移動',
+        PLAY : 'プレイ',
         NEXT : '次へ',
     },
     SELECT : {

@@ -26,6 +26,13 @@ declare global {
     audioLoaded : boolean;
     audioError : boolean;
   }
+  
+  export interface MediaQueryContextInterface {
+    pc : string;
+    tablet : string;
+    mobile : string;
+  }
+
 
   //일단 대체할 방법이 없어 보이는 부분, 레거시를 제외하고 제한적으로 사용바람
   export interface ObjStringKey<T> extends Array<T> {
@@ -1130,7 +1137,7 @@ declare global {
   export interface SharedTimelineCarouselComp {
     BUTTON : {
       PREV : string;
-      CURR : string;
+      PLAY : string;
       NEXT : string;
     }
     SELECT : {
