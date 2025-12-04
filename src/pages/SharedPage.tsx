@@ -362,21 +362,6 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles,
         paddingBottom : `${ isMobile ? '3dvw' : '0px' }`
     }
 
-    const PlayStyle : CSSProperties = {
-        left : `50%`,
-        transform : `translate(-50%, 0%)`,
-    }
-
-    const BackwardStyle : CSSProperties = {
-        left : `50%`,
-        transform : `translate( calc(-150% - 16px), 0%)`
-    }
-
-    const ForwardStyle : CSSProperties = {
-        left : `50%`,
-        transform : `translate( calc(50% + 16px), 0%)`
-    }
-
     const textShadow = fontShadow ? '-1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black' : '';
 
     const JaTextStyle : CSSProperties = {
@@ -571,6 +556,9 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles,
                     {
                         isCollapsed === true && isMobile &&
                         <FloatButton.Group
+                            style={{
+                                transform : `translate( 0%, calc(-150% - 16px) )`
+                            }}
                             open={floatButtonOpen}
                             trigger='click'
                             icon={<ControlOutlined />}
