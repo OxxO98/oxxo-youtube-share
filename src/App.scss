@@ -57,6 +57,10 @@
 
 $primary-color : 	oklch(40.233% 0.14406 26.637);
 
+html{
+  overflow: hidden;
+}
+
 *{
   -ms-overflow-style: none;
   &::selection{

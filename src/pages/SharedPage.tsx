@@ -34,7 +34,7 @@ import { sharedActions } from 'reducers/sharedReducer';
 
 //CSS@antd
 import { Layout, Splitter, Flex, Row, Col, Button, List, theme, Space, Select, Modal, Slider, Switch, ColorPicker, Divider, Empty, Typography, InputNumber, FloatButton } from 'antd';
-import { SettingOutlined } from '@ant-design/icons'
+import { SettingOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons'
 import type { ColorPickerProps, GetProp } from 'antd';
     
 type Color = GetProp<ColorPickerProps, 'value'>;
@@ -187,7 +187,7 @@ const SharedPage = () => {
     return(
         <>
             <VideoContext.Provider value={{ videoId : sharedData?.videoId!, frameRate : 30 }}>
-                <Layout style={{ height : '100dvh', width : '100lvw' }}>
+                <Layout style={{ height : '100dvh', width : '100%' }}>
                     {
                         isCollapsed === false &&
                         <Header style={{ padding: 0 }}>
@@ -203,7 +203,7 @@ const SharedPage = () => {
                         sharedData !== null &&
                         <SharedComp sharedData={sharedData} isCollapsed={isCollapsed}/>
                     }
-                    <FloatButton onClick={() => setIsCollapsed(!isCollapsed)} />
+                    <FloatButton type="primary" icon={isCollapsed ? <FullscreenOutlined /> : <FullscreenExitOutlined />} onClick={() => setIsCollapsed(!isCollapsed)} />
                     </Content>
                 </Layout>
             </VideoContext.Provider>
@@ -341,7 +341,7 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles,
     const BoxStyle : CSSProperties = {
         position : 'absolute',
         transform : `translate(-50%, 0%)`,
-        bottom : `${ isCollapsed ? '' : '70px'}`,
+        bottom : `${ isCollapsed ? '0px' : '70px'}`,
         left : `50%`
     }
 
