@@ -557,7 +557,7 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles,
                         isCollapsed === true && isMobile &&
                         <FloatButton.Group
                             style={{
-                                transform : `translate( 0%, calc(-150% - 16px) )`
+                                transform : `translate( 0%, calc(-100% - 16px) )`
                             }}
                             open={floatButtonOpen}
                             trigger='click'
