@@ -217,7 +217,7 @@ const SharedPage = () => {
                         sharedData !== null &&
                         <SharedComp sharedData={sharedData} isCollapsed={isCollapsed}/>
                     }
-                    <FloatButton type="primary" icon={isCollapsed ? <FullscreenOutlined /> : <FullscreenExitOutlined />} onClick={() => setIsCollapsed(!isCollapsed)} />
+                    <FloatButton type="primary" icon={isCollapsed ? <FullscreenExitOutlined /> : <FullscreenOutlined />} onClick={() => setIsCollapsed(!isCollapsed)} />
                     </Content>
                 </Layout>
             </VideoContext.Provider>
