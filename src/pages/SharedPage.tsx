@@ -33,7 +33,7 @@ import { store, RootState } from 'reducers/store';
 import { sharedActions } from 'reducers/sharedReducer';
 
 //CSS@antd
-import { Layout, Splitter, Flex, Row, Col, Button, List, theme, Space, Select, Modal, Slider, Switch, ColorPicker, Divider, Empty, Typography, InputNumber } from 'antd';
+import { Layout, Splitter, Flex, Row, Col, Button, List, theme, Space, Select, Modal, Slider, Switch, ColorPicker, Divider, Empty, Typography, InputNumber, FloatButton } from 'antd';
 import { SettingOutlined } from '@ant-design/icons'
 import type { ColorPickerProps, GetProp } from 'antd';
     
@@ -58,6 +58,7 @@ interface SharedData {
 
 interface SharedCompProps {
     sharedData : SharedData;
+    isCollapsed : boolean;
 }
 
 const TimelineControlstyle : CSSProperties = {
@@ -70,6 +71,8 @@ const SharedPage = () => {
     const { t } = useTranslation('SharedPage');
 
     const [sharedData, setSharedData] = useState<SharedData | null>(null);
+    
+    const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -184,19 +187,23 @@ const SharedPage = () => {
     return(
         <>
             <VideoContext.Provider value={{ videoId : sharedData?.videoId!, frameRate : 30 }}>
-                <Layout style={{ height : '100dvh', width : '100dvw' }}>
-                    <Header style={{ padding: 0 }}>
-                        <Flex align='center' gap={16} justify='right' style={{ height : '100%', margin : '0 16px'}}>
-                            <Button onClick={() => handleSaveByCaption()}>{t('BUTTON.SAVE_CAPTION_JA')}</Button>
-                            <Button onClick={() => handleSaveByCaption('ko')}>{t('BUTTON.SAVE_CAPTION_KO')}</Button>
-                            <SelectLocaleComp/>
-                        </Flex>
-                    </Header>
+                <Layout style={{ height : '100dvh', width : '100lvw' }}>
+                    {
+                        isCollapsed === false &&
+                        <Header style={{ padding: 0 }}>
+                                <Flex align='center' gap={16} justify='right' style={{ height : '100%', margin : '0 16px'}}>
+                                    <Button onClick={() => handleSaveByCaption()}>{t('BUTTON.SAVE_CAPTION_JA')}</Button>
+                                    <Button onClick={() => handleSaveByCaption('ko')}>{t('BUTTON.SAVE_CAPTION_KO')}</Button>
+                                    <SelectLocaleComp/>
+                                </Flex>
+                        </Header>
+                    }
                     <Content>
                     {
                         sharedData !== null &&
-                        <SharedComp sharedData={sharedData}/>
+                        <SharedComp sharedData={sharedData} isCollapsed={isCollapsed}/>
                     }
+                    <FloatButton onClick={() => setIsCollapsed(!isCollapsed)} />
                     </Content>
                 </Layout>
             </VideoContext.Provider>
@@ -204,11 +211,12 @@ const SharedPage = () => {
     )
 }
 
-const SharedComp = ({ sharedData } : SharedCompProps ) => {
+const SharedComp = ({ sharedData, isCollapsed } : SharedCompProps ) => {
     //Context
     const { videoId } = useContext(VideoContext); 
 
     //State
+
 
     //Hook
     const { state, playerRef, setPlayerRef, playerHandles } = useReactPlayerHook(videoId);
@@ -223,8 +231,8 @@ const SharedComp = ({ sharedData } : SharedCompProps ) => {
                 </Splitter.Panel>
                 <Splitter.Panel defaultSize="100%" min="50%" max="100%">  
                     <Flex vertical align='center' style={{ position : 'relative'}}>
-                        <SharedVideoComp playerRef={playerRef} setPlayerRef={setPlayerRef} state={state} playerHandles={playerHandles}/>
-                        <SharedTimelineCarouselComp timeline={sharedData.timeline} playerRef={playerRef} state={state} playerHandles={playerHandles}/>
+                        <SharedVideoComp playerRef={playerRef} setPlayerRef={setPlayerRef} state={state} playerHandles={playerHandles} isCollapsed={isCollapsed}/>
+                        <SharedTimelineCarouselComp timeline={sharedData.timeline} playerRef={playerRef} state={state} playerHandles={playerHandles} isCollapsed={isCollapsed}/>
                     </Flex>
                 </Splitter.Panel>
                 <Splitter.Panel collapsible={{ start : true, end : true, showCollapsibleIcon : true }} defaultSize="0%" min="30%" max="50%">
@@ -240,6 +248,7 @@ interface SharedVideoCompProps {
     setPlayerRef : ( player : HTMLVideoElement ) => void;
     state : ReactPlayerState;
     playerHandles : PlayerHandles;
+    isCollapsed : boolean;
 }
 
 interface SharedTimelineCarouselCompProps {
@@ -247,9 +256,15 @@ interface SharedTimelineCarouselCompProps {
     playerRef : React.RefObject<HTMLVideoElement | null>;
     state : ReactPlayerState;
     playerHandles : PlayerHandles;
+    isCollapsed : boolean;
 }
 
-type SharedTimelineCompProps = SharedTimelineCarouselCompProps;
+interface SharedTimelineCompProps {
+    timeline : SharedTimeline[];
+    playerRef : React.RefObject<HTMLVideoElement | null>;
+    state : ReactPlayerState;
+    playerHandles : PlayerHandles;
+};
 
 interface SharedBunProps {
     textData : TextData[];
@@ -259,7 +274,7 @@ interface SharedBunSettingModalCompProps {
     children : React.ReactNode;
 }
 
-const SharedVideoComp = ({ playerRef, setPlayerRef, state, playerHandles } : SharedVideoCompProps) => {
+const SharedVideoComp = ({ playerRef, setPlayerRef, state, playerHandles, isCollapsed } : SharedVideoCompProps) => {
 
     //State
     const { handlePlay, handlePause, handleDurationChange } = playerHandles;
@@ -274,7 +289,7 @@ const SharedVideoComp = ({ playerRef, setPlayerRef, state, playerHandles } : Sha
 
     return(
         <>
-            <div style={{ width : '100%', maxWidth : `calc( (100dvh - 134px) * 16 / 9)`}}>
+            <div style={{ width : '100%', maxWidth : `calc( (100dvh${ isCollapsed ? '' : ' - 134px'}) * 16 / 9)`}}>
                 <ReactPlayer
                     ref={setPlayerRef}
                     style={{ width: '100%', height: 'auto', aspectRatio: '16/9' }}
@@ -309,7 +324,7 @@ const SharedBun = ({ textData } : SharedBunProps ) => {
     )
 }
 
-const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles } : SharedTimelineCarouselCompProps ) => {
+const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles, isCollapsed } : SharedTimelineCarouselCompProps ) => {
 
     const { t } = useTranslation('SharedTimelineCarouselComp');
 
@@ -326,14 +341,14 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles 
     const BoxStyle : CSSProperties = {
         position : 'absolute',
         transform : `translate(-50%, 0%)`,
-        bottom : `70px`,
+        bottom : `${ isCollapsed ? '' : '70px'}`,
         left : `50%`
     }
 
     const textShadow = fontShadow ? '-1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black' : '';
 
     const JaTextStyle : CSSProperties = {
-        fontSize : `min( ${jaTextFontSize/10}dvw, calc( (100dvh - 134px) * 16 / 9 / 100 * ${jaTextFontSize/10}) )`,
+        fontSize : `min( ${jaTextFontSize/10}dvw, calc( (100dvh${ isCollapsed ? '' : ' - 134px'}) * 16 / 9 / 100 * ${jaTextFontSize/10}) )`,
         color : jaTextColor,
         fontFamily : jaFontFamily,
         fontWeight : jaFontWeight,
@@ -341,7 +356,7 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles 
     }
     
     const KoTextStyle : CSSProperties = {
-        fontSize : `min( ${koTextFontSize/10}dvw, calc( (100dvh - 134px) * 16 / 9 / 100 * ${koTextFontSize/10}) )`,
+        fontSize : `min( ${koTextFontSize/10}dvw, calc( (100dvh${ isCollapsed ? '' : ' - 134px'}) * 16 / 9 / 100 * ${koTextFontSize/10}) )`,
         color : koTextColor,
         fontFamily : koFontFamily,
         fontWeight : koFontWeight,
@@ -461,57 +476,60 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles 
         <>
             <div>
                 <div>
-                    <div style={TimelineControlstyle}>
-                        <Flex justify='center' align='center' gap='middle'>
-                            <Button onClick={prevTimeLine}>{t('BUTTON.PREV')}</Button>
-                            <Button onClick={currentTimeLine}>{t('BUTTON.CURR')}</Button>
-                            <Button onClick={nextTimeLine}>{t('BUTTON.NEXT')}</Button>
-                            <Select defaultValue="both"
-                                style={{ minWidth : 120 }}
-                                onChange={handelSelectChange}
-                                options={[
-                                    { value: 'jaOnly', label: t('SELECT.JATEXT_ONLY') },
-                                    { value: 'koOnly', label: t('SELECT.KOTEXT_ONLY') },
-                                    { value: 'both', label: t('SELECT.BOTH') },
-                            ]}/>
-                            <SharedBunSettingModalComp>
-                                <Flex vertical justify='center' style={{ ...TimelineBunStyle, marginBottom : '16px' }}>
-                                {
-                                    sortFont ? 
-                                    <>
+                    {
+                        isCollapsed === false &&
+                        <div style={TimelineControlstyle}>
+                            <Flex justify='center' align='center' gap='middle'>
+                                <Button onClick={prevTimeLine}>{t('BUTTON.PREV')}</Button>
+                                <Button onClick={currentTimeLine}>{t('BUTTON.CURR')}</Button>
+                                <Button onClick={nextTimeLine}>{t('BUTTON.NEXT')}</Button>
+                                <Select defaultValue="both"
+                                    style={{ minWidth : 120 }}
+                                    onChange={handelSelectChange}
+                                    options={[
+                                        { value: 'jaOnly', label: t('SELECT.JATEXT_ONLY') },
+                                        { value: 'koOnly', label: t('SELECT.KOTEXT_ONLY') },
+                                        { value: 'both', label: t('SELECT.BOTH') },
+                                ]}/>
+                                <SharedBunSettingModalComp>
+                                    <Flex vertical justify='center' style={{ ...TimelineBunStyle, marginBottom : '16px' }}>
                                     {
-                                        bunSelect.ko &&
-                                        <div style={KoTextStyle}>
-                                            {timeline[currentBunId].koText}
-                                        </div>
+                                        sortFont ? 
+                                        <>
+                                        {
+                                            bunSelect.ko &&
+                                            <div style={KoTextStyle}>
+                                                {timeline[currentBunId].koText}
+                                            </div>
+                                        }
+                                        {
+                                            bunSelect.ja &&
+                                            <div style={JaTextStyle}>
+                                                <SharedBun textData={timeline[currentBunId].jaText}/>
+                                            </div>
+                                        }
+                                        </>
+                                        :
+                                        <>
+                                        {
+                                            bunSelect.ja &&
+                                            <div style={JaTextStyle}>
+                                                <SharedBun textData={timeline[currentBunId].jaText}/>
+                                            </div>
+                                        }
+                                        {
+                                            bunSelect.ko &&
+                                            <div style={KoTextStyle}>
+                                                {timeline[currentBunId].koText}
+                                            </div>
+                                        }
+                                        </>
                                     }
-                                    {
-                                        bunSelect.ja &&
-                                        <div style={JaTextStyle}>
-                                            <SharedBun textData={timeline[currentBunId].jaText}/>
-                                        </div>
-                                    }
-                                    </>
-                                    :
-                                    <>
-                                    {
-                                        bunSelect.ja &&
-                                        <div style={JaTextStyle}>
-                                            <SharedBun textData={timeline[currentBunId].jaText}/>
-                                        </div>
-                                    }
-                                    {
-                                        bunSelect.ko &&
-                                        <div style={KoTextStyle}>
-                                            {timeline[currentBunId].koText}
-                                        </div>
-                                    }
-                                    </>
-                                }
-                                </Flex>
-                            </SharedBunSettingModalComp>
-                        </Flex>
-                    </div>
+                                    </Flex>
+                                </SharedBunSettingModalComp>
+                            </Flex>
+                        </div>
+                    }
                     <Flex vertical justify='center' style={{ ...TimelineBunStyle, ...BoxStyle }}>
                     {
                     timeline !== null && timeline.length !== 0 &&
