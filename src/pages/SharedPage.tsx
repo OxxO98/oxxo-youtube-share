@@ -37,7 +37,7 @@ import { sharedActions } from 'reducers/sharedReducer';
 
 //CSS@antd
 import { Layout, Splitter, Flex, Row, Col, Button, List, theme, Space, Select, Modal, Slider, Switch, ColorPicker, Divider, Empty, Typography, InputNumber, FloatButton } from 'antd';
-import { SettingOutlined, FullscreenOutlined, FullscreenExitOutlined, PlayCircleOutlined, PauseCircleOutlined, BackwardOutlined, ForwardOutlined } from '@ant-design/icons'
+import { SettingOutlined, FullscreenOutlined, FullscreenExitOutlined, PlayCircleOutlined, PauseCircleOutlined, BackwardOutlined, ForwardOutlined, ControlOutlined } from '@ant-design/icons'
 import type { ColorPickerProps, GetProp } from 'antd';
     
 type Color = GetProp<ColorPickerProps, 'value'>;
@@ -359,7 +359,22 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles,
         transform : `translate(-50%, 0%)`,
         bottom : `${ isCollapsed ? '0px' : '70px' }`,
         left : `50%`,
-        paddingBottom : '1dvw'
+        paddingBottom : `${ isMobile ? '3dvw' : '0px' }`
+    }
+
+    const PlayStyle : CSSProperties = {
+        left : `50%`,
+        transform : `translate(-50%, 0%)`,
+    }
+
+    const BackwardStyle : CSSProperties = {
+        left : `50%`,
+        transform : `translate( calc(-150% - 16px), 0%)`
+    }
+
+    const ForwardStyle : CSSProperties = {
+        left : `50%`,
+        transform : `translate( calc(50% + 16px), 0%)`
     }
 
     const textShadow = fontShadow ? '-1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black' : '';
@@ -387,6 +402,8 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles,
     const { handlePausePlay, handleSeek } = playerHandles;
     
     const [bunSelect, setBunSelect] = useState({ ja : true, ko : true });
+
+    const [floatButtonOpen, setFloatButtonOpen] = useState(false);
 
     const { gotoTime, keyboard } = useVideoPlayHook( playing, handlePausePlay, state, handleSeek );
     
@@ -553,11 +570,16 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles,
                     }
                     {
                         isCollapsed === true && isMobile &&
-                        <>
+                        <FloatButton.Group
+                            open={floatButtonOpen}
+                            trigger='click'
+                            icon={<ControlOutlined />}
+                            onClick={() => setFloatButtonOpen(!floatButtonOpen)}
+                        >
                             <FloatButton onClick={prevTimeLine} icon={<BackwardOutlined />}/>
-                            <FloatButton onClick={playTimeline} icon={ playing ? <PauseCircleOutlined /> : <PlayCircleOutlined/> }/>
+                            <FloatButton type='primary' onClick={playTimeline} icon={ playing ? <PauseCircleOutlined /> : <PlayCircleOutlined/> }/>
                             <FloatButton onClick={nextTimeLine} icon={<ForwardOutlined />}/>
-                        </>
+                        </FloatButton.Group>
                     }
                     <Flex vertical justify='center' style={{ ...TimelineBunStyle, ...BoxStyle }}>
                     {
