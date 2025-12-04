@@ -187,7 +187,7 @@ const SharedPage = () => {
     return(
         <>
             <VideoContext.Provider value={{ videoId : sharedData?.videoId!, frameRate : 30 }}>
-                <Layout style={{ height : '100dvh', width : '100%' }}>
+                <Layout style={{ height : '100dvh', width : '100dvw' }}>
                     {
                         isCollapsed === false &&
                         <Header style={{ padding: 0 }}>
