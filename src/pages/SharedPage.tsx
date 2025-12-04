@@ -33,7 +33,7 @@ import { store, RootState } from 'reducers/store';
 import { sharedActions } from 'reducers/sharedReducer';
 
 //CSS@antd
-import { Layout, Splitter, Flex, Row, Col, Button, List, theme, Space, Select, Modal, Slider, Switch, ColorPicker, Divider, Empty, Typography } from 'antd';
+import { Layout, Splitter, Flex, Row, Col, Button, List, theme, Space, Select, Modal, Slider, Switch, ColorPicker, Divider, Empty, Typography, InputNumber } from 'antd';
 import { SettingOutlined } from '@ant-design/icons'
 import type { ColorPickerProps, GetProp } from 'antd';
     
@@ -274,7 +274,7 @@ const SharedVideoComp = ({ playerRef, setPlayerRef, state, playerHandles } : Sha
 
     return(
         <>
-            <div style={{ width : '100%', maxWidth : '70%'}}>
+            <div style={{ width : '100%', maxWidth : `calc( (100vh - 134px) * 16 / 9)`}}>
                 <ReactPlayer
                     ref={setPlayerRef}
                     style={{ width: '100%', height: 'auto', aspectRatio: '16/9' }}
@@ -333,7 +333,7 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles 
     const textShadow = fontShadow ? '-1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black' : '';
 
     const JaTextStyle : CSSProperties = {
-        fontSize : jaTextFontSize,
+        fontSize : `min( ${jaTextFontSize/10}vw, calc( (100vh - 134px) * 16 / 9 / 100 * ${jaTextFontSize/10}) )`,
         color : jaTextColor,
         fontFamily : jaFontFamily,
         fontWeight : jaFontWeight,
@@ -341,7 +341,7 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles 
     }
     
     const KoTextStyle : CSSProperties = {
-        fontSize : koTextFontSize,
+        fontSize : `min( ${koTextFontSize/10}vw, calc( (100vh - 134px) * 16 / 9 / 100 * ${koTextFontSize/10}) )`,
         color : koTextColor,
         fontFamily : koFontFamily,
         fontWeight : koFontWeight,
@@ -605,11 +605,13 @@ const SharedBunSettingModalComp = ({ children } : SharedBunSettingModalCompProps
     }
 
     //텍스트 설정
-    const onJaFontSizeChange = (value : number) => {
+    const onJaFontSizeChange = (value : number | null) => {
+        if(value === null){ return }
         store.dispatch( setJaFontSize(value) );
     }
 
-    const onKoFontSizeChange = (value : number) => {
+    const onKoFontSizeChange = (value : number | null) => {
+        if(value === null){ return }
         store.dispatch( setKoFontSize(value) );
     }
 
@@ -679,10 +681,17 @@ const SharedBunSettingModalComp = ({ children } : SharedBunSettingModalCompProps
                     </Col>
                     <Col span={12}>    
                         <Slider
-                            min={12}
+                            min={10}
                             max={60}
                             onChange={onJaFontSizeChange}
                             value={jaTextFontSize}
+                        />
+                        <InputNumber
+                            min={10}
+                            max={60}
+                            style={{ margin: '0 16px' }}
+                            value={jaTextFontSize}
+                            onChange={onJaFontSizeChange}
                         />
                     </Col>
                     <Col span={4}>
@@ -706,10 +715,17 @@ const SharedBunSettingModalComp = ({ children } : SharedBunSettingModalCompProps
                     </Col>
                     <Col span={12}>  
                         <Slider
-                            min={12}
+                            min={10}
                             max={60}
                             onChange={onKoFontSizeChange}
                             value={koTextFontSize}
+                        />
+                        <InputNumber
+                            min={10}
+                            max={60}
+                            style={{ margin: '0 16px' }}
+                            value={koTextFontSize}
+                            onChange={onKoFontSizeChange}
                         />  
                     </Col>
                     <Col span={4}>
