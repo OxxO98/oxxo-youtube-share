@@ -184,7 +184,7 @@ const SharedPage = () => {
     return(
         <>
             <VideoContext.Provider value={{ videoId : sharedData?.videoId!, frameRate : 30 }}>
-                <Layout style={{ height : '100vh' }}>
+                <Layout style={{ height : '100dvh', width : '100dvw' }}>
                     <Header style={{ padding: 0 }}>
                         <Flex align='center' gap={16} justify='right' style={{ height : '100%', margin : '0 16px'}}>
                             <Button onClick={() => handleSaveByCaption()}>{t('BUTTON.SAVE_CAPTION_JA')}</Button>
@@ -274,7 +274,7 @@ const SharedVideoComp = ({ playerRef, setPlayerRef, state, playerHandles } : Sha
 
     return(
         <>
-            <div style={{ width : '100%', maxWidth : `calc( (100vh - 134px) * 16 / 9)`}}>
+            <div style={{ width : '100%', maxWidth : `calc( (100dvh - 134px) * 16 / 9)`}}>
                 <ReactPlayer
                     ref={setPlayerRef}
                     style={{ width: '100%', height: 'auto', aspectRatio: '16/9' }}
@@ -333,7 +333,7 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles 
     const textShadow = fontShadow ? '-1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black' : '';
 
     const JaTextStyle : CSSProperties = {
-        fontSize : `min( ${jaTextFontSize/10}vw, calc( (100vh - 134px) * 16 / 9 / 100 * ${jaTextFontSize/10}) )`,
+        fontSize : `min( ${jaTextFontSize/10}dvw, calc( (100dvh - 134px) * 16 / 9 / 100 * ${jaTextFontSize/10}) )`,
         color : jaTextColor,
         fontFamily : jaFontFamily,
         fontWeight : jaFontWeight,
@@ -341,7 +341,7 @@ const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles 
     }
     
     const KoTextStyle : CSSProperties = {
-        fontSize : `min( ${koTextFontSize/10}vw, calc( (100vh - 134px) * 16 / 9 / 100 * ${koTextFontSize/10}) )`,
+        fontSize : `min( ${koTextFontSize/10}dvw, calc( (100dvh - 134px) * 16 / 9 / 100 * ${koTextFontSize/10}) )`,
         color : koTextColor,
         fontFamily : koFontFamily,
         fontWeight : koFontWeight,
