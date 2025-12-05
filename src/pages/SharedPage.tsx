@@ -69,6 +69,33 @@ const TimelineControlstyle : CSSProperties = {
     alignContent : 'center'
 }
 
+interface SharedVideoCompProps {
+    setPlayerRef : ( player : HTMLVideoElement ) => void;
+    state : ReactPlayerState;
+    playerHandles : PlayerHandles;
+    isCollapsed : boolean;
+}
+
+interface SharedTimelineCarouselCompProps {
+    timeline : SharedTimeline[];
+    state : ReactPlayerState;
+    playerHandles : PlayerHandles;
+    isCollapsed : boolean;
+}
+
+interface SharedTimelineCompProps {
+    timeline : SharedTimeline[];
+    state : ReactPlayerState;
+    playerHandles : PlayerHandles;
+};
+
+interface SharedBunProps {
+    textData : TextData[];
+}
+
+interface SharedBunSettingModalCompProps {
+    children : React.ReactNode;
+}
 
 const SharedPage = () => {
     const { t } = useTranslation('SharedPage');
@@ -230,62 +257,31 @@ const SharedComp = ({ sharedData, isCollapsed } : SharedCompProps ) => {
     const { videoId } = useContext(VideoContext); 
 
     //Hook
-    const { state, playerRef, setPlayerRef, playerHandles } = useReactPlayerHook(videoId);
-        
+    const { state, setPlayerRef, playerHandles } = useReactPlayerHook(videoId);
+
     useHandleSelection(document, 'activeRange');
 
     return (
         <>
-            <Splitter style={{ height: '100%', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)' }}>
+            <Splitter style={{ height: '100%', width : '100%', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)' }}>
                 <Splitter.Panel collapsible={{ start : true, end : true, showCollapsibleIcon : true }} defaultSize="0%" min="25%" max="25%" resizable={false}>
                     <SharedDictionaryComp />
                 </Splitter.Panel>
                 <Splitter.Panel defaultSize="100%" min="50%" max="100%">  
                     <Flex vertical align='center' style={{ position : 'relative'}}>
-                        <SharedVideoComp playerRef={playerRef} setPlayerRef={setPlayerRef} state={state} playerHandles={playerHandles} isCollapsed={isCollapsed}/>
-                        <SharedTimelineCarouselComp timeline={sharedData.timeline} playerRef={playerRef} state={state} playerHandles={playerHandles} isCollapsed={isCollapsed}/>
+                        <SharedVideoComp setPlayerRef={setPlayerRef} state={state} playerHandles={playerHandles} isCollapsed={isCollapsed}/>
+                        <SharedTimelineCarouselComp timeline={sharedData.timeline} state={state} playerHandles={playerHandles} isCollapsed={isCollapsed}/>
                     </Flex>
                 </Splitter.Panel>
                 <Splitter.Panel collapsible={{ start : true, end : true, showCollapsibleIcon : true }} defaultSize="0%" min="30%" max="50%">
-                    <SharedTimelineComp timeline={sharedData.timeline} playerRef={playerRef} state={state} playerHandles={playerHandles}/>
+                    <SharedTimelineComp timeline={sharedData.timeline} state={state} playerHandles={playerHandles}/>
                 </Splitter.Panel>
             </Splitter>
         </>
     )
 }
 
-interface SharedVideoCompProps {
-    playerRef : React.RefObject<HTMLVideoElement | null>;
-    setPlayerRef : ( player : HTMLVideoElement ) => void;
-    state : ReactPlayerState;
-    playerHandles : PlayerHandles;
-    isCollapsed : boolean;
-}
-
-interface SharedTimelineCarouselCompProps {
-    timeline : SharedTimeline[];
-    playerRef : React.RefObject<HTMLVideoElement | null>;
-    state : ReactPlayerState;
-    playerHandles : PlayerHandles;
-    isCollapsed : boolean;
-}
-
-interface SharedTimelineCompProps {
-    timeline : SharedTimeline[];
-    playerRef : React.RefObject<HTMLVideoElement | null>;
-    state : ReactPlayerState;
-    playerHandles : PlayerHandles;
-};
-
-interface SharedBunProps {
-    textData : TextData[];
-}
-
-interface SharedBunSettingModalCompProps {
-    children : React.ReactNode;
-}
-
-const SharedVideoComp = ({ playerRef, setPlayerRef, state, playerHandles, isCollapsed } : SharedVideoCompProps) => {
+const SharedVideoComp = ({ setPlayerRef, state, playerHandles, isCollapsed } : SharedVideoCompProps) => {
 
     //State
     const { handlePlay, handlePause, handleDurationChange } = playerHandles;
@@ -335,7 +331,7 @@ const SharedBun = ({ textData } : SharedBunProps ) => {
     )
 }
 
-const SharedTimelineCarouselComp = ({ timeline, playerRef, state, playerHandles, isCollapsed } : SharedTimelineCarouselCompProps ) => {
+const SharedTimelineCarouselComp = ({ timeline, state, playerHandles, isCollapsed } : SharedTimelineCarouselCompProps ) => {
 
     const { t } = useTranslation('SharedTimelineCarouselComp');
 
@@ -826,7 +822,7 @@ const SharedBunSettingModalComp = ({ children } : SharedBunSettingModalCompProps
     )
 }
 
-const SharedTimelineComp = ({ timeline, playerRef, state, playerHandles } : SharedTimelineCompProps ) => {
+const SharedTimelineComp = ({ timeline, state, playerHandles } : SharedTimelineCompProps ) => {
     
     const divBox = useRef<HTMLDivElement>(null); //canvas Div Box 크기
     const [divBoxHeight, setDivBoxHeight] = useState<number>(800);
@@ -885,7 +881,7 @@ const SharedTimelineComp = ({ timeline, playerRef, state, playerHandles } : Shar
 
     return(
         <>
-            <Flex vertical style={{ height : '100%' }}>
+            <Flex vertical style={{ height : '100%', width : "100%" }}>
                 <div style={{ width : "100%", height : "100%", overflow : "hidden"}} ref={divBox}>
                 {
                     timeline !== null &&
