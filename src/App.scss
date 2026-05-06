@@ -99,7 +99,7 @@ iframe {
     padding: 0;
     user-select: none;
     @media (max-width: 768px) and (hover: none) {
-      transform: translateY(0.1em);
+      transform: translateY(100%);
     }
   }
 }
