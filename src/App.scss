@@ -98,9 +98,10 @@ iframe {
     margin : 0;
     padding: 0;
     user-select: none;
-    //@include defaultBorder(1px);
+    @media (max-width: 768px) and (hover: none) {
+      transform: translateY(0.1em);
+    }
   }
-  //@include defaultBorder(1px);
 }
 
 .rubyNasi{
