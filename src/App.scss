@@ -98,7 +98,7 @@ iframe {
     margin : 0;
     padding: 0;
     user-select: none;
-    @media (max-width: 768px) and (hover: none) {
+    @media (hover: none) and (pointer: coarse) {
       transform: translateY(50%);
     }
   }
