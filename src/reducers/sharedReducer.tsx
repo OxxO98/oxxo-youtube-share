@@ -47,7 +47,7 @@ const jaFonts : fonts = [
 ]
 
 const initialState : SharedInitial = {
-    backgroundColor : '#000000cc',
+    backgroundColor : '#00000088',
     jaTextColor : '#ffe600',
     koTextColor : '#FFFFFF',
 

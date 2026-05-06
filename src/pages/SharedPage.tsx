@@ -561,9 +561,7 @@ const SharedTimelineCarouselComp = ({ timeline, state, playerHandles, isCollapse
         width : isMobile ? '92%' : 'min(88%, 980px)',
         padding : isMobile ? '10px 14px' : '12px 22px',
         borderRadius : 8,
-        border : '1px solid rgba(255, 255, 255, 0.16)',
-        boxShadow : '0 14px 34px rgba(0, 0, 0, 0.36)',
-        backdropFilter : 'blur(8px)',
+        backdropFilter : 'blur(4px)',
         paddingBottom : `${ isMobile ? 'calc(10px + 3dvw)' : '12px' }`
     }
 

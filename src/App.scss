@@ -85,15 +85,15 @@ iframe {
   // font-size: 16px;
   // font-weight: 400;
 
-  line-height: 32px;
-
   ruby-align : space-around;
   ruby-overhang : none;
+  line-height: 1;
 
   margin : 0;
   padding: 0;
   rt{
     font-size: '50%';
+    line-height: 1;
 
     margin : 0;
     padding: 0;
