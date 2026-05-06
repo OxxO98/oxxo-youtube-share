@@ -64,6 +64,7 @@ html{
 
 *{
   -ms-overflow-style: none;
+  scrollbar-width: none;
   &::selection{
     color: white;
     background-color: $primary-color;
@@ -145,4 +146,23 @@ iframe {
 .bold {
   font-family: 'Noto Sans JP', sans-serif;
   font-weight: 700;
+}
+
+.shared-page-scrollless,
+.shared-page-scrollless * {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+}
+
+.shared-page-scrollless {
+  .rc-virtual-list-scrollbar,
+  .rc-virtual-list-scrollbar-thumb {
+    display: none !important;
+  }
 }

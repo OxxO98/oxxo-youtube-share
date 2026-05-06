@@ -36,11 +36,12 @@ import { store, RootState } from 'reducers/store';
 import { sharedActions } from 'reducers/sharedReducer';
 
 //CSS@antd
-import { Layout, Splitter, Flex, Row, Col, Button, List, theme, Space, Select, Modal, Slider, Switch, ColorPicker, Divider, Empty, Typography, InputNumber, FloatButton } from 'antd';
-import { SettingOutlined, FullscreenOutlined, FullscreenExitOutlined, PlayCircleOutlined, PauseCircleOutlined, BackwardOutlined, ForwardOutlined, ControlOutlined } from '@ant-design/icons'
+import { Layout, Splitter, Flex, Row, Col, Button, List, theme, Select, Modal, Slider, Switch, ColorPicker, Divider, Empty, Typography, InputNumber, FloatButton } from 'antd';
+import { SettingOutlined, FullscreenOutlined, FullscreenExitOutlined, PlayCircleOutlined, PauseCircleOutlined, BackwardOutlined, ForwardOutlined, ControlOutlined, DownloadOutlined, CaretRightOutlined, CaretLeftOutlined } from '@ant-design/icons'
 import type { ColorPickerProps, GetProp } from 'antd';
     
 type Color = GetProp<ColorPickerProps, 'value'>;
+
 const { Header, Content } = Layout; //Import 위에 있으면 안됨.
 const { useToken } = theme; 
 
@@ -66,7 +67,71 @@ interface SharedCompProps {
 
 const TimelineControlstyle : CSSProperties = {
     height : '70px',
-    alignContent : 'center'
+    alignContent : 'center',
+    padding : '0 16px',
+    borderTop : '1px solid rgba(255, 255, 255, 0.08)',
+    background : 'rgba(14, 14, 16, 0.92)',
+    backdropFilter : 'blur(10px)'
+}
+
+const sharedShellStyle : CSSProperties = {
+    height : '100dvh',
+    width : '100dvw',
+    background : '#070707',
+    color : '#f5f5f5'
+}
+
+const sharedHeaderStyle : CSSProperties = {
+    padding: 0,
+    height : 56,
+    lineHeight : '56px',
+    borderBottom : '1px solid rgba(255, 255, 255, 0.08)',
+    boxShadow : '0 8px 24px rgba(0, 0, 0, 0.24)',
+    zIndex : 2
+}
+
+const panelBackdropStyle : CSSProperties = {
+    height : '100%',
+    width : '100%',
+    background : '#101010'
+}
+
+const splitterCollapseIconStyle : CSSProperties = {
+    width : 26,
+    height : 48,
+    display : 'inline-flex',
+    alignItems : 'center',
+    justifyContent : 'center',
+    borderRadius : 8,
+    color : '#ffffff',
+    background : 'rgba(215, 0, 11, 0.82)',
+    border : '1px solid rgba(255, 255, 255, 0.26)',
+    boxShadow : '0 8px 22px rgba(215, 0, 11, 0.28)',
+    right : '8px',
+}
+
+const DEFAULT_SIDE_PANEL_SIZE = 680;
+const MIN_SIDE_PANEL_SIZE = 420;
+const MAX_SIDE_PANEL_SIZE = 820;
+const MIN_MAIN_PANEL_SIZE = 420;
+
+const clamp = ( value : number, min : number, max : number ) => {
+    return Math.min(Math.max(value, min), max);
+}
+
+const clampSharedSidePanelSize = ( side : number, containerWidth : number ) => {
+    if(containerWidth <= 0){
+        return side;
+    }
+
+    if(side <= 0){
+        return 0;
+    }
+
+    const availableSideWidth = Math.max(0, containerWidth - MIN_MAIN_PANEL_SIZE);
+    const maxSideSize = Math.min(MAX_SIDE_PANEL_SIZE, availableSideWidth);
+
+    return Math.round(clamp(side, Math.min(MIN_SIDE_PANEL_SIZE, maxSideSize), maxSideSize));
 }
 
 interface SharedVideoCompProps {
@@ -203,7 +268,7 @@ const SharedPage = () => {
                 navigate('/notFound');
             }
         }
-    }, [location])
+    }, [location, navigate, setParams])
 
     useEffect( () => {
         let res = response;
@@ -217,22 +282,22 @@ const SharedPage = () => {
                 navigate('/notFound');
             }
         }
-    }, [response])
+    }, [response, navigate])
 
 
     return(
         <>
             <VideoContext.Provider value={{ videoId : sharedData?.videoId!, frameRate : 30 }}>
-                <Layout style={{ height : '100dvh', width : '100dvw' }}>
+                <Layout style={sharedShellStyle}>
                     {
                         isCollapsed === false &&
-                        <Header style={{ padding: 0 }}>
+                        <Header style={sharedHeaderStyle}>
                                 <Flex align='center' gap={16} justify='right' style={{ height : '100%', margin : '0 16px'}}>
                                     {
                                         !isMobile && 
                                         <>
-                                            <Button onClick={() => handleSaveByCaption()}>{t('BUTTON.SAVE_CAPTION_JA')}</Button>
-                                            <Button onClick={() => handleSaveByCaption('ko')}>{t('BUTTON.SAVE_CAPTION_KO')}</Button>
+                                            <Button icon={<DownloadOutlined />} onClick={() => handleSaveByCaption()}>{t('BUTTON.SAVE_CAPTION_JA')}</Button>
+                                            <Button icon={<DownloadOutlined />} onClick={() => handleSaveByCaption('ko')}>{t('BUTTON.SAVE_CAPTION_KO')}</Button>
                                         </>
                                     }
                                     <SelectLocaleComp/>
@@ -244,7 +309,12 @@ const SharedPage = () => {
                         sharedData !== null &&
                         <SharedComp sharedData={sharedData} isCollapsed={isCollapsed}/>
                     }
-                    <FloatButton type="primary" icon={isCollapsed ? <FullscreenExitOutlined /> : <FullscreenOutlined />} onClick={() => setIsCollapsed(!isCollapsed)} />
+                    <FloatButton
+                        type="primary"
+                        icon={isCollapsed ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
+                        onClick={() => setIsCollapsed(!isCollapsed)}
+                        style={{ boxShadow : '0 10px 28px rgba(215, 0, 11, 0.34)' }}
+                    />
                     </Content>
                 </Layout>
             </VideoContext.Provider>
@@ -255,28 +325,133 @@ const SharedPage = () => {
 const SharedComp = ({ sharedData, isCollapsed } : SharedCompProps ) => {
     //Context
     const { videoId } = useContext(VideoContext); 
+    const isMobile = useMediaQuery({
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
+    });
+
+    //Ref
+    const splitterBoxRef = useRef<HTMLDivElement>(null);
 
     //Hook
     const { state, setPlayerRef, playerHandles } = useReactPlayerHook(videoId);
 
+    //State
+    const [splitterWidth, setSplitterWidth] = useState(0);
+    const [sidePanelSize, setSidePanelSize] = useState(DEFAULT_SIDE_PANEL_SIZE);
+
     useHandleSelection(document, 'activeRange');
 
-    return (
-        <>
-            <Splitter style={{ height: '100%', width : '100%', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)' }}>
-                <Splitter.Panel collapsible={{ start : true, end : true, showCollapsibleIcon : true }} defaultSize="0%" min="25%" max="25%" resizable={false}>
-                    <SharedDictionaryComp />
-                </Splitter.Panel>
-                <Splitter.Panel defaultSize="100%" min="50%" max="100%">  
-                    <Flex vertical align='center' style={{ position : 'relative'}}>
+    const applySidePanelSize = useCallback( ( size : number ) => {
+        setSidePanelSize(clampSharedSidePanelSize(size, splitterWidth));
+    }, [splitterWidth])
+
+    const handleSplitterResize = ( sizes : number[] ) => {
+        if(isCollapsed){
+            return;
+        }
+
+        applySidePanelSize(sizes[1] ?? 0);
+    }
+
+    const handleSplitterCollapse = ( _collapsed : boolean[], sizes : number[] ) => {
+        if(isCollapsed){
+            return;
+        }
+
+        const nextSideSize = (sidePanelSize === 0 && (sizes[1] ?? 0) > 0) ? DEFAULT_SIDE_PANEL_SIZE : sizes[1] ?? 0;
+        applySidePanelSize(nextSideSize);
+    }
+
+    useEffect( () => {
+        if(isCollapsed){
+            return;
+        }
+
+        if(splitterBoxRef.current === null){
+            return;
+        }
+
+        const observer = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                setSplitterWidth(entry.contentRect.width);
+            }
+        });
+
+        observer.observe(splitterBoxRef.current);
+
+        return () => {
+            observer.disconnect();
+        }
+    }, [isCollapsed])
+
+    useEffect( () => {
+        setSidePanelSize(prev => clampSharedSidePanelSize(prev, splitterWidth));
+    }, [splitterWidth])
+
+    if(isCollapsed){
+        return(
+            <>
+                <Flex vertical className="shared-page-scrollless" align='center' justify='space-between' style={{ position : 'relative', height : '100%', width : '100%', minWidth : 0, background : '#060606'}}>
+                    <SharedVideoComp setPlayerRef={setPlayerRef} state={state} playerHandles={playerHandles} isCollapsed={isCollapsed}/>
+                    <SharedTimelineCarouselComp timeline={sharedData.timeline} state={state} playerHandles={playerHandles} isCollapsed={isCollapsed}/>
+                </Flex>
+            </>
+        )
+    }
+
+    if(isMobile){
+        return(
+            <>
+                <Flex vertical className="shared-page-scrollless" style={{ height : '100%', width : '100%', minWidth : 0, background : '#060606', overflow : 'hidden' }}>
+                    <Flex vertical align='center' justify='space-between' style={{ position : 'relative', width : '100%', flex : '0 0 auto', minWidth : 0, background : '#060606' }}>
                         <SharedVideoComp setPlayerRef={setPlayerRef} state={state} playerHandles={playerHandles} isCollapsed={isCollapsed}/>
                         <SharedTimelineCarouselComp timeline={sharedData.timeline} state={state} playerHandles={playerHandles} isCollapsed={isCollapsed}/>
                     </Flex>
-                </Splitter.Panel>
-                <Splitter.Panel collapsible={{ start : true, end : true, showCollapsibleIcon : true }} defaultSize="0%" min="30%" max="50%">
-                    <SharedTimelineComp timeline={sharedData.timeline} state={state} playerHandles={playerHandles}/>
-                </Splitter.Panel>
-            </Splitter>
+                    <div style={{ flex : '1 1 auto', minHeight : 0, width : '100%', background : '#101010', borderTop : '1px solid rgba(255, 255, 255, 0.08)' }}>
+                        <SharedTimelineComp timeline={sharedData.timeline} state={state} playerHandles={playerHandles}/>
+                    </div>
+                </Flex>
+            </>
+        )
+    }
+
+    return (
+        <>
+            <div ref={splitterBoxRef} style={{ height : '100%', width : '100%', minWidth : 0 }}>
+                <Splitter
+                    style={{ height: '100%', width : '100%', background : '#090909' }}
+                    collapsibleIcon={{
+                        start : <span style={splitterCollapseIconStyle}><CaretLeftOutlined /></span>,
+                        end : <span style={splitterCollapseIconStyle}><CaretRightOutlined /></span>
+                    }}
+                    onResize={handleSplitterResize}
+                    onResizeEnd={handleSplitterResize}
+                    onCollapse={handleSplitterCollapse}
+                    lazy
+                >
+                    <Splitter.Panel min={MIN_MAIN_PANEL_SIZE}>
+                        <Flex vertical align='center' justify='space-between' style={{ position : 'relative', height : '100%', width : '100%', minWidth : 0, background : '#060606', overflow : 'hidden'}}>
+                            <SharedVideoComp setPlayerRef={setPlayerRef} state={state} playerHandles={playerHandles} isCollapsed={isCollapsed}/>
+                            <SharedTimelineCarouselComp timeline={sharedData.timeline} state={state} playerHandles={playerHandles} isCollapsed={isCollapsed}/>
+                        </Flex>
+                    </Splitter.Panel>
+                    <Splitter.Panel
+                        collapsible={{ start : true, end : false, showCollapsibleIcon : true }}
+                        size={sidePanelSize}
+                        min={0}
+                        max={MAX_SIDE_PANEL_SIZE}
+                    >
+                        <Flex style={{ ...panelBackdropStyle, minWidth : 0 }}>
+                            <div style={{ width : '42%', minWidth : 220, maxWidth : 340, height : '100%', borderRight : '1px solid rgba(255, 255, 255, 0.08)' }}>
+                                <SharedDictionaryComp />
+                            </div>
+                            <div style={{ flex : 1, minWidth : 0, height : '100%' }}>
+                                <SharedTimelineComp timeline={sharedData.timeline} state={state} playerHandles={playerHandles}/>
+                            </div>
+                        </Flex>
+                    </Splitter.Panel>
+                </Splitter>
+            </div>
         </>
     )
 }
@@ -296,10 +471,34 @@ const SharedVideoComp = ({ setPlayerRef, state, playerHandles, isCollapsed } : S
 
     return(
         <>
-            <div style={{ width : '100%', maxWidth : `calc( (100dvh${ isCollapsed ? '' : ' - 134px'}) * 16 / 9)`}}>
+            <div
+                style={{
+                    width : '100%',
+                    flex : '1 1 auto',
+                    minHeight : 0,
+                    display : 'flex',
+                    alignItems : 'center',
+                    justifyContent : 'center',
+                    padding : isCollapsed ? 0 : '18px 18px 0',
+                    boxSizing : 'border-box'
+                }}
+            >
+                <div
+                    style={{
+                        width : 'min(100%, calc((100dvh - 24px) * 16 / 9))',
+                        maxWidth : `calc( (100dvh${ isCollapsed ? '' : ' - 134px'}) * 16 / 9)`,
+                        maxHeight : isCollapsed ? 'calc(100dvh - 24px)' : 'calc(100dvh - 158px)',
+                        aspectRatio : '16 / 9',
+                        overflow : 'hidden',
+                        background : '#000',
+                        border : isCollapsed ? 'none' : '1px solid rgba(255, 255, 255, 0.12)',
+                        borderRadius : isCollapsed ? 0 : 8,
+                        boxShadow : isCollapsed ? 'none' : '0 18px 60px rgba(0, 0, 0, 0.38)'
+                    }}
+                >
                 <ReactPlayer
                     ref={setPlayerRef}
-                    style={{ width: '100%', height: 'auto', aspectRatio: '16/9' }}
+                    style={{ width: '100%', height: '100%', display : 'block' }}
                     src={src}
                     pip={pip}
                     playing={playing}
@@ -312,6 +511,7 @@ const SharedVideoComp = ({ setPlayerRef, state, playerHandles, isCollapsed } : S
                     muted={muted}
                     playsInline={true}
                 />
+                </div>
             </div>
         </>
     )
@@ -323,8 +523,8 @@ const SharedBun = ({ textData } : SharedBunProps ) => {
     return(
         <>
         {
-            textData.map( (v) => 
-                <ComplexText bId={_bId} offset={v.offset} data={v.data} ruby={v.ruby}/>
+            textData.map( (v, i) => 
+                <ComplexText key={`${_bId}-${i}`} bId={_bId} offset={v.offset} data={v.data} ruby={v.ruby}/>
             )
         }
         </>
@@ -348,14 +548,23 @@ const SharedTimelineCarouselComp = ({ timeline, state, playerHandles, isCollapse
         textAlign : 'center',
         margin : 'auto',
         backgroundColor : backgroundColor,
+        boxSizing : 'border-box',
+        overflowWrap : 'break-word',
+        wordBreak : 'keep-all',
     }
 
     const BoxStyle : CSSProperties = {
         position : 'absolute',
         transform : `translate(-50%, 0%)`,
-        bottom : `${ isCollapsed ? '0px' : '70px' }`,
+        bottom : `${ isCollapsed ? '18px' : '86px' }`,
         left : `50%`,
-        paddingBottom : `${ isMobile ? '3dvw' : '0px' }`
+        width : isMobile ? '92%' : 'min(88%, 980px)',
+        padding : isMobile ? '10px 14px' : '12px 22px',
+        borderRadius : 8,
+        border : '1px solid rgba(255, 255, 255, 0.16)',
+        boxShadow : '0 14px 34px rgba(0, 0, 0, 0.36)',
+        backdropFilter : 'blur(8px)',
+        paddingBottom : `${ isMobile ? 'calc(10px + 3dvw)' : '12px' }`
     }
 
     const textShadow = fontShadow ? '-1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black' : '';
@@ -365,7 +574,8 @@ const SharedTimelineCarouselComp = ({ timeline, state, playerHandles, isCollapse
         color : jaTextColor,
         fontFamily : jaFontFamily,
         fontWeight : jaFontWeight,
-        textShadow: textShadow
+        textShadow: textShadow,
+        lineHeight : 1.45
     }
     
     const KoTextStyle : CSSProperties = {
@@ -373,7 +583,9 @@ const SharedTimelineCarouselComp = ({ timeline, state, playerHandles, isCollapse
         color : koTextColor,
         fontFamily : koFontFamily,
         fontWeight : koFontWeight,
-        textShadow: textShadow
+        textShadow: textShadow,
+        lineHeight : 1.45,
+        marginTop : 4
     }
 
     //State
@@ -491,14 +703,14 @@ const SharedTimelineCarouselComp = ({ timeline, state, playerHandles, isCollapse
                     {
                         isCollapsed === false &&
                         <div style={TimelineControlstyle}>
-                            <Flex justify='center' align='center' gap='middle'>
-                                <Button onClick={prevTimeLine} icon={<BackwardOutlined />} iconPosition='end'>
+                            <Flex justify='center' align='center' gap='small' wrap>
+                                <Button onClick={prevTimeLine} icon={<BackwardOutlined />}>
                                     {!isMobile && t('BUTTON.PREV')}
                                 </Button>
-                                <Button onClick={playTimeline} icon={ playing ? <PauseCircleOutlined /> : <PlayCircleOutlined/> } iconPosition='end'>
+                                <Button type='primary' onClick={playTimeline} icon={ playing ? <PauseCircleOutlined /> : <PlayCircleOutlined/> }>
                                     {!isMobile && t('BUTTON.PLAY')}
                                 </Button>
-                                <Button onClick={nextTimeLine} icon={<ForwardOutlined />} iconPosition='end'>
+                                <Button onClick={nextTimeLine} icon={<ForwardOutlined />}>
                                     {!isMobile && t('BUTTON.NEXT')}
                                 </Button>
                                 <Select
@@ -511,7 +723,7 @@ const SharedTimelineCarouselComp = ({ timeline, state, playerHandles, isCollapse
                                         { value: 'both', label: t('SELECT.BOTH') },
                                 ]}/>
                                 <SharedBunSettingModalComp>
-                                    <Flex vertical justify='center' style={{ ...TimelineBunStyle, marginBottom : '16px' }}>
+                                    <Flex vertical justify='center' style={{ ...TimelineBunStyle, marginBottom : '16px', padding : '14px 18px', borderRadius : 8, border : '1px solid rgba(255, 255, 255, 0.1)' }}>
                                     {
                                         sortFont ? 
                                         <>
@@ -699,14 +911,14 @@ const SharedBunSettingModalComp = ({ children } : SharedBunSettingModalCompProps
                 closable={{ 'aria-label': 'Custom Close Button' }}
                 open={isModalOpen}
                 onCancel={handleCancel}
-                width={'80%'}
+                width={'min(860px, 92vw)'}
                 footer={[
                     <Button onClick={handleCancel}>{t('BUTTON.CANCLE')}</Button>,
                     <Button type='primary' onClick={handleOk}>{t('BUTTON.DONE')}</Button>
                 ]}
             >
                 {children}
-                <Row>
+                <Row align='middle' gutter={[12, 12]}>
                     <Col span={4}>
                         {t('CONTENTS.0')}
                     </Col>
@@ -715,7 +927,7 @@ const SharedBunSettingModalComp = ({ children } : SharedBunSettingModalCompProps
                     </Col>
                 </Row>
                 <Divider />
-                <Row>
+                <Row align='middle' gutter={[12, 12]}>
                     <Col span={4}>
                         {t('CONTENTS.1')}
                     </Col>
@@ -728,7 +940,7 @@ const SharedBunSettingModalComp = ({ children } : SharedBunSettingModalCompProps
                     </Col>
                 </Row>
                 <Divider />
-                <Row>
+                <Row align='middle' gutter={[12, 12]}>
                     <Col span={4}>
                         {t('CONTENTS.2')}
                     </Col>
@@ -753,7 +965,7 @@ const SharedBunSettingModalComp = ({ children } : SharedBunSettingModalCompProps
                         <ColorPicker value={jaTextColor} onChange={onJaTextColorChange}/>
                     </Col>
                 </Row>
-                <Row>
+                <Row align='middle' gutter={[12, 12]}>
                     <Col offset={4}>
                         <Select
                             defaultValue={jaFonts[0].value}
@@ -764,7 +976,7 @@ const SharedBunSettingModalComp = ({ children } : SharedBunSettingModalCompProps
                     </Col>
                 </Row>
                 <Divider />
-                <Row>
+                <Row align='middle' gutter={[12, 12]}>
                     <Col span={4}>
                         {t('CONTENTS.3')}
                     </Col>
@@ -789,7 +1001,7 @@ const SharedBunSettingModalComp = ({ children } : SharedBunSettingModalCompProps
                         <ColorPicker value={koTextColor} onChange={onKoTextColorChange}/>
                     </Col>
                 </Row>
-                <Row>
+                <Row align='middle' gutter={[12, 12]}>
                     <Col offset={4}>
                         <Select
                             defaultValue={koFonts[0].value}
@@ -800,7 +1012,7 @@ const SharedBunSettingModalComp = ({ children } : SharedBunSettingModalCompProps
                     </Col>
                 </Row>
                 <Divider />
-                <Row>
+                <Row align='middle' gutter={[12, 12]}>
                     <Col span={4}>
                         {t('CONTENTS.4')}
                     </Col>
@@ -833,6 +1045,7 @@ const SharedTimelineComp = ({ timeline, state, playerHandles } : SharedTimelineC
     const { handlePlay, handleSeek } = playerHandles;
 
     const { gotoTime } = useVideoPlayHook( playing, handlePlay, state, handleSeek );
+    const { timeToTS } = useTimeStamp();
     
     //CSS@antd
     const { token } = useToken();
@@ -881,35 +1094,72 @@ const SharedTimelineComp = ({ timeline, state, playerHandles } : SharedTimelineC
 
     return(
         <>
-            <Flex vertical style={{ height : '100%', width : "100%" }}>
-                <div style={{ width : "100%", height : "100%", overflow : "hidden"}} ref={divBox}>
+            <Flex vertical className="shared-page-scrollless" style={{ height : '100%', width : "100%" }}>
+                <div className="shared-page-scrollless" style={{ width : "100%", height : "100%", overflow : "hidden"}} ref={divBox}>
                 {
                     timeline !== null &&
-                    <List bordered>
+                    <List
+                        className="shared-page-scrollless"
+                        bordered={false}
+                        style={{
+                            height : '100%',
+                            background : '#101010',
+                            padding : '10px 8px'
+                        }}
+                    >
                         <VirtualList
                             data={timeline}
                             height={divBoxHeight}
-                            itemHeight={47}
+                            itemHeight={92}
                             itemKey="id"
                             ref={virtualRef}
                         >
                         {
-                            (v, i) => (
+                            (v, i) => {
+                                const isActive = currentBunId !== undefined && currentBunId === i;
+
+                                return (
                                 <List.Item
-                                    style={ (currentBunId !== undefined && currentBunId === i) ? { background :  token.colorPrimaryBg } : undefined }
+                                    style={{
+                                        margin : '0 0 8px',
+                                        padding : '12px 14px',
+                                        border : `1px solid ${isActive ? token.colorPrimaryBorder : 'rgba(255, 255, 255, 0.08)'}`,
+                                        borderRadius : 8,
+                                        background : isActive ? 'rgba(215, 0, 11, 0.16)' : 'rgba(255, 255, 255, 0.035)',
+                                        boxShadow : isActive ? 'inset 3px 0 0 #d7000b' : 'none',
+                                        cursor : 'pointer',
+                                        transition : 'background 160ms ease, border-color 160ms ease'
+                                    }}
                                 >
                                     <div style={{ width : "100%" }} onClick={() => goToTimeLine(i)}>
-                                        <Flex justify="left" style={{ width : "100%" }}>
-                                            <Space align='baseline'>
-                                                <SharedBun textData={timeline[i].jaText}/>
-                                            </Space>
+                                        <Flex justify="space-between" align="center" gap={8} style={{ width : "100%", marginBottom : 6 }}>
+                                            <Typography.Text
+                                                style={{
+                                                    color : isActive ? token.colorPrimary : token.colorTextSecondary,
+                                                    fontSize : 12,
+                                                    fontVariantNumeric : 'tabular-nums'
+                                                }}
+                                            >
+                                                {timeToTS(v.startTime)}
+                                            </Typography.Text>
+                                            <Typography.Text type="secondary" style={{ fontSize : 12 }}>
+                                                {timeToTS(v.endTime)}
+                                            </Typography.Text>
                                         </Flex>
-                                        <Flex justify="space-between" style={{ width : "100%" }}>
-                                            {timeline[i].koText}
+                                        <Flex justify="left" style={{ width : "100%", color : token.colorText, lineHeight : 1.55 }}>
+                                            <Typography.Text style={{ color : token.colorText, fontSize : 15 }}>
+                                                <SharedBun textData={timeline[i].jaText}/>
+                                            </Typography.Text>
+                                        </Flex>
+                                        <Flex justify="space-between" style={{ width : "100%", marginTop : 4 }}>
+                                            <Typography.Text type="secondary" style={{ lineHeight : 1.5 }}>
+                                                {timeline[i].koText}
+                                            </Typography.Text>
                                         </Flex>
                                     </div>
                                 </List.Item>
-                            )
+                                )
+                            }
                         }
                         </VirtualList>
                     </List>
