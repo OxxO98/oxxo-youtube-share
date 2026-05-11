@@ -114,6 +114,10 @@ const DEFAULT_SIDE_PANEL_SIZE = 680;
 const MIN_SIDE_PANEL_SIZE = 420;
 const MAX_SIDE_PANEL_SIZE = 820;
 const MIN_MAIN_PANEL_SIZE = 420;
+const INITIAL_DICTIONARY_PANEL_SIZE = 0;
+const DEFAULT_DICTIONARY_PANEL_SIZE = 300;
+const MIN_DICTIONARY_PANEL_SIZE = 220;
+const MAX_DICTIONARY_PANEL_SIZE = 360;
 
 const clamp = ( value : number, min : number, max : number ) => {
     return Math.min(Math.max(value, min), max);
@@ -134,11 +138,18 @@ const clampSharedSidePanelSize = ( side : number, containerWidth : number ) => {
     return Math.round(clamp(side, Math.min(MIN_SIDE_PANEL_SIZE, maxSideSize), maxSideSize));
 }
 
+const clampDictionaryPanelSize = ( dictionarySize : number ) => {
+    if(dictionarySize <= 0){
+        return 0;
+    }
+
+    return Math.round(clamp(dictionarySize, MIN_DICTIONARY_PANEL_SIZE, MAX_DICTIONARY_PANEL_SIZE));
+}
+
 interface SharedVideoCompProps {
     setPlayerRef : ( player : HTMLVideoElement ) => void;
     state : ReactPlayerState;
     playerHandles : PlayerHandles;
-    isCollapsed : boolean;
 }
 
 interface SharedTimelineCarouselCompProps {
@@ -173,7 +184,7 @@ const SharedPage = () => {
     //State
     const [sharedData, setSharedData] = useState<SharedData | null>(null);
     
-    const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
+    const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -338,6 +349,7 @@ const SharedComp = ({ sharedData, isCollapsed } : SharedCompProps ) => {
     //State
     const [splitterWidth, setSplitterWidth] = useState(0);
     const [sidePanelSize, setSidePanelSize] = useState(DEFAULT_SIDE_PANEL_SIZE);
+    const [dictionaryPanelSize, setDictionaryPanelSize] = useState(INITIAL_DICTIONARY_PANEL_SIZE);
 
     useHandleSelection(document, 'activeRange');
 
@@ -353,13 +365,17 @@ const SharedComp = ({ sharedData, isCollapsed } : SharedCompProps ) => {
         applySidePanelSize(sizes[1] ?? 0);
     }
 
-    const handleSplitterCollapse = ( _collapsed : boolean[], sizes : number[] ) => {
-        if(isCollapsed){
-            return;
-        }
+    const applyDictionaryPanelSize = useCallback( ( size : number ) => {
+        setDictionaryPanelSize(clampDictionaryPanelSize(size));
+    }, [])
 
-        const nextSideSize = (sidePanelSize === 0 && (sizes[1] ?? 0) > 0) ? DEFAULT_SIDE_PANEL_SIZE : sizes[1] ?? 0;
-        applySidePanelSize(nextSideSize);
+    const handleDictionarySplitterResize = ( sizes : number[] ) => {
+        applyDictionaryPanelSize(sizes[0] ?? 0);
+    }
+
+    const handleDictionarySplitterCollapse = ( _collapsed : boolean[], sizes : number[] ) => {
+        const nextDictionarySize = (dictionaryPanelSize === 0 && (sizes[0] ?? 0) > 0) ? DEFAULT_DICTIONARY_PANEL_SIZE : sizes[0] ?? 0;
+        applyDictionaryPanelSize(nextDictionarySize);
     }
 
     useEffect( () => {
@@ -388,28 +404,22 @@ const SharedComp = ({ sharedData, isCollapsed } : SharedCompProps ) => {
         setSidePanelSize(prev => clampSharedSidePanelSize(prev, splitterWidth));
     }, [splitterWidth])
 
-    if(isCollapsed){
-        return(
-            <>
-                <Flex vertical className="shared-page-scrollless" align='center' justify='space-between' style={{ position : 'relative', height : '100%', width : '100%', minWidth : 0, background : '#060606'}}>
-                    <SharedVideoComp setPlayerRef={setPlayerRef} state={state} playerHandles={playerHandles} isCollapsed={isCollapsed}/>
-                    <SharedTimelineCarouselComp timeline={sharedData.timeline} state={state} playerHandles={playerHandles} isCollapsed={isCollapsed}/>
-                </Flex>
-            </>
-        )
-    }
+    const mainPanelClassName = `shared-page-scrollless shared-main-panel${isCollapsed ? ' shared-main-collapsed' : ''}`;
 
     if(isMobile){
         return(
             <>
                 <Flex vertical className="shared-page-scrollless" style={{ height : '100%', width : '100%', minWidth : 0, background : '#060606', overflow : 'hidden' }}>
-                    <Flex vertical align='center' justify='space-between' style={{ position : 'relative', width : '100%', flex : '0 0 auto', minWidth : 0, background : '#060606' }}>
-                        <SharedVideoComp setPlayerRef={setPlayerRef} state={state} playerHandles={playerHandles} isCollapsed={isCollapsed}/>
+                    <Flex vertical className={mainPanelClassName} align='center' justify='space-between' style={{ position : 'relative', width : '100%', flex : '0 0 auto', minWidth : 0, background : '#060606' }}>
+                        <SharedVideoComp setPlayerRef={setPlayerRef} state={state} playerHandles={playerHandles}/>
                         <SharedTimelineCarouselComp timeline={sharedData.timeline} state={state} playerHandles={playerHandles} isCollapsed={isCollapsed}/>
                     </Flex>
+                    {
+                    !isCollapsed &&
                     <div style={{ flex : '1 1 auto', minHeight : 0, width : '100%', background : '#101010', borderTop : '1px solid rgba(255, 255, 255, 0.08)' }}>
                         <SharedTimelineComp timeline={sharedData.timeline} state={state} playerHandles={playerHandles}/>
                     </div>
+                    }
                 </Flex>
             </>
         )
@@ -420,35 +430,52 @@ const SharedComp = ({ sharedData, isCollapsed } : SharedCompProps ) => {
             <div ref={splitterBoxRef} style={{ height : '100%', width : '100%', minWidth : 0 }}>
                 <Splitter
                     style={{ height: '100%', width : '100%', background : '#090909' }}
-                    collapsibleIcon={{
-                        start : <span style={splitterCollapseIconStyle}><CaretLeftOutlined /></span>,
-                        end : <span style={splitterCollapseIconStyle}><CaretRightOutlined /></span>
-                    }}
                     onResize={handleSplitterResize}
                     onResizeEnd={handleSplitterResize}
-                    onCollapse={handleSplitterCollapse}
                     lazy
                 >
-                    <Splitter.Panel min={MIN_MAIN_PANEL_SIZE}>
-                        <Flex vertical align='center' justify='space-between' style={{ position : 'relative', height : '100%', width : '100%', minWidth : 0, background : '#060606', overflow : 'hidden'}}>
-                            <SharedVideoComp setPlayerRef={setPlayerRef} state={state} playerHandles={playerHandles} isCollapsed={isCollapsed}/>
+                    <Splitter.Panel min={isCollapsed ? 0 : MIN_MAIN_PANEL_SIZE}>
+                        <Flex vertical className={mainPanelClassName} align='center' justify='space-between' style={{ position : 'relative', height : '100%', width : '100%', minWidth : 0, background : '#060606', overflow : 'hidden'}}>
+                            <SharedVideoComp setPlayerRef={setPlayerRef} state={state} playerHandles={playerHandles}/>
                             <SharedTimelineCarouselComp timeline={sharedData.timeline} state={state} playerHandles={playerHandles} isCollapsed={isCollapsed}/>
                         </Flex>
                     </Splitter.Panel>
                     <Splitter.Panel
-                        collapsible={{ start : true, end : false, showCollapsibleIcon : true }}
-                        size={sidePanelSize}
-                        min={0}
-                        max={MAX_SIDE_PANEL_SIZE}
+                        size={isCollapsed ? 0 : sidePanelSize}
+                        min={isCollapsed ? 0 : MIN_SIDE_PANEL_SIZE}
+                        max={isCollapsed ? 0 : MAX_SIDE_PANEL_SIZE}
                     >
-                        <Flex style={{ ...panelBackdropStyle, minWidth : 0 }}>
-                            <div style={{ width : '42%', minWidth : 220, maxWidth : 340, height : '100%', borderRight : '1px solid rgba(255, 255, 255, 0.08)' }}>
-                                <SharedDictionaryComp />
-                            </div>
-                            <div style={{ flex : 1, minWidth : 0, height : '100%' }}>
-                                <SharedTimelineComp timeline={sharedData.timeline} state={state} playerHandles={playerHandles}/>
-                            </div>
-                        </Flex>
+                        {
+                        !isCollapsed &&
+                        <Splitter
+                            style={{ ...panelBackdropStyle, minWidth : 0, overflow : 'hidden'  }}
+                            collapsibleIcon={{
+                                start : <span style={splitterCollapseIconStyle}><CaretLeftOutlined /></span>,
+                                end : <span style={splitterCollapseIconStyle}><CaretRightOutlined /></span>
+                            }}
+                            onResize={handleDictionarySplitterResize}
+                            onResizeEnd={handleDictionarySplitterResize}
+                            onCollapse={handleDictionarySplitterCollapse}
+                            lazy
+                        >
+                            <Splitter.Panel
+                                collapsible={{ start : false, end : true, showCollapsibleIcon : true }}
+                                resizable={false}
+                                size={dictionaryPanelSize}
+                                min={0}
+                                max={MAX_DICTIONARY_PANEL_SIZE}
+                            >
+                                <div style={{ width : '100%', height : '100%', borderRight : '1px solid rgba(255, 255, 255, 0.08)', overflow : 'hidden' }}>
+                                    <SharedDictionaryComp />
+                                </div>
+                            </Splitter.Panel>
+                            <Splitter.Panel min={260}>
+                                <div style={{ width : '100%', height : '100%', minWidth : 0 }}>
+                                    <SharedTimelineComp timeline={sharedData.timeline} state={state} playerHandles={playerHandles}/>
+                                </div>
+                            </Splitter.Panel>
+                        </Splitter>
+                        }
                     </Splitter.Panel>
                 </Splitter>
             </div>
@@ -456,7 +483,18 @@ const SharedComp = ({ sharedData, isCollapsed } : SharedCompProps ) => {
     )
 }
 
-const SharedVideoComp = ({ setPlayerRef, state, playerHandles, isCollapsed } : SharedVideoCompProps) => {
+const areSharedVideoCompPropsEqual = ( prev : SharedVideoCompProps, next : SharedVideoCompProps ) => {
+    return (
+        prev.setPlayerRef === next.setPlayerRef &&
+        prev.state.src === next.state.src &&
+        prev.state.pip === next.state.pip &&
+        prev.state.playing === next.state.playing &&
+        prev.state.volume === next.state.volume &&
+        prev.state.muted === next.state.muted
+    );
+}
+
+const SharedVideoComp = React.memo(({ setPlayerRef, state, playerHandles } : SharedVideoCompProps) => {
 
     //State
     const { handlePlay, handlePause, handleDurationChange } = playerHandles;
@@ -472,29 +510,10 @@ const SharedVideoComp = ({ setPlayerRef, state, playerHandles, isCollapsed } : S
     return(
         <>
             <div
-                style={{
-                    width : '100%',
-                    flex : '1 1 auto',
-                    minHeight : 0,
-                    display : 'flex',
-                    alignItems : 'center',
-                    justifyContent : 'center',
-                    padding : isCollapsed ? 0 : '18px 18px 0',
-                    boxSizing : 'border-box'
-                }}
+                className="shared-video-shell"
             >
                 <div
-                    style={{
-                        width : 'min(100%, calc((100dvh - 24px) * 16 / 9))',
-                        maxWidth : `calc( (100dvh${ isCollapsed ? '' : ' - 134px'}) * 16 / 9)`,
-                        maxHeight : isCollapsed ? 'calc(100dvh - 24px)' : 'calc(100dvh - 158px)',
-                        aspectRatio : '16 / 9',
-                        overflow : 'hidden',
-                        background : '#000',
-                        border : isCollapsed ? 'none' : '1px solid rgba(255, 255, 255, 0.12)',
-                        borderRadius : isCollapsed ? 0 : 8,
-                        boxShadow : isCollapsed ? 'none' : '0 18px 60px rgba(0, 0, 0, 0.38)'
-                    }}
+                    className="shared-video-frame"
                 >
                 <ReactPlayer
                     ref={setPlayerRef}
@@ -515,7 +534,7 @@ const SharedVideoComp = ({ setPlayerRef, state, playerHandles, isCollapsed } : S
             </div>
         </>
     )
-}
+}, areSharedVideoCompPropsEqual)
 
 const SharedBun = ({ textData } : SharedBunProps ) => {
     const _bId = 'bId'.concat( textData.map( (v) => v.offset ).join('') )
@@ -1100,7 +1119,6 @@ const SharedTimelineComp = ({ timeline, state, playerHandles } : SharedTimelineC
                         className="shared-page-scrollless"
                         bordered={false}
                         style={{
-                            height : '100%',
                             background : '#101010',
                             padding : '10px 8px'
                         }}
@@ -1145,7 +1163,7 @@ const SharedTimelineComp = ({ timeline, state, playerHandles } : SharedTimelineC
                                             </Typography.Text>
                                         </Flex>
                                         <Flex justify="left" style={{ width : "100%", color : token.colorText, lineHeight : 1.55 }}>
-                                            <Typography.Text style={{ color : token.colorText, fontSize : 15 }}>
+                                            <Typography.Text className='default_jaText' style={{ color : token.colorText, fontSize : 15 }}>
                                                 <SharedBun textData={timeline[i].jaText}/>
                                             </Typography.Text>
                                         </Flex>
@@ -1169,8 +1187,10 @@ const SharedTimelineComp = ({ timeline, state, playerHandles } : SharedTimelineC
 }
 
 const DictionaryStyle = {
-  width : "100%",
-  height : "100%"
+    border: 'none',
+    width: 'calc(100% + 16px)',
+    height: '100%',
+    marginRight: '-16px',
 }
 
 //네이버 사전
@@ -1188,7 +1208,7 @@ const SharedDictionaryComp = () => {
         <>
         {
             selection && selection !== '　' && selection !== ' ' && selection.length < 10 && checkKatachi(selection) !== null ?
-            <div style={DictionaryStyle}>
+            <div style={{ width : '100%', height : '100%', overflow : 'hidden' }}>
                 <iframe title='dictionary_naver' src={'https://ja.dict.naver.com/?m=mobile#/search?range=all&query=' + selection} style={DictionaryStyle}></iframe>
             </div>
             :

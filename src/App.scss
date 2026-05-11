@@ -80,10 +80,13 @@ iframe {
   overflow: hidden;
 }
 
+.default_jaText {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
 .rubyAri{
-  // font-family: 'Noto Sans JP', sans-serif;
-  // font-size: 16px;
-  // font-weight: 400;
 
   ruby-align : space-around;
   ruby-overhang : none;
@@ -165,5 +168,44 @@ iframe {
   .rc-virtual-list-scrollbar,
   .rc-virtual-list-scrollbar-thumb {
     display: none !important;
+  }
+}
+
+.shared-main-panel {
+  .shared-video-shell {
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px 18px 0;
+    box-sizing: border-box;
+  }
+
+  .shared-video-frame {
+    width: min(100%, calc(177.778dvh - 42.667px));
+    max-width: calc(177.778dvh - 238.222px);
+    max-height: calc(100dvh - 158px);
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #000;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.38);
+  }
+
+  &.shared-main-collapsed {
+    .shared-video-shell {
+      padding: 0;
+    }
+
+    .shared-video-frame {
+      max-width: 177.778dvh;
+      max-height: calc(100dvh - 24px);
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+    }
   }
 }
