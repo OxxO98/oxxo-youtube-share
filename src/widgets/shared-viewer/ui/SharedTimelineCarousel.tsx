@@ -146,7 +146,7 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
     const controlSelectStyle : CSSProperties = {
         ...controlButtonStyle,
         fontSize : isMobile ? 12 : 16,
-        width : isMobile ? 104 : 144,
+        width : isMobile ? 94 : 144,
     }
 
     const handleProgressChange = ( value : number | number[] ) => {
@@ -296,7 +296,7 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
                     }
                     </Flex>
                 </SharedVideo>
-                <Flex style={{ padding : 18 }}>
+                <Flex style={{ padding : 18, paddingTop : isMobile ? 0 : 18 }}>
                 {
                     isCollapsed === false &&
                     <div style={controlPanelStyle}>
