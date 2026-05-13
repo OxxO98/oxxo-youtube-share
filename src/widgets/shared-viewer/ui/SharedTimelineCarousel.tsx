@@ -4,20 +4,22 @@ import { useTranslation } from 'react-i18next';
 import { useMediaQuery } from 'react-responsive';
 import { useSelector } from 'react-redux';
 
-import { Button, Flex, FloatButton, Select } from 'antd';
-import { BackwardOutlined, ControlOutlined, ForwardOutlined, PauseCircleOutlined, PlayCircleOutlined } from '@ant-design/icons';
+import { Button, Flex, FloatButton, Select, Slider, Typography } from 'antd';
+import { StepBackwardOutlined, ControlOutlined, StepForwardOutlined, PauseOutlined, CaretRightOutlined } from '@ant-design/icons';
 
 import { MediaQueryContext } from 'contexts/MediaQueryContext';
-import { useHandleKeyboard, useVideoPlayHook } from 'hooks/VideoPlayHook';
+import { useHandleKeyboard, useTimeStamp, useVideoPlayHook } from 'hooks/VideoPlayHook';
 import { RootState } from 'reducers/store';
 
 import type { SharedTimelineCarouselProps } from 'widgets/shared-viewer/model/types';
 import { timelineControlStyle } from 'widgets/shared-viewer/config/styles';
 import { SharedBun } from './SharedBun';
 import { SharedBunSettingModal } from './SharedBunSettingModal';
+import { SharedVideo } from './SharedVideo';
 
-export const SharedTimelineCarousel = ({ timeline, state, playerHandles, isCollapsed } : SharedTimelineCarouselProps ) => {
+export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlayerRef, isCollapsed } : SharedTimelineCarouselProps ) => {
     const { t } = useTranslation('SharedTimelineCarouselComp');
+    const { t : tSetting } = useTranslation('SharedBunSettingModalComp');
 
     const isMobile = useMediaQuery({
         query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
@@ -37,14 +39,15 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, isColla
 
     const BoxStyle : CSSProperties = {
         position : 'absolute',
-        transform : `translate(-50%, 0%)`,
-        bottom : `${ isCollapsed ? '18px' : '86px' }`,
+        transform : `translateX(-50%)`,
+        bottom : isMobile ? '7%' : '8%',
         left : `50%`,
-        width : isMobile ? '92%' : 'min(88%, 980px)',
+        width : isMobile ? '88%' : 'min(72%, 760px)',
         padding : isMobile ? '10px 14px' : '12px 22px',
-        borderRadius : 8,
-        backdropFilter : 'blur(4px)',
-        paddingBottom : `${ isMobile ? 'calc(10px + 3dvw)' : '12px' }`
+        borderRadius : 16,
+        backdropFilter : 'blur(8px)',
+        paddingBottom : `${ isMobile ? 'calc(10px + 2dvw)' : '12px' }`,
+        zIndex : 2,
     }
 
     const textShadow = fontShadow ? '-1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black' : '';
@@ -70,13 +73,89 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, isColla
 
     const [currentBunId, setCurrentBunId] = useState(0);
 
-    const { playing, playedSeconds } = state;
+    const { playing, playedSeconds, duration } = state;
     const { handlePausePlay, handleSeek } = playerHandles;
 
     const [bunSelect, setBunSelect] = useState({ ja : true, ko : true });
     const [floatButtonOpen, setFloatButtonOpen] = useState(false);
 
     const { gotoTime, keyboard } = useVideoPlayHook( playing, handlePausePlay, state, handleSeek );
+    const { timeToTS } = useTimeStamp();
+
+    const sliderMax = Math.max(duration || 0, playedSeconds || 0, 0);
+    const sliderValue = Math.min(playedSeconds || 0, sliderMax);
+
+    const controlPanelStyle : CSSProperties = {
+        ...timelineControlStyle,
+        height : 'auto',
+        padding : isMobile ? '10px 12px 14px' : '12px 20px 18px',
+        background : 'linear-gradient(rgb(20, 20, 20), rgb(13, 13, 13))',
+        boxShadow : '0 -12px 34px rgba(0, 0, 0, 0.36)',
+        border : '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius : 8,
+        width : '100%',
+        flex : '0 0 auto',
+    }
+
+    const progressStyle : CSSProperties = {
+        width : '100%',
+        maxWidth : 920,
+        margin : '0 auto 10px',
+    }
+
+    const controlGroupStyle : CSSProperties = {
+        width : '100%',
+        maxWidth : 820,
+        margin : '0 auto',
+    }
+
+    const controlItemStyle : CSSProperties = {
+        flex : '0 0 2',
+        minWidth : isMobile ? 58 : 104,
+        textAlign : 'center',
+    }
+
+    const controlButtonStyle : CSSProperties = {
+        width : isMobile ? 54 : 94,
+        height : isMobile ? 42 : 54,
+        borderRadius : 6,
+        background : 'rgba(255, 255, 255, 0.045)',
+        border : '1px solid rgba(255, 255, 255, 0.12)',
+        color : '#f5f5f5',
+        fontSize : isMobile ? 18 : 22,
+        boxShadow : 'inset 0 1px 0 rgba(255, 255, 255, 0.04)',
+    }
+
+    const playButtonStyle : CSSProperties = {
+        width : isMobile ? 56 : 68,
+        height : isMobile ? 56 : 68,
+        borderRadius : '50%',
+        background : 'linear-gradient(180deg, #ff3046, #d7000b)',
+        border : '1px solid rgba(255, 90, 110, 0.55)',
+        color : '#ffffff',
+        fontSize : isMobile ? 24 : 30,
+        boxShadow : '0 10px 28px rgba(215, 0, 11, 0.42)',
+    }
+
+    const dividerStyle : CSSProperties = {
+        width : 1,
+        height : isMobile ? 48 : 74,
+        background : 'rgba(255, 255, 255, 0.10)',
+    }
+
+    const controlSelectStyle : CSSProperties = {
+        ...controlButtonStyle,
+        fontSize : isMobile ? 12 : 16,
+        width : isMobile ? 104 : 144,
+    }
+
+    const handleProgressChange = ( value : number | number[] ) => {
+        if(Array.isArray(value)){
+            return;
+        }
+
+        handleSeek(value);
+    }
 
     const customKeyBoard = [
         { key : 'ArrowRight', action : () => { nextTimeLine() } },
@@ -175,86 +254,9 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, isColla
 
     return(
         <>
-            <div>
-                <div>
-                    {
-                        isCollapsed === false &&
-                        <div style={timelineControlStyle}>
-                            <Flex justify='center' align='center' gap='small' wrap>
-                                <Button onClick={prevTimeLine} icon={<BackwardOutlined />}>
-                                    {!isMobile && t('BUTTON.PREV')}
-                                </Button>
-                                <Button type='primary' onClick={playTimeline} icon={ playing ? <PauseCircleOutlined /> : <PlayCircleOutlined/> }>
-                                    {!isMobile && t('BUTTON.PLAY')}
-                                </Button>
-                                <Button onClick={nextTimeLine} icon={<ForwardOutlined />}>
-                                    {!isMobile && t('BUTTON.NEXT')}
-                                </Button>
-                                <Select
-                                    defaultValue="both"
-                                    style={{ minWidth : 120 }}
-                                    onChange={handelSelectChange}
-                                    options={[
-                                        { value: 'jaOnly', label: t('SELECT.JATEXT_ONLY') },
-                                        { value: 'koOnly', label: t('SELECT.KOTEXT_ONLY') },
-                                        { value: 'both', label: t('SELECT.BOTH') },
-                                ]}/>
-                                <SharedBunSettingModal>
-                                    <Flex vertical justify='center' style={{ ...TimelineBunStyle, marginBottom : '16px', padding : '14px 18px', borderRadius : 8, border : '1px solid rgba(255, 255, 255, 0.1)' }}>
-                                    {
-                                        sortFont ?
-                                        <>
-                                        {
-                                            bunSelect.ko &&
-                                            <div style={KoTextStyle}>
-                                                {timeline[currentBunId].koText}
-                                            </div>
-                                        }
-                                        {
-                                            bunSelect.ja &&
-                                            <div style={JaTextStyle}>
-                                                <SharedBun textData={timeline[currentBunId].jaText}/>
-                                            </div>
-                                        }
-                                        </>
-                                        :
-                                        <>
-                                        {
-                                            bunSelect.ja &&
-                                            <div style={JaTextStyle}>
-                                                <SharedBun textData={timeline[currentBunId].jaText}/>
-                                            </div>
-                                        }
-                                        {
-                                            bunSelect.ko &&
-                                            <div style={KoTextStyle}>
-                                                {timeline[currentBunId].koText}
-                                            </div>
-                                        }
-                                        </>
-                                    }
-                                    </Flex>
-                                </SharedBunSettingModal>
-                            </Flex>
-                        </div>
-                    }
-                    {
-                        isCollapsed === true && isMobile &&
-                        <FloatButton.Group
-                            style={{
-                                transform : `translate( 0%, calc(-100% - 16px) )`
-                            }}
-                            open={floatButtonOpen}
-                            trigger='click'
-                            icon={<ControlOutlined />}
-                            onClick={() => setFloatButtonOpen(!floatButtonOpen)}
-                        >
-                            <FloatButton onClick={prevTimeLine} icon={<BackwardOutlined />}/>
-                            <FloatButton type='primary' onClick={playTimeline} icon={ playing ? <PauseCircleOutlined /> : <PlayCircleOutlined/> }/>
-                            <FloatButton onClick={nextTimeLine} icon={<ForwardOutlined />}/>
-                        </FloatButton.Group>
-                    }
-                    <Flex vertical justify='center' style={{ ...TimelineBunStyle, ...BoxStyle }}>
+            <Flex vertical style={{ width : '100%', height : '100%', minHeight : 0 }}>
+                <SharedVideo setPlayerRef={setPlayerRef} state={state} playerHandles={playerHandles}>
+                    <Flex vertical justify='center' align='center' style={{ ...TimelineBunStyle, ...BoxStyle }}>
                     {
                     timeline !== null && timeline.length !== 0 &&
                     <>
@@ -293,9 +295,151 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, isColla
                     </>
                     }
                     </Flex>
-                </div>
-            </div>
+                </SharedVideo>
+                <Flex style={{ padding : 18 }}>
+                {
+                    isCollapsed === false &&
+                    <div style={controlPanelStyle}>
+                        <div style={progressStyle}>
+                            <Slider
+                                min={0}
+                                max={sliderMax}
+                                value={sliderValue}
+                                onChange={handleProgressChange}
+                                disabled={sliderMax <= 0}
+                                tooltip={{ formatter : null }}
+                                style={{ margin : '0 0 2px' }}
+                            />
+                            <Flex justify='space-between' align='center'>
+                                <Typography.Text style={{ color : 'rgba(255, 255, 255, 0.68)', fontSize : 12, fontVariantNumeric : 'tabular-nums' }}>
+                                    {timeToTS(playedSeconds || 0)}
+                                </Typography.Text>
+                                <Typography.Text style={{ color : 'rgba(255, 255, 255, 0.68)', fontSize : 12, fontVariantNumeric : 'tabular-nums' }}>
+                                    {timeToTS(duration || 0)}
+                                </Typography.Text>
+                            </Flex>
+                        </div>
+                        <Flex justify='center' align='center' gap={isMobile ? 10 : 20} wrap style={controlGroupStyle}>
+                            <Flex vertical align='center' style={controlItemStyle}>
+                                <Button style={controlButtonStyle} onClick={prevTimeLine} icon={<StepBackwardOutlined />} />
+                            </Flex>
+                            <span style={dividerStyle} />
+                            <Flex vertical align='center' style={controlItemStyle}>
+                                <Button style={playButtonStyle} onClick={playTimeline} icon={ playing ? <PauseOutlined /> : <CaretRightOutlined/> } />
+                            </Flex>
+                            <span style={dividerStyle} />
+                            <Flex vertical align='center' style={controlItemStyle}>
+                                <Button style={controlButtonStyle} onClick={nextTimeLine} icon={<StepForwardOutlined />} />
+                            </Flex>
+                            <span style={dividerStyle} />
+                            <Flex vertical align='center' style={controlItemStyle}>
+                                <Select
+                                    defaultValue="both"
+                                    variant='borderless'
+                                    style={controlSelectStyle}
+                                    onChange={handelSelectChange}
+                                    options={[
+                                        { value: 'jaOnly', label: t('SELECT.JATEXT_ONLY') },
+                                        { value: 'koOnly', label: t('SELECT.KOTEXT_ONLY') },
+                                        { value: 'both', label: t('SELECT.BOTH') },
+                                ]}/>
+                            </Flex>
+                            <span style={dividerStyle} />
+                            <Flex vertical align='center' style={controlItemStyle}>
+                                <SharedBunSettingModal triggerStyle={controlButtonStyle}>
+                                    <Flex vertical justify='center' style={{ ...TimelineBunStyle, marginBottom : '16px', padding : '14px 18px', borderRadius : 8, border : '1px solid rgba(255, 255, 255, 0.1)' }}>
+                                    {
+                                        sortFont ?
+                                        <>
+                                        {
+                                            bunSelect.ko &&
+                                            <div style={KoTextStyle}>
+                                                {timeline[currentBunId].koText}
+                                            </div>
+                                        }
+                                        {
+                                            bunSelect.ja &&
+                                            <div style={JaTextStyle}>
+                                                <SharedBun textData={timeline[currentBunId].jaText}/>
+                                            </div>
+                                        }
+                                        </>
+                                        :
+                                        <>
+                                        {
+                                            bunSelect.ja &&
+                                            <div style={JaTextStyle}>
+                                                <SharedBun textData={timeline[currentBunId].jaText}/>
+                                            </div>
+                                        }
+                                        {
+                                            bunSelect.ko &&
+                                            <div style={KoTextStyle}>
+                                                {timeline[currentBunId].koText}
+                                            </div>
+                                        }
+                                        </>
+                                    }
+                                    </Flex>
+                                </SharedBunSettingModal>
+                            </Flex>
+                        </Flex>
+                    </div>
+                }
+                </Flex>
+                {
+                    isCollapsed === true && isMobile &&
+                    <FloatButton.Group
+                        style={{
+                            transform : `translate( 0%, calc(-100% - 16px) )`
+                        }}
+                        open={floatButtonOpen}
+                        trigger='click'
+                        icon={<ControlOutlined />}
+                        onClick={() => setFloatButtonOpen(!floatButtonOpen)}
+                    >
+                        <FloatButton onClick={prevTimeLine} icon={<StepBackwardOutlined />}/>
+                        <FloatButton type='primary' onClick={playTimeline} icon={ playing ? <PauseOutlined /> : <CaretRightOutlined/> }/>
+                        <FloatButton onClick={nextTimeLine} icon={<StepForwardOutlined />}/>
+                        <SharedBunSettingModal triggerStyle={{ width : '40px', height : '40px', borderRadius : '50%'}} >
+                            <Flex vertical justify='center' style={{ ...TimelineBunStyle, marginBottom : '16px', padding : '14px 18px', borderRadius : 8, border : '1px solid rgba(255, 255, 255, 0.1)' }}>
+                                {
+                                    sortFont ?
+                                    <>
+                                    {
+                                        bunSelect.ko &&
+                                        <div style={KoTextStyle}>
+                                            {timeline[currentBunId].koText}
+                                        </div>
+                                    }
+                                    {
+                                        bunSelect.ja &&
+                                        <div style={JaTextStyle}>
+                                            <SharedBun textData={timeline[currentBunId].jaText}/>
+                                        </div>
+                                    }
+                                    </>
+                                    :
+                                    <>
+                                    {
+                                        bunSelect.ja &&
+                                        <div style={JaTextStyle}>
+                                            <SharedBun textData={timeline[currentBunId].jaText}/>
+                                        </div>
+                                    }
+                                    {
+                                        bunSelect.ko &&
+                                        <div style={KoTextStyle}>
+                                            {timeline[currentBunId].koText}
+                                        </div>
+                                    }
+                                    </>
+                                }
+                            </Flex>
+                        </SharedBunSettingModal>
+                    </FloatButton.Group>
+                }
+            </Flex>
         </>
     )
 }
-

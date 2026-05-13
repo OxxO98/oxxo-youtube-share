@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactPlayer from 'react-player';
 
+import { Flex } from 'antd'
+
 import type { SharedVideoProps } from 'widgets/shared-viewer/model/types';
 
 const areSharedVideoPropsEqual = ( prev : SharedVideoProps, next : SharedVideoProps ) => {
@@ -10,11 +12,12 @@ const areSharedVideoPropsEqual = ( prev : SharedVideoProps, next : SharedVideoPr
         prev.state.pip === next.state.pip &&
         prev.state.playing === next.state.playing &&
         prev.state.volume === next.state.volume &&
-        prev.state.muted === next.state.muted
+        prev.state.muted === next.state.muted &&
+        prev.children === next.children
     );
 }
 
-export const SharedVideo = React.memo(({ setPlayerRef, state, playerHandles } : SharedVideoProps) => {
+export const SharedVideo = React.memo(({ setPlayerRef, state, playerHandles, children } : SharedVideoProps) => {
     const { handlePlay, handlePause, handleDurationChange } = playerHandles;
 
     const {
@@ -27,11 +30,13 @@ export const SharedVideo = React.memo(({ setPlayerRef, state, playerHandles } : 
 
     return(
         <>
-            <div
+            <Flex
+                justify='center'
                 className="shared-video-shell"
             >
                 <div
                     className="shared-video-frame"
+                    style={{ position : 'relative' }}
                 >
                 <ReactPlayer
                     ref={setPlayerRef}
@@ -48,9 +53,9 @@ export const SharedVideo = React.memo(({ setPlayerRef, state, playerHandles } : 
                     muted={muted}
                     playsInline={true}
                 />
+                {children}
                 </div>
-            </div>
+            </Flex>
         </>
     )
 }, areSharedVideoPropsEqual)
-

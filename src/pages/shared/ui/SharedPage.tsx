@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 import { Layout, FloatButton } from 'antd';
 import { FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
@@ -15,6 +17,8 @@ import { sharedShellStyle } from './styles';
 const { Content } = Layout;
 
 const SharedPage = () => {
+    const { t } = useTranslation('SharedPage');
+
     const sharedData = useSharedData();
     const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
 
@@ -25,6 +29,8 @@ const SharedPage = () => {
 
         saveCaptionFile(sharedData, timeToTS, opt);
     }
+
+    useHotkeys('enter', () => { setIsCollapsed(!isCollapsed) })
 
     return(
         <>
@@ -41,6 +47,7 @@ const SharedPage = () => {
                     }
                     <FloatButton
                         type="primary"
+                        tooltip={isCollapsed ? <span>{t('TOOLTIP.FLOAT_COLLAPSED')}</span> : <span>{t('TOOLTIP.FLOAT')}</span>}
                         icon={isCollapsed ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
                         onClick={() => setIsCollapsed(!isCollapsed)}
                         style={{ boxShadow : '0 10px 28px rgba(215, 0, 11, 0.34)' }}

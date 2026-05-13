@@ -1,16 +1,116 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useMediaQuery } from 'react-responsive';
 import VirtualList, { ListRef } from 'rc-virtual-list';
 
-import { Flex, List, theme, Typography } from 'antd';
+import { Flex, List, Typography } from 'antd';
+
+import { MediaQueryContext } from 'contexts/MediaQueryContext';
 
 import { useTimeStamp, useVideoPlayHook } from 'hooks/VideoPlayHook';
 
 import type { SharedTimelineListProps } from 'widgets/shared-viewer/model/types';
 import { SharedBun } from './SharedBun';
 
-const { useToken } = theme;
+const panelOuterStyle: CSSProperties = {
+    height: '100%',
+    width: '100%',
+    padding: 18,
+    boxSizing: 'border-box',
+    minHeight: 0,
+}
+
+const panelStyle : CSSProperties = {
+    height : '100%',
+    width : '100%',
+    background : 'linear-gradient(180deg, #141414, #0d0d0d)',
+    border : '1px solid rgba(255, 255, 255, 0.08)',
+    borderRadius : 8,
+    overflow : 'hidden',
+}
+
+const headerStyle : CSSProperties = {
+    flex : '0 0 auto',
+    padding : '18px 20px 12px',
+}
+
+const titleStyle : CSSProperties = {
+    color : '#f5f5f5',
+    fontSize : 18,
+    fontWeight : 800,
+}
+
+const countBadgeStyle : CSSProperties = {
+    height : 26,
+    display : 'inline-flex',
+    alignItems : 'center',
+    padding : '0 10px',
+    borderRadius : 999,
+    background : 'rgba(255, 255, 255, 0.06)',
+    border : '1px solid rgba(255, 255, 255, 0.12)',
+    color : 'rgba(255, 255, 255, 0.72)',
+    fontSize : 13,
+    fontWeight : 700,
+}
+
+const listStyle : CSSProperties = {
+    background : 'transparent',
+    padding : '0 12px 14px',
+}
+
+const timeColumnStyle : CSSProperties = {
+    flex : '0 0 106px',
+    color : 'rgba(255, 255, 255, 0.76)',
+    fontSize : 14,
+    fontVariantNumeric : 'tabular-nums',
+    lineHeight : 1.8,
+}
+
+const verticalDividerStyle : CSSProperties = {
+    alignSelf : 'stretch',
+    width : 1,
+    margin : '0 18px 0 0',
+    background : 'rgba(255, 255, 255, 0.08)',
+}
+
+const jaTextStyle : CSSProperties = {
+    color : '#ffc928',
+    fontSize : 17,
+    fontWeight : 500,
+    lineHeight : 1.45,
+}
+
+const koTextStyle : CSSProperties = {
+    color : '#f5f5f5',
+    fontSize : 17,
+    fontWeight : 600,
+    lineHeight : 1.45,
+    marginTop : 4,
+}
+
+const activeMarkerStyle : CSSProperties = {
+    position : 'absolute',
+    left : -14,
+    top : '50%',
+    transform : 'translateY(-50%)',
+    width : 26,
+    height : 52,
+    display : 'inline-flex',
+    alignItems : 'center',
+    justifyContent : 'center',
+    borderRadius : '0 999px 999px 0',
+    background : 'linear-gradient(180deg, #ff3046, #d7000b)',
+    color : '#ffffff',
+    fontSize : 12,
+    boxShadow : '0 10px 24px rgba(215, 0, 11, 0.32)',
+}
 
 export const SharedTimelineList = ({ timeline, state, playerHandles } : SharedTimelineListProps ) => {
+    const { t } = useTranslation('SharedTimelineList');
+    const isMobile = useMediaQuery({
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
+    });
     const divBox = useRef<HTMLDivElement>(null);
     const [divBoxHeight, setDivBoxHeight] = useState<number>(800);
     const virtualRef = useRef(null);
@@ -20,8 +120,6 @@ export const SharedTimelineList = ({ timeline, state, playerHandles } : SharedTi
 
     const { gotoTime } = useVideoPlayHook( playing, handlePlay, state, handleSeek );
     const { timeToTS } = useTimeStamp();
-
-    const { token } = useToken();
 
     const moveTimeLine = useCallback( () => {
         if(playedSeconds !== null){
@@ -60,83 +158,85 @@ export const SharedTimelineList = ({ timeline, state, playerHandles } : SharedTi
             });
 
             observer.observe(divBox.current);
+
+            return () => {
+                observer.disconnect();
+            }
         }
     }, [])
 
     return(
         <>
-            <Flex vertical className="shared-page-scrollless" style={{ height : '100%', width : "100%" }}>
-                <div className="shared-page-scrollless" style={{ width : "100%", height : "100%", overflow : "hidden"}} ref={divBox}>
-                {
-                    timeline !== null &&
-                    <List
-                        className="shared-page-scrollless"
-                        bordered={false}
-                        style={{
-                            background : '#101010',
-                            padding : '10px 8px'
-                        }}
-                    >
-                        <VirtualList
-                            data={timeline}
-                            height={divBoxHeight}
-                            itemHeight={92}
-                            itemKey="id"
-                            ref={virtualRef}
+            <Flex vertical style={{ ...panelOuterStyle, paddingTop : isMobile ? 0 : 18, paddingBottom : isMobile ? 0 : 18 }}>
+                <Flex vertical className="shared-page-scrollless" style={panelStyle}>
+                    <Flex align='center' gap={10} style={headerStyle}>
+                        <Typography.Text style={titleStyle}>{t('HEADER.TITLE')}</Typography.Text>
+                        <span style={countBadgeStyle}>{timeline.length}{t('HEADER.LENGTH')}</span>
+                    </Flex>
+                    <div className="shared-page-scrollless" style={{ width : "100%", flex : '1 1 auto', minHeight : 0, overflow : "hidden"}} ref={divBox}>
+                    {
+                        timeline !== null &&
+                        <List
+                            className="shared-page-scrollless"
+                            bordered={false}
+                            style={listStyle}
                         >
-                        {
-                            (v, i) => {
-                                const isActive = currentBunId !== undefined && currentBunId === i;
+                            <VirtualList
+                                data={timeline}
+                                height={divBoxHeight}
+                                itemHeight={104}
+                                itemKey="id"
+                                ref={virtualRef}
+                            >
+                            {
+                                (v, i) => {
+                                    const isActive = currentBunId !== undefined && currentBunId === i;
 
-                                return (
-                                <List.Item
-                                    style={{
-                                        margin : '0 0 8px',
-                                        padding : '12px 14px',
-                                        border : `1px solid ${isActive ? token.colorPrimaryBorder : 'rgba(255, 255, 255, 0.08)'}`,
-                                        borderRadius : 8,
-                                        background : isActive ? 'rgba(215, 0, 11, 0.16)' : 'rgba(255, 255, 255, 0.035)',
-                                        boxShadow : isActive ? 'inset 3px 0 0 #d7000b' : 'none',
-                                        cursor : 'pointer',
-                                        transition : 'background 160ms ease, border-color 160ms ease'
-                                    }}
-                                >
-                                    <div style={{ width : "100%" }} onClick={() => goToTimeLine(i)}>
-                                        <Flex justify="space-between" align="center" gap={8} style={{ width : "100%", marginBottom : 6 }}>
-                                            <Typography.Text
-                                                style={{
-                                                    color : isActive ? token.colorPrimary : token.colorTextSecondary,
-                                                    fontSize : 12,
-                                                    fontVariantNumeric : 'tabular-nums'
-                                                }}
-                                            >
-                                                {timeToTS(v.startTime)}
-                                            </Typography.Text>
-                                            <Typography.Text type="secondary" style={{ fontSize : 12 }}>
-                                                {timeToTS(v.endTime)}
-                                            </Typography.Text>
-                                        </Flex>
-                                        <Flex justify="left" style={{ width : "100%", color : token.colorText, lineHeight : 1.55 }}>
-                                            <Typography.Text className='default_jaText' style={{ color : token.colorText, fontSize : 15 }}>
-                                                <SharedBun textData={timeline[i].jaText}/>
-                                            </Typography.Text>
-                                        </Flex>
-                                        <Flex justify="space-between" style={{ width : "100%", marginTop : 4 }}>
-                                            <Typography.Text type="secondary" style={{ lineHeight : 1.5 }}>
-                                                {timeline[i].koText}
-                                            </Typography.Text>
-                                        </Flex>
-                                    </div>
-                                </List.Item>
-                                )
+                                    return (
+                                    <List.Item
+                                        style={{
+                                            position : 'relative',
+                                            margin : '0 0 8px',
+                                            padding : '14px 16px',
+                                            border : `1px solid ${isActive ? '#d7000b' : 'rgba(255, 255, 255, 0.08)'}`,
+                                            borderRadius : 8,
+                                            background : isActive ? 'linear-gradient(180deg, rgba(215, 0, 11, 0.14), rgba(255, 255, 255, 0.035))' : 'linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.035))',
+                                            boxShadow : isActive ? '0 0 0 1px rgba(215, 0, 11, 0.24)' : 'none',
+                                            cursor : 'pointer',
+                                            transition : 'background 160ms ease, border-color 160ms ease'
+                                        }}
+                                    >
+                                        <div style={{ width : "100%" }} onClick={() => goToTimeLine(i)}>
+                                            {
+                                                isActive &&
+                                                <span style={activeMarkerStyle}></span>
+                                            }
+                                            <Flex align='center' style={{ width : '100%' }}>
+                                                <Flex vertical justify='center' style={timeColumnStyle}>
+                                                    <span>{timeToTS(v.startTime)}</span>
+                                                    <span>{timeToTS(v.endTime)}</span>
+                                                </Flex>
+                                                <span style={verticalDividerStyle} />
+                                                <Flex vertical justify='center' style={{ flex : '1 1 auto', minWidth : 0 }}>
+                                                    <Typography.Text className='default_jaText' style={jaTextStyle}>
+                                                        <SharedBun textData={timeline[i].jaText}/>
+                                                    </Typography.Text>
+                                                    <Typography.Text style={koTextStyle}>
+                                                        {timeline[i].koText}
+                                                    </Typography.Text>
+                                                </Flex>
+                                            </Flex>
+                                        </div>
+                                    </List.Item>
+                                    )
+                                }
                             }
-                        }
-                        </VirtualList>
-                    </List>
-                }
-                </div>
+                            </VirtualList>
+                        </List>
+                    }
+                    </div>
+                </Flex>
             </Flex>
         </>
     )
 }
-

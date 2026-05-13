@@ -174,12 +174,9 @@ iframe {
 .shared-main-panel {
   .shared-video-shell {
     width: 100%;
-    flex: 1 1 auto;
     min-height: 0;
-    display: flex;
-    align-items: center;
     justify-content: center;
-    padding: 18px 18px 0;
+    padding: 18px;
     box-sizing: border-box;
   }
 
@@ -207,5 +204,20 @@ iframe {
       border-radius: 0;
       box-shadow: none;
     }
+  }
+}
+
+.shared-splitter {
+  .ant-splitter-bar {
+    background: transparent;
+  }
+
+  .ant-splitter-bar::before,
+  .ant-splitter-bar::after {
+    background: transparent;
+  }
+
+  .ant-splitter-bar-dragger::before {
+    background: transparent !important;
   }
 }

@@ -11,8 +11,8 @@ export const sharedHeaderStyle : CSSProperties = {
     padding: 0,
     height : 56,
     lineHeight : '56px',
-    borderBottom : '1px solid rgba(255, 255, 255, 0.08)',
+    background : '#050505',
+    border : 'none',
     boxShadow : '0 8px 24px rgba(0, 0, 0, 0.24)',
     zIndex : 2
 }
-

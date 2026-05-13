@@ -811,6 +811,8 @@ declare global {
     SharedTimelineCarouselComp : SharedTimelineCarouselComp;
     SharedBunSettingModalComp : SharedBunSettingModalComp;
     SharedDictionaryComp : SharedDictionaryComp;
+
+    SharedTimelineList : SharedTimelineList;
   }
 
   export interface LayoutComp {
@@ -1132,6 +1134,10 @@ declare global {
       SAVE_CAPTION_JA : string;
       SAVE_CAPTION_KO : string;
     }
+    TOOLTIP : {
+      FLOAT : string;
+      FLOAT_COLLAPSED : string;
+    }
   }
 
   export interface SharedTimelineCarouselComp {
@@ -1160,6 +1166,13 @@ declare global {
   export interface SharedDictionaryComp {
     MESSAGE : {
       ERROR : string;
+    }
+  }
+
+  export interface SharedTimelineList {
+    HEADER : {
+      TITLE : string;
+      LENGTH : string;
     }
   }
   

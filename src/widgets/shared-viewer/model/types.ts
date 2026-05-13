@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 import type { SharedData, SharedTimeline } from 'entities/shared/model/types';
 
@@ -11,12 +11,14 @@ export interface SharedVideoProps {
     setPlayerRef : ( player : HTMLVideoElement ) => void;
     state : ReactPlayerState;
     playerHandles : PlayerHandles;
+    children? : ReactNode;
 }
 
 export interface SharedTimelineCarouselProps {
     timeline : SharedTimeline[];
     state : ReactPlayerState;
     playerHandles : PlayerHandles;
+    setPlayerRef : ( player : HTMLVideoElement ) => void;
     isCollapsed : boolean;
 }
 
@@ -32,5 +34,5 @@ export interface SharedBunProps {
 
 export interface SharedBunSettingModalProps {
     children : ReactNode;
+    triggerStyle? : CSSProperties;
 }
-

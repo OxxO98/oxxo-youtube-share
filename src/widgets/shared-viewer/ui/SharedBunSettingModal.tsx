@@ -15,7 +15,7 @@ type Color = GetProp<ColorPickerProps, 'value'>;
 
 const { setBackgroundColor, setJaTextColor, setKoTextColor, setJaFontSize, setKoFontSize, setSortFont, setJaFontFamily, setKoFontFamily, toggleFontShadow } = sharedActions;
 
-export const SharedBunSettingModal = ({ children } : SharedBunSettingModalProps ) => {
+export const SharedBunSettingModal = ({ children, triggerStyle } : SharedBunSettingModalProps ) => {
     const { t } = useTranslation('SharedBunSettingModalComp');
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -87,7 +87,7 @@ export const SharedBunSettingModal = ({ children } : SharedBunSettingModalProps 
 
     return(
         <>
-            <Button onClick={showModal}>
+            <Button style={triggerStyle} onClick={showModal}>
                 <SettingOutlined />
             </Button>
 
@@ -218,4 +218,3 @@ export const SharedBunSettingModal = ({ children } : SharedBunSettingModalProps 
         </>
     )
 }
-

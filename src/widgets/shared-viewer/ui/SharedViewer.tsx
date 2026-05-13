@@ -30,7 +30,6 @@ import {
 import { SharedDictionary } from './SharedDictionary';
 import { SharedTimelineCarousel } from './SharedTimelineCarousel';
 import { SharedTimelineList } from './SharedTimelineList';
-import { SharedVideo } from './SharedVideo';
 
 export const SharedViewer = ({ sharedData, isCollapsed } : SharedViewerProps ) => {
     const { videoId } = useContext(VideoContext);
@@ -106,12 +105,11 @@ export const SharedViewer = ({ sharedData, isCollapsed } : SharedViewerProps ) =
             <>
                 <Flex vertical className="shared-page-scrollless" style={{ height : '100%', width : '100%', minWidth : 0, background : '#060606', overflow : 'hidden' }}>
                     <Flex vertical className={mainPanelClassName} align='center' justify='space-between' style={{ position : 'relative', width : '100%', flex : '0 0 auto', minWidth : 0, background : '#060606' }}>
-                        <SharedVideo setPlayerRef={setPlayerRef} state={state} playerHandles={playerHandles}/>
-                        <SharedTimelineCarousel timeline={sharedData.timeline} state={state} playerHandles={playerHandles} isCollapsed={isCollapsed}/>
+                        <SharedTimelineCarousel timeline={sharedData.timeline} state={state} playerHandles={playerHandles} setPlayerRef={setPlayerRef} isCollapsed={isCollapsed}/>
                     </Flex>
                     {
                     !isCollapsed &&
-                    <div style={{ flex : '1 1 auto', minHeight : 0, width : '100%', background : '#101010', borderTop : '1px solid rgba(255, 255, 255, 0.08)' }}>
+                    <div style={{ flex : '1 1 auto', minHeight : 0, width : '100%' }}>
                         <SharedTimelineList timeline={sharedData.timeline} state={state} playerHandles={playerHandles}/>
                     </div>
                     }
@@ -124,15 +122,16 @@ export const SharedViewer = ({ sharedData, isCollapsed } : SharedViewerProps ) =
         <>
             <div ref={splitterBoxRef} style={{ height : '100%', width : '100%', minWidth : 0 }}>
                 <Splitter
+                    className='shared-splitter'
                     style={{ height: '100%', width : '100%', background : '#090909' }}
                     onResize={handleSplitterResize}
                     onResizeEnd={handleSplitterResize}
+                    
                     lazy
                 >
                     <Splitter.Panel min={isCollapsed ? 0 : MIN_MAIN_PANEL_SIZE}>
                         <Flex vertical className={mainPanelClassName} align='center' justify='space-between' style={{ position : 'relative', height : '100%', width : '100%', minWidth : 0, background : '#060606', overflow : 'hidden'}}>
-                            <SharedVideo setPlayerRef={setPlayerRef} state={state} playerHandles={playerHandles}/>
-                            <SharedTimelineCarousel timeline={sharedData.timeline} state={state} playerHandles={playerHandles} isCollapsed={isCollapsed}/>
+                            <SharedTimelineCarousel timeline={sharedData.timeline} state={state} playerHandles={playerHandles} setPlayerRef={setPlayerRef} isCollapsed={isCollapsed}/>
                         </Flex>
                     </Splitter.Panel>
                     <Splitter.Panel
@@ -143,6 +142,7 @@ export const SharedViewer = ({ sharedData, isCollapsed } : SharedViewerProps ) =
                         {
                         !isCollapsed &&
                         <Splitter
+                            className='shared-splitter'
                             style={{ ...panelBackdropStyle, minWidth : 0, overflow : 'hidden'  }}
                             collapsibleIcon={{
                                 start : <span style={splitterCollapseIconStyle}><CaretLeftOutlined /></span>,
@@ -160,7 +160,7 @@ export const SharedViewer = ({ sharedData, isCollapsed } : SharedViewerProps ) =
                                 min={0}
                                 max={MAX_DICTIONARY_PANEL_SIZE}
                             >
-                                <div style={{ width : '100%', height : '100%', borderRight : '1px solid rgba(255, 255, 255, 0.08)', overflow : 'hidden' }}>
+                                <div style={{ width : '100%', height : '100%', overflow : 'hidden' }}>
                                     <SharedDictionary />
                                 </div>
                             </Splitter.Panel>
@@ -177,4 +177,3 @@ export const SharedViewer = ({ sharedData, isCollapsed } : SharedViewerProps ) =
         </>
     )
 }
-

@@ -357,13 +357,17 @@ const SharedPage : Locale['SharedPage'] = {
     BUTTON : {
         SAVE_CAPTION_JA : '일본어 자막으로 저장',
         SAVE_CAPTION_KO : '한국어 자막으로 저장'
+    },
+    TOOLTIP : {
+        FLOAT : '영상만 보기',
+        FLOAT_COLLAPSED : '타임라인 보기',
     }
 }
 
 const SharedTimelineCarouselComp : Locale['SharedTimelineCarouselComp'] = {
     BUTTON : {
         PREV : '이전',
-        PLAY : '제생',
+        PLAY : '재생',
         NEXT : '다음'
     },
     SELECT : {
@@ -374,7 +378,7 @@ const SharedTimelineCarouselComp : Locale['SharedTimelineCarouselComp'] = {
 }
 
 const SharedBunSettingModalComp : Locale['SharedBunSettingModalComp'] = {
-    TITLE : '세팅',
+    TITLE : '설정',
     BUTTON : {
         DONE : '확인',
         CANCLE : '취소'
@@ -389,6 +393,13 @@ const SharedBunSettingModalComp : Locale['SharedBunSettingModalComp'] = {
 
 const SharedDictionaryComp : Locale['SharedDictionaryComp'] = {
     ...DictionaryComp
+}
+
+const SharedTimelineList : Locale['SharedTimelineList'] = {
+    HEADER : {
+        TITLE : '타임라인',
+        LENGTH : '개'
+    }
 }
 
 export default {
@@ -449,4 +460,5 @@ export default {
     SharedTimelineCarouselComp,
     SharedBunSettingModalComp,
     SharedDictionaryComp,
+    SharedTimelineList,
 } as Locale

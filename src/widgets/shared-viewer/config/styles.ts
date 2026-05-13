@@ -4,15 +4,12 @@ export const timelineControlStyle : CSSProperties = {
     height : '70px',
     alignContent : 'center',
     padding : '0 16px',
-    borderTop : '1px solid rgba(255, 255, 255, 0.08)',
-    background : 'rgba(14, 14, 16, 0.92)',
     backdropFilter : 'blur(10px)'
 }
 
 export const panelBackdropStyle : CSSProperties = {
     height : '100%',
     width : '100%',
-    background : '#101010'
 }
 
 export const splitterCollapseIconStyle : CSSProperties = {
