@@ -127,8 +127,8 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
     }
 
     const playButtonStyle : CSSProperties = {
-        width : isMobile ? 36 : 68,
-        height : isMobile ? 36 : 68,
+        width : isMobile ? 46 : 68,
+        height : isMobile ? 46 : 68,
         borderRadius : '50%',
         background : 'linear-gradient(180deg, #ff3046, #d7000b)',
         border : '1px solid rgba(255, 90, 110, 0.55)',
@@ -319,7 +319,7 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
                                 </Typography.Text>
                             </Flex>
                         </div>
-                        <Flex justify='center' align='center' gap={isMobile ? 10 : 20} wrap style={controlGroupStyle}>
+                        <Flex justify='center' align='center' gap={isMobile ? 4 : 20} wrap style={controlGroupStyle}>
                             <Flex vertical align='center' style={controlItemStyle}>
                                 <Button style={controlButtonStyle} onClick={prevTimeLine} icon={<StepBackwardOutlined />} />
                             </Flex>
