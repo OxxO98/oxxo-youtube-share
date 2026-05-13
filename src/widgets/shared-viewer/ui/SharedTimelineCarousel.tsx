@@ -111,13 +111,13 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
 
     const controlItemStyle : CSSProperties = {
         flex : '0 0 2',
-        minWidth : isMobile ? 58 : 104,
+        minWidth : isMobile ? 48 : 104,
         textAlign : 'center',
     }
 
     const controlButtonStyle : CSSProperties = {
-        width : isMobile ? 54 : 94,
-        height : isMobile ? 42 : 54,
+        width : isMobile ? 44 : 94,
+        height : isMobile ? 32 : 54,
         borderRadius : 6,
         background : 'rgba(255, 255, 255, 0.045)',
         border : '1px solid rgba(255, 255, 255, 0.12)',
@@ -127,8 +127,8 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
     }
 
     const playButtonStyle : CSSProperties = {
-        width : isMobile ? 56 : 68,
-        height : isMobile ? 56 : 68,
+        width : isMobile ? 46 : 68,
+        height : isMobile ? 46 : 68,
         borderRadius : '50%',
         background : 'linear-gradient(180deg, #ff3046, #d7000b)',
         border : '1px solid rgba(255, 90, 110, 0.55)',
@@ -139,7 +139,7 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
 
     const dividerStyle : CSSProperties = {
         width : 1,
-        height : isMobile ? 48 : 74,
+        height : isMobile ? 38 : 74,
         background : 'rgba(255, 255, 255, 0.10)',
     }
 
