@@ -146,7 +146,7 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
     const controlSelectStyle : CSSProperties = {
         ...controlButtonStyle,
         fontSize : isMobile ? 12 : 16,
-        width : isMobile ? 94 : 144,
+        width : isMobile ? 68 : 144,
     }
 
     const handleProgressChange = ( value : number | number[] ) => {
@@ -339,9 +339,9 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
                                     style={controlSelectStyle}
                                     onChange={handelSelectChange}
                                     options={[
-                                        { value: 'jaOnly', label: t('SELECT.JATEXT_ONLY') },
-                                        { value: 'koOnly', label: t('SELECT.KOTEXT_ONLY') },
-                                        { value: 'both', label: t('SELECT.BOTH') },
+                                        { value: 'jaOnly', label: isMobile ? 'あ' : t('SELECT.JATEXT_ONLY') },
+                                        { value: 'koOnly', label: isMobile ? '가' : t('SELECT.KOTEXT_ONLY') },
+                                        { value: 'both', label: isMobile ? '가あ' : t('SELECT.BOTH') },
                                 ]}/>
                             </Flex>
                             <span style={dividerStyle} />
