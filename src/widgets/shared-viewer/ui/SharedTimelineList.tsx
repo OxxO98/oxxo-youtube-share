@@ -212,11 +212,16 @@ export const SharedTimelineList = ({ timeline, state, playerHandles } : SharedTi
                                                 <span style={activeMarkerStyle}></span>
                                             }
                                             <Flex align='center' style={{ width : '100%' }}>
-                                                <Flex vertical justify='center' style={timeColumnStyle}>
-                                                    <span>{timeToTS(v.startTime)}</span>
-                                                    <span>{timeToTS(v.endTime)}</span>
-                                                </Flex>
-                                                <span style={verticalDividerStyle} />
+                                                {
+                                                    !isMobile &&
+                                                    <>
+                                                        <Flex vertical justify='center' style={timeColumnStyle}>
+                                                            <span>{timeToTS(v.startTime)}</span>
+                                                            <span>{timeToTS(v.endTime)}</span>
+                                                        </Flex>
+                                                        <span style={verticalDividerStyle} />
+                                                    </>
+                                                }
                                                 <Flex vertical justify='center' style={{ flex : '1 1 auto', minWidth : 0 }}>
                                                     <Typography.Text className='default_jaText' style={jaTextStyle}>
                                                         <SharedBun textData={timeline[i].jaText}/>
