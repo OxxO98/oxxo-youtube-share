@@ -1,0 +1,2 @@
+export { SharedPage } from './ui/SharedPage';
+

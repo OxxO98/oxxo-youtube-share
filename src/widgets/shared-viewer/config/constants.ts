@@ -1,0 +1,9 @@
+export const DEFAULT_SIDE_PANEL_SIZE = 680;
+export const MIN_SIDE_PANEL_SIZE = 420;
+export const MAX_SIDE_PANEL_SIZE = 820;
+export const MIN_MAIN_PANEL_SIZE = 420;
+export const INITIAL_DICTIONARY_PANEL_SIZE = 0;
+export const DEFAULT_DICTIONARY_PANEL_SIZE = 300;
+export const MIN_DICTIONARY_PANEL_SIZE = 220;
+export const MAX_DICTIONARY_PANEL_SIZE = 360;
+
