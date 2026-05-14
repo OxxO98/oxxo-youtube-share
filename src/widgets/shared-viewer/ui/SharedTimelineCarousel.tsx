@@ -12,10 +12,49 @@ import { useHandleKeyboard, useTimeStamp, useVideoPlayHook } from 'hooks/VideoPl
 import { RootState } from 'reducers/store';
 
 import type { SharedTimelineCarouselProps } from 'widgets/shared-viewer/model/types';
+import type { SharedTimeline } from 'entities/shared/model/types';
 import { timelineControlStyle } from 'widgets/shared-viewer/config/styles';
 import { SharedBun } from './SharedBun';
 import { SharedBunSettingModal } from './SharedBunSettingModal';
 import { SharedVideo } from './SharedVideo';
+
+interface SharedSubtitlePreviewProps {
+    timeline : SharedTimeline;
+    style : CSSProperties;
+    sortFont : boolean;
+    jaTextStyle : CSSProperties;
+    koTextStyle : CSSProperties;
+    activeRangeId? : string;
+}
+
+const SharedSubtitlePreview = ({ timeline, style, sortFont, jaTextStyle, koTextStyle, activeRangeId } : SharedSubtitlePreviewProps ) => {
+
+    const renderOrder = sortFont ? ['ko', 'ja'] : ['ja', 'ko'];
+
+    return(
+        <Flex vertical justify='center' align='center' style={style}>
+            {
+                renderOrder.map( (lang) => {
+                    if( lang === 'ja' ){
+                        return(
+                            <div id={activeRangeId} style={jaTextStyle}>
+                                <SharedBun textData={timeline.jaText}/>
+                            </div>
+                        )
+                    }
+
+                    if( lang === 'ko' ){
+                        return(
+                            <div style={koTextStyle}>
+                                {timeline.koText}
+                            </div>
+                        )
+                    }
+                })
+            }
+            </Flex>
+    )
+}
 
 export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlayerRef, isCollapsed } : SharedTimelineCarouselProps ) => {
     const { t } = useTranslation('SharedTimelineCarouselComp');
@@ -256,45 +295,7 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
         <>
             <Flex vertical style={{ width : '100%', height : '100%', minHeight : 0 }}>
                 <SharedVideo setPlayerRef={setPlayerRef} state={state} playerHandles={playerHandles}>
-                    <Flex vertical justify='center' align='center' style={{ ...TimelineBunStyle, ...BoxStyle }}>
-                    {
-                    timeline !== null && timeline.length !== 0 &&
-                    <>
-                    {
-                        sortFont ?
-                        <>
-                        {
-                            bunSelect.ko &&
-                            <div style={KoTextStyle}>
-                                {timeline[currentBunId].koText}
-                            </div>
-                        }
-                        {
-                            bunSelect.ja &&
-                            <div id="activeRange" style={JaTextStyle}>
-                                <SharedBun textData={timeline[currentBunId].jaText}/>
-                            </div>
-                        }
-                        </>
-                        :
-                        <>
-                        {
-                            bunSelect.ja &&
-                            <div id="activeRange" style={JaTextStyle}>
-                                <SharedBun textData={timeline[currentBunId].jaText}/>
-                            </div>
-                        }
-                        {
-                            bunSelect.ko &&
-                            <div style={KoTextStyle}>
-                                {timeline[currentBunId].koText}
-                            </div>
-                        }
-                        </>
-                    }
-                    </>
-                    }
-                    </Flex>
+                    <SharedSubtitlePreview timeline={timeline[currentBunId]} style={{ ...TimelineBunStyle, ...BoxStyle }} sortFont={sortFont} jaTextStyle={JaTextStyle} koTextStyle={KoTextStyle} activeRangeId='activeRange'/>
                 </SharedVideo>
                 <Flex style={{ padding : 18, paddingTop : isMobile ? 0 : 18 }}>
                 {
@@ -347,40 +348,7 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
                             <span style={dividerStyle} />
                             <Flex vertical align='center' style={controlItemStyle}>
                                 <SharedBunSettingModal triggerStyle={controlButtonStyle}>
-                                    <Flex vertical justify='center' style={{ ...TimelineBunStyle, marginBottom : '16px', padding : '14px 18px', borderRadius : 8, border : '1px solid rgba(255, 255, 255, 0.1)' }}>
-                                    {
-                                        sortFont ?
-                                        <>
-                                        {
-                                            bunSelect.ko &&
-                                            <div style={KoTextStyle}>
-                                                {timeline[currentBunId].koText}
-                                            </div>
-                                        }
-                                        {
-                                            bunSelect.ja &&
-                                            <div style={JaTextStyle}>
-                                                <SharedBun textData={timeline[currentBunId].jaText}/>
-                                            </div>
-                                        }
-                                        </>
-                                        :
-                                        <>
-                                        {
-                                            bunSelect.ja &&
-                                            <div style={JaTextStyle}>
-                                                <SharedBun textData={timeline[currentBunId].jaText}/>
-                                            </div>
-                                        }
-                                        {
-                                            bunSelect.ko &&
-                                            <div style={KoTextStyle}>
-                                                {timeline[currentBunId].koText}
-                                            </div>
-                                        }
-                                        </>
-                                    }
-                                    </Flex>
+                                    <SharedSubtitlePreview timeline={timeline[currentBunId]} style={{ ...TimelineBunStyle, marginBottom : '16px', padding : '14px 18px', borderRadius : 8, border : '1px solid rgba(255, 255, 255, 0.1)' }} sortFont={sortFont} jaTextStyle={JaTextStyle} koTextStyle={KoTextStyle}/>
                                 </SharedBunSettingModal>
                             </Flex>
                         </Flex>
@@ -402,40 +370,7 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
                         <FloatButton type='primary' onClick={playTimeline} icon={ playing ? <PauseOutlined /> : <CaretRightOutlined/> }/>
                         <FloatButton onClick={nextTimeLine} icon={<StepForwardOutlined />}/>
                         <SharedBunSettingModal triggerStyle={{ width : '40px', height : '40px', borderRadius : '50%'}} >
-                            <Flex vertical justify='center' style={{ ...TimelineBunStyle, marginBottom : '16px', padding : '14px 18px', borderRadius : 8, border : '1px solid rgba(255, 255, 255, 0.1)' }}>
-                                {
-                                    sortFont ?
-                                    <>
-                                    {
-                                        bunSelect.ko &&
-                                        <div style={KoTextStyle}>
-                                            {timeline[currentBunId].koText}
-                                        </div>
-                                    }
-                                    {
-                                        bunSelect.ja &&
-                                        <div style={JaTextStyle}>
-                                            <SharedBun textData={timeline[currentBunId].jaText}/>
-                                        </div>
-                                    }
-                                    </>
-                                    :
-                                    <>
-                                    {
-                                        bunSelect.ja &&
-                                        <div style={JaTextStyle}>
-                                            <SharedBun textData={timeline[currentBunId].jaText}/>
-                                        </div>
-                                    }
-                                    {
-                                        bunSelect.ko &&
-                                        <div style={KoTextStyle}>
-                                            {timeline[currentBunId].koText}
-                                        </div>
-                                    }
-                                    </>
-                                }
-                            </Flex>
+                            <SharedSubtitlePreview timeline={timeline[currentBunId]} style={{ ...TimelineBunStyle, marginBottom : '16px', padding : '14px 18px', borderRadius : 8, border : '1px solid rgba(255, 255, 255, 0.1)' }} sortFont={sortFont} jaTextStyle={JaTextStyle} koTextStyle={KoTextStyle}/>
                         </SharedBunSettingModal>
                     </FloatButton.Group>
                 }

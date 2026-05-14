@@ -16,3 +16,10 @@ export const sharedHeaderStyle : CSSProperties = {
     boxShadow : '0 8px 24px rgba(0, 0, 0, 0.24)',
     zIndex : 2
 }
+
+export const sharedHeaderMobileStyle : CSSProperties = {
+    ...sharedHeaderStyle,
+    height : 40,
+    paddingTop : 8,
+    lineHeight : '32px',
+}

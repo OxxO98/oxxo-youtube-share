@@ -9,13 +9,13 @@ import { DownloadOutlined } from '@ant-design/icons';
 import { SelectLocaleComp } from 'components/SelectLocaleComp';
 import { MediaQueryContext } from 'contexts/MediaQueryContext';
 
-import { sharedHeaderStyle } from './styles';
+import { sharedHeaderStyle, sharedHeaderMobileStyle } from './styles';
 
 const { Header } = Layout;
 
 const headerInnerStyle : CSSProperties = {
     height : '100%',
-    margin : '0 12px',
+    margin : '0 18px',
 }
 
 const captionButtonStyle : CSSProperties = {
@@ -42,7 +42,7 @@ export const SharedHeader = ({ onSaveCaption } : SharedHeaderProps) => {
     });
 
     return (
-        <Header style={sharedHeaderStyle}>
+        <Header style={isMobile ? sharedHeaderMobileStyle : sharedHeaderStyle}>
             <Flex align='center' gap={12} justify='right' style={headerInnerStyle}>
                 {
                     !isMobile &&
