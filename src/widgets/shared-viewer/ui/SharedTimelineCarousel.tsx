@@ -298,7 +298,7 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
                 <SharedVideo setPlayerRef={setPlayerRef} state={state} playerHandles={playerHandles}>
                     <SharedSubtitlePreview timeline={timeline[currentBunId]} style={{ ...TimelineBunStyle, ...BoxStyle }} sortFont={sortFont} jaTextStyle={JaTextStyle} koTextStyle={KoTextStyle} activeRangeId='activeRange'/>
                 </SharedVideo>
-                <Flex style={{ padding : 18, paddingTop : isMobile ? 0 : 18 }}>
+                <Flex style={{ padding : 18, paddingTop : isMobile ? 0 : 18, paddingBottom : isMobile ? 8 : 18 }}>
                 {
                     isCollapsed === false &&
                     <div style={controlPanelStyle}>

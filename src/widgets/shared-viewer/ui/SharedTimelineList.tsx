@@ -197,7 +197,7 @@ export const SharedTimelineList = ({ timeline, state, playerHandles } : SharedTi
                                         style={{
                                             position : 'relative',
                                             margin : '0 0 8px',
-                                            padding : isMobile ? '1rem 1rem' : '14px 16px',
+                                            padding : isMobile ? '8px 16px' : '14px 16px',
                                             border : `1px solid ${isActive ? '#d7000b' : 'rgba(255, 255, 255, 0.08)'}`,
                                             borderRadius : 8,
                                             background : isActive ? 'linear-gradient(180deg, rgba(215, 0, 11, 0.14), rgba(255, 255, 255, 0.035))' : 'linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.035))',
@@ -223,10 +223,10 @@ export const SharedTimelineList = ({ timeline, state, playerHandles } : SharedTi
                                                     </>
                                                 }
                                                 <Flex vertical justify='center' style={{ flex : '1 1 auto', minWidth : 0 }}>
-                                                    <Typography.Text className='default_jaText' style={jaTextStyle}>
+                                                    <Typography.Text className='default_jaText' style={{ ...jaTextStyle, lineHeight : isMobile ? 1 : 1.45 }}>
                                                         <SharedBun textData={timeline[i].jaText}/>
                                                     </Typography.Text>
-                                                    <Typography.Text style={koTextStyle}>
+                                                    <Typography.Text style={{ ...koTextStyle, lineHeight : isMobile ? 1 : 1.45 }}>
                                                         {timeline[i].koText}
                                                     </Typography.Text>
                                                 </Flex>

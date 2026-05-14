@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import ReactPlayer from 'react-player';
+import { useMediaQuery } from 'react-responsive';
 
 import { Flex } from 'antd'
 
 import type { SharedVideoProps } from 'widgets/shared-viewer/model/types';
+
+import { MediaQueryContext } from 'contexts/MediaQueryContext';
 
 const areSharedVideoPropsEqual = ( prev : SharedVideoProps, next : SharedVideoProps ) => {
     return (
@@ -18,6 +21,10 @@ const areSharedVideoPropsEqual = ( prev : SharedVideoProps, next : SharedVideoPr
 }
 
 export const SharedVideo = React.memo(({ setPlayerRef, state, playerHandles, children } : SharedVideoProps) => {
+    const isMobile = useMediaQuery({
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
+    });
+
     const { handlePlay, handlePause, handleDurationChange } = playerHandles;
 
     const {
@@ -33,6 +40,7 @@ export const SharedVideo = React.memo(({ setPlayerRef, state, playerHandles, chi
             <Flex
                 justify='center'
                 className="shared-video-shell"
+                style={{ padding : isMobile ? '8px 18px' : '18px' }}
             >
                 <div
                     className="shared-video-frame"
