@@ -197,7 +197,7 @@ export const SharedTimelineList = ({ timeline, state, playerHandles } : SharedTi
                                         style={{
                                             position : 'relative',
                                             margin : '0 0 8px',
-                                            padding : '14px 16px',
+                                            padding : isMobile ? '1rem 1rem' : '14px 16px',
                                             border : `1px solid ${isActive ? '#d7000b' : 'rgba(255, 255, 255, 0.08)'}`,
                                             borderRadius : 8,
                                             background : isActive ? 'linear-gradient(180deg, rgba(215, 0, 11, 0.14), rgba(255, 255, 255, 0.035))' : 'linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.035))',
