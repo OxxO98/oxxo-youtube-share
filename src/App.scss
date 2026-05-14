@@ -98,7 +98,7 @@ iframe {
   margin : 0;
   padding: 0;
   rt{
-    line-height: 1;
+    line-height: 0.5;
 
     margin : 0;
     padding: 0;
@@ -110,10 +110,6 @@ iframe {
 }
 
 .rubyNasi{
-  // font-family: 'Noto Sans JP', sans-serif;
-  // font-size: 16px;
-  // font-weight: 400;
-
   margin: 0;
   padding: 0;
 }
@@ -126,12 +122,9 @@ iframe {
   position: relative;
   font-family: 'Noto Sans JP', sans-serif;
 
-  //color:$white;
-  //font-weight: bold;
   z-index: 0;
 
   rt{
-    //color: $black;
     position: relative;
     z-index: 0;
     user-select: none;
@@ -146,7 +139,6 @@ iframe {
     z-index: -1;
     background-color: $primary-color;
   }
-  //box-shadow: inset 0 -16px 0 hsla(0, 90%, 83%, 0.93);
 }
 
 .bold {

@@ -226,7 +226,7 @@ export const SharedTimelineList = ({ timeline, state, playerHandles } : SharedTi
                                                     <Typography.Text className='default_jaText' style={{ ...jaTextStyle, lineHeight : isMobile ? 1 : 1.45 }}>
                                                         <SharedBun textData={timeline[i].jaText}/>
                                                     </Typography.Text>
-                                                    <Typography.Text style={{ ...koTextStyle, lineHeight : isMobile ? 1 : 1.45 }}>
+                                                    <Typography.Text style={{ ...koTextStyle, lineHeight : isMobile ? 1.2 : 1.45 }}>
                                                         {timeline[i].koText}
                                                     </Typography.Text>
                                                 </Flex>

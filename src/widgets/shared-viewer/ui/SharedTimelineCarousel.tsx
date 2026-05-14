@@ -69,7 +69,7 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
     const TimelineBunStyle : CSSProperties = {
         width : '100%',
         textAlign : 'center',
-        margin : 'auto',
+        margin : isMobile ? '4px 0' : 'auto',
         backgroundColor : backgroundColor,
         boxSizing : 'border-box',
         overflowWrap : 'break-word',
@@ -82,10 +82,10 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
         bottom : isMobile ? '7%' : '8%',
         left : `50%`,
         width : isMobile ? '88%' : 'min(72%, 760px)',
-        padding : isMobile ? '10px 14px' : '12px 22px',
+        padding : isMobile ? '4px 14px' : '12px 22px',
         borderRadius : 16,
         backdropFilter : 'blur(8px)',
-        paddingBottom : `${ isMobile ? '10px' : '12px' }`,
+        paddingBottom : isMobile ? '8px' : '12px',
         pointerEvents : isMobile ? 'none' : 'auto',
         zIndex : 2,
     }
@@ -108,7 +108,7 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
         fontWeight : koFontWeight,
         textShadow: textShadow,
         lineHeight : 1.45,
-        marginTop : 4
+        marginTop : '4px'
     }
 
     const [currentBunId, setCurrentBunId] = useState(0);
