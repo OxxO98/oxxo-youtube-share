@@ -85,7 +85,8 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
         padding : isMobile ? '10px 14px' : '12px 22px',
         borderRadius : 16,
         backdropFilter : 'blur(8px)',
-        paddingBottom : `${ isMobile ? 'calc(10px + 2dvw)' : '12px' }`,
+        paddingBottom : `${ isMobile ? '10px' : '12px' }`,
+        pointerEvents : isMobile ? 'none' : 'auto',
         zIndex : 2,
     }
 
