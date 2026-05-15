@@ -39,12 +39,6 @@ const SharedPage = () => {
         saveCaptionFile(sharedData, timeToTS, opt);
     }
 
-    useEffect( () => {
-        if( isLandscape === true ){
-            setIsCollapsed(true);
-        }
-    }, [isLandscape])
-
     useHotkeys('enter', () => { setIsCollapsed(!isCollapsed) })
 
     return(
@@ -58,11 +52,11 @@ const SharedPage = () => {
                     <Content>
                     {
                         sharedData !== null &&
-                        <SharedViewer sharedData={sharedData} isCollapsed={isCollapsed}/>
+                        <SharedViewer sharedData={sharedData} isCollapsed={isCollapsed || isLandscape}/>
                     }
                     <FloatButton
                         type="primary"
-                        tooltip={(isCollapsed && !isMobile) ? <span>{t('TOOLTIP.FLOAT_COLLAPSED')}</span> : <span>{t('TOOLTIP.FLOAT')}</span>}
+                        tooltip={isCollapsed ? !isMobile ? <span>{t('TOOLTIP.FLOAT_COLLAPSED')}</span> : null : !isMobile ? <span>{t('TOOLTIP.FLOAT')}</span> : null }
                         icon={isCollapsed ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
                         onClick={() => setIsCollapsed(!isCollapsed)}
                         style={{ boxShadow : '0 10px 28px rgba(215, 0, 11, 0.34)' }}
