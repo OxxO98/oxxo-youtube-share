@@ -24,7 +24,7 @@ export const sharedHeaderShortStyle : CSSProperties = {
     lineHeight : '32px',
 }
 
-export const sharedHeaderMobileStyle : CSSProperties = {
+export const sharedHeaderMobileLandscapeStyle : CSSProperties = {
     ...sharedHeaderShortStyle,
     position : 'absolute',
     top : 0,
