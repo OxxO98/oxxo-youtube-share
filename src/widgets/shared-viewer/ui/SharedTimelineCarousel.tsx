@@ -369,6 +369,7 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
                             transform : `translate( 0%, calc(-100% - 16px) )`
                         }}
                         open={floatButtonOpen}
+                        placement={isLandscape ? 'top' : 'left'}
                         trigger='click'
                         icon={<ControlOutlined />}
                         onClick={() => setFloatButtonOpen(!floatButtonOpen)}
