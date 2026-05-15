@@ -145,7 +145,7 @@ export const SharedViewer = ({ sharedData, isCollapsed } : SharedViewerProps ) =
                         min={isCollapsed ? 0 : MIN_SIDE_PANEL_SIZE}
                         max={isCollapsed ? 0 : MAX_SIDE_PANEL_SIZE}
                     >
-                        {
+                    {
                         !isCollapsed &&
                         <Splitter
                             className='shared-splitter'

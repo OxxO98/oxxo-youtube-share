@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { useMediaQuery } from 'react-responsive';
 import { useTranslation } from 'react-i18next';
 import { useHotkeys } from 'react-hotkeys-hook';
 
@@ -7,6 +8,7 @@ import { FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
 
 import { saveCaptionFile } from 'entities/shared/lib/createCaptionFile';
 import { VideoContext } from 'contexts/VideoContext';
+import { MediaQueryContext } from 'contexts/MediaQueryContext';
 import { useTimeStamp } from 'hooks/VideoPlayHook';
 import { SharedViewer } from 'widgets/shared-viewer/ui/SharedViewer';
 
@@ -18,6 +20,10 @@ const { Content } = Layout;
 
 const SharedPage = () => {
     const { t } = useTranslation('SharedPage');
+    
+    const isLandscape = useMediaQuery({
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobileLandscape
+    });
 
     const sharedData = useSharedData();
     const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
@@ -45,13 +51,16 @@ const SharedPage = () => {
                         sharedData !== null &&
                         <SharedViewer sharedData={sharedData} isCollapsed={isCollapsed}/>
                     }
-                    <FloatButton
-                        type="primary"
-                        tooltip={isCollapsed ? <span>{t('TOOLTIP.FLOAT_COLLAPSED')}</span> : <span>{t('TOOLTIP.FLOAT')}</span>}
-                        icon={isCollapsed ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
-                        onClick={() => setIsCollapsed(!isCollapsed)}
-                        style={{ boxShadow : '0 10px 28px rgba(215, 0, 11, 0.34)' }}
-                    />
+                    {
+                        !isLandscape &&
+                        <FloatButton
+                            type="primary"
+                            tooltip={isCollapsed ? <span>{t('TOOLTIP.FLOAT_COLLAPSED')}</span> : <span>{t('TOOLTIP.FLOAT')}</span>}
+                            icon={isCollapsed ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
+                            onClick={() => setIsCollapsed(!isCollapsed)}
+                            style={{ boxShadow : '0 10px 28px rgba(215, 0, 11, 0.34)' }}
+                        />
+                    }
                     </Content>
                 </Layout>
             </VideoContext.Provider>
