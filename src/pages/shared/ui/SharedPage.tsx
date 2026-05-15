@@ -39,6 +39,12 @@ const SharedPage = () => {
         saveCaptionFile(sharedData, timeToTS, opt);
     }
 
+    useEffect( () => {
+        if( isMobile === true && isLandscape === false ){
+            setIsCollapsed(false);
+        }
+    }, [isMobile, isLandscape])
+
     useHotkeys('enter', () => { setIsCollapsed(!isCollapsed) })
 
     return(

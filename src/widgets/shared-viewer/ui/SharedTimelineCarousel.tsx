@@ -376,9 +376,12 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
                         <FloatButton onClick={prevTimeLine} icon={<StepBackwardOutlined />}/>
                         <FloatButton type='primary' onClick={playTimeline} icon={ playing ? <PauseOutlined /> : <CaretRightOutlined/> }/>
                         <FloatButton onClick={nextTimeLine} icon={<StepForwardOutlined />}/>
-                        <SharedBunSettingModal triggerStyle={{ width : '40px', height : '40px', borderRadius : '50%'}} >
-                            <SharedSubtitlePreview timeline={timeline[currentBunId]} style={{ ...TimelineBunStyle, marginBottom : '16px', padding : '14px 18px', borderRadius : 8, border : '1px solid rgba(255, 255, 255, 0.1)' }} sortFont={sortFont} jaTextStyle={JaTextStyle} koTextStyle={KoTextStyle}/>
-                        </SharedBunSettingModal>
+                        {
+                            !isLandscape &&
+                            <SharedBunSettingModal triggerStyle={{ width : '40px', height : '40px', borderRadius : '50%'}} >
+                                <SharedSubtitlePreview timeline={timeline[currentBunId]} style={{ ...TimelineBunStyle, marginBottom : '16px', padding : '14px 18px', borderRadius : 8, border : '1px solid rgba(255, 255, 255, 0.1)' }} sortFont={sortFont} jaTextStyle={JaTextStyle} koTextStyle={KoTextStyle}/>
+                            </SharedBunSettingModal>
+                        }
                     </FloatButton.Group>
                 }
             </Flex>
