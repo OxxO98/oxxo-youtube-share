@@ -111,6 +111,10 @@ export const SharedTimelineList = ({ timeline, state, playerHandles } : SharedTi
     const isMobile = useMediaQuery({
         query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
     });
+    const isShort = useMediaQuery({
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).short
+    });
+    const isResponsive = isMobile || isShort;
     const divBox = useRef<HTMLDivElement>(null);
     const [divBoxHeight, setDivBoxHeight] = useState<number>(800);
     const virtualRef = useRef(null);
@@ -173,7 +177,7 @@ export const SharedTimelineList = ({ timeline, state, playerHandles } : SharedTi
 
     return(
         <>
-            <Flex vertical style={{ ...panelOuterStyle, paddingTop : isMobile ? 0 : 18, paddingBottom : isMobile ? 0 : 18 }}>
+            <Flex vertical style={{ ...panelOuterStyle, paddingTop : isResponsive ? 0 : 18, paddingBottom : isResponsive ? 0 : 18 }}>
                 <Flex vertical className="shared-page-scrollless" style={panelStyle}>
                     <Flex align='center' gap={10} style={headerStyle}>
                         <Typography.Text style={titleStyle}>{t('HEADER.TITLE')}</Typography.Text>
@@ -203,7 +207,7 @@ export const SharedTimelineList = ({ timeline, state, playerHandles } : SharedTi
                                         style={{
                                             position : 'relative',
                                             margin : '0 0 8px',
-                                            padding : isMobile ? '8px 16px' : '14px 16px',
+                                            padding : isResponsive ? '8px 16px' : '14px 16px',
                                             border : `1px solid ${isActive ? '#d7000b' : 'rgba(255, 255, 255, 0.08)'}`,
                                             borderRadius : 8,
                                             background : isActive ? 'linear-gradient(180deg, rgba(215, 0, 11, 0.14), rgba(255, 255, 255, 0.035))' : 'linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.035))',
@@ -215,11 +219,11 @@ export const SharedTimelineList = ({ timeline, state, playerHandles } : SharedTi
                                         <div style={{ width : "100%" }} onClick={() => goToTimeLine(i)}>
                                             {
                                                 isActive &&
-                                                <span style={isMobile ? activeMarkerStyleMobile : activeMarkerStyle }></span>
+                                                <span style={isResponsive ? activeMarkerStyleMobile : activeMarkerStyle }></span>
                                             }
                                             <Flex align='center' style={{ width : '100%' }}>
                                                 {
-                                                    !isMobile &&
+                                                    !isResponsive &&
                                                     <>
                                                         <Flex vertical justify='center' style={timeColumnStyle}>
                                                             <span>{timeToTS(v.startTime)}</span>
@@ -229,10 +233,10 @@ export const SharedTimelineList = ({ timeline, state, playerHandles } : SharedTi
                                                     </>
                                                 }
                                                 <Flex vertical justify='center' style={{ flex : '1 1 auto', minWidth : 0 }}>
-                                                    <Typography.Text className='default_jaText' style={{ ...jaTextStyle, lineHeight : isMobile ? 1 : 1.45 }}>
+                                                    <Typography.Text className='default_jaText' style={{ ...jaTextStyle, lineHeight : isResponsive ? 1 : 1.45 }}>
                                                         <SharedBun textData={timeline[i].jaText}/>
                                                     </Typography.Text>
-                                                    <Typography.Text style={{ ...koTextStyle, lineHeight : isMobile ? 1.2 : 1.45 }}>
+                                                    <Typography.Text style={{ ...koTextStyle, lineHeight : isResponsive ? 1.2 : 1.45 }}>
                                                         {timeline[i].koText}
                                                     </Typography.Text>
                                                 </Flex>

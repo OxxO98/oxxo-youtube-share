@@ -58,14 +58,17 @@ const SharedSubtitlePreview = ({ timeline, style, sortFont, jaTextStyle, koTextS
 
 export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlayerRef, isCollapsed } : SharedTimelineCarouselProps ) => {
     const { t } = useTranslation('SharedTimelineCarouselComp');
-    const { t : tSetting } = useTranslation('SharedBunSettingModalComp');
 
     const isMobile = useMediaQuery({
         query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
     });
+    const isLandscape = useMediaQuery({
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobileLandscape
+    });
     const isShort = useMediaQuery({
         query : useContext<MediaQueryContextInterface>(MediaQueryContext).short
     });
+    const isResponsive = isMobile || isShort;
 
     const { backgroundColor, jaTextColor, koTextColor,  jaTextFontSize, koTextFontSize, jaFontFamily, koFontFamily, sortFont, fontShadow, jaFontWeight, koFontWeight } = useSelector( (_state : RootState) => _state.shared );
 
@@ -301,9 +304,9 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
                 <SharedVideo setPlayerRef={setPlayerRef} state={state} playerHandles={playerHandles}>
                     <SharedSubtitlePreview timeline={timeline[currentBunId]} style={{ ...TimelineBunStyle, ...BoxStyle }} sortFont={sortFont} jaTextStyle={JaTextStyle} koTextStyle={KoTextStyle} activeRangeId='activeRange'/>
                 </SharedVideo>
-                <Flex style={{ padding : 18, paddingTop : isMobile ? 0 : 18, paddingBottom : isMobile ? 8 : 18 }}>
+                <Flex style={{ padding : 18, paddingTop : isResponsive ? 0 : 18, paddingBottom : isResponsive ? 8 : 18 }}>
                 {
-                    !isCollapsed && !isMobile &&
+                    !isCollapsed && !isLandscape &&
                     <div style={controlPanelStyle}>
                         <div style={progressStyle}>
                             <Slider

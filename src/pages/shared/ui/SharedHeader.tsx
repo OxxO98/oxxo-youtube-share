@@ -41,7 +41,7 @@ export const SharedHeader = ({ onSaveCaption } : SharedHeaderProps) => {
         query : useContext<MediaQueryContextInterface>(MediaQueryContext).short
     });
     const isMobile = useMediaQuery({
-        query : useContext<MediaQueryContextInterface>(MediaQueryContext).short
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
     });
     const isResponsive = isShort || isMobile;
 

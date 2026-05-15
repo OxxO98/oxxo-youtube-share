@@ -24,6 +24,10 @@ export const SharedVideo = React.memo(({ setPlayerRef, state, playerHandles, chi
     const isMobile = useMediaQuery({
         query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
     });
+    const isShort = useMediaQuery({
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).short
+    });
+    const isResponsive = isMobile || isShort;
 
     const { handlePlay, handlePause, handleDurationChange } = playerHandles;
 
@@ -40,7 +44,7 @@ export const SharedVideo = React.memo(({ setPlayerRef, state, playerHandles, chi
             <Flex
                 justify='center'
                 className="shared-video-shell"
-                style={{ padding : isMobile ? '8px 18px' : '18px' }}
+                style={{ padding : isResponsive ? '8px 18px' : '18px' }}
             >
                 <div
                     className="shared-video-frame"
