@@ -17,9 +17,16 @@ export const sharedHeaderStyle : CSSProperties = {
     zIndex : 2
 }
 
-export const sharedHeaderMobileStyle : CSSProperties = {
+export const sharedHeaderShortStyle : CSSProperties = {
     ...sharedHeaderStyle,
     height : 40,
     paddingTop : 8,
     lineHeight : '32px',
+}
+
+export const sharedHeaderMobileStyle : CSSProperties = {
+    ...sharedHeaderShortStyle,
+    position : 'absolute',
+    top : 0,
+    right : 0,
 }

@@ -9,7 +9,7 @@ import { DownloadOutlined } from '@ant-design/icons';
 import { SelectLocaleComp } from 'components/SelectLocaleComp';
 import { MediaQueryContext } from 'contexts/MediaQueryContext';
 
-import { sharedHeaderStyle, sharedHeaderMobileStyle } from './styles';
+import { sharedHeaderStyle, sharedHeaderMobileStyle, sharedHeaderShortStyle } from './styles';
 
 const { Header } = Layout;
 
@@ -46,7 +46,7 @@ export const SharedHeader = ({ onSaveCaption } : SharedHeaderProps) => {
     const isResponsive = isShort || isMobile;
 
     return (
-        <Header style={isResponsive ? sharedHeaderMobileStyle : sharedHeaderStyle}>
+        <Header style={isShort ? isMobile ? sharedHeaderMobileStyle : sharedHeaderShortStyle : sharedHeaderStyle}>
             <Flex align='center' gap={12} justify='right' style={headerInnerStyle}>
                 {
                     !isResponsive &&
