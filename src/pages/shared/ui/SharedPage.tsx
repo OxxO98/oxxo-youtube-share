@@ -43,7 +43,7 @@ const SharedPage = () => {
             <VideoContext.Provider value={{ videoId : sharedData?.videoId!, frameRate : 30 }}>
                 <Layout style={sharedShellStyle}>
                     {
-                        isCollapsed === false &&
+                        isCollapsed === false && !isLandscape && 
                         <SharedHeader onSaveCaption={handleSaveByCaption}/>
                     }
                     <Content>

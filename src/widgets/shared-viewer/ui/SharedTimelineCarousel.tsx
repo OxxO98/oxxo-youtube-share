@@ -301,7 +301,7 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
     return(
         <>
             <Flex vertical style={{ width : '100%', height : '100%', minHeight : 0 }}>
-                <SharedVideo setPlayerRef={setPlayerRef} state={state} playerHandles={playerHandles} style={{ padding : isResponsive ? '8px 18px' : '18px' }}>
+                <SharedVideo setPlayerRef={setPlayerRef} state={state} playerHandles={playerHandles} style={{ padding : isResponsive ? isLandscape ? 0 : '8px 18px' : '18px' }}>
                     <SharedSubtitlePreview timeline={timeline[currentBunId]} style={{ ...TimelineBunStyle, ...BoxStyle }} sortFont={sortFont} jaTextStyle={JaTextStyle} koTextStyle={KoTextStyle} activeRangeId='activeRange'/>
                 </SharedVideo>
                 <Flex style={{ padding : 18, paddingTop : isResponsive ? 0 : 18, paddingBottom : isResponsive ? 8 : 18 }}>

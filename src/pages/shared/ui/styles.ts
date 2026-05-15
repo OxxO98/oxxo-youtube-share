@@ -23,10 +23,3 @@ export const sharedHeaderShortStyle : CSSProperties = {
     paddingTop : 8,
     lineHeight : '32px',
 }
-
-export const sharedHeaderMobileLandscapeStyle : CSSProperties = {
-    ...sharedHeaderShortStyle,
-    position : 'absolute',
-    top : 0,
-    right : 0,
-}
