@@ -363,7 +363,7 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
                 }
                 </Flex>
                 {
-                    isCollapsed && isShort &&
+                    isCollapsed && isMobile &&
                     <FloatButton.Group
                         style={{
                             transform : `translate( 0%, calc(-100% - 16px) )`

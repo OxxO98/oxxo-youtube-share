@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { useTranslation } from 'react-i18next';
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -24,6 +24,9 @@ const SharedPage = () => {
     const isLandscape = useMediaQuery({
         query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobileLandscape
     });
+    const isMobile = useMediaQuery({
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
+    });
 
     const sharedData = useSharedData();
     const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
@@ -35,6 +38,12 @@ const SharedPage = () => {
 
         saveCaptionFile(sharedData, timeToTS, opt);
     }
+
+    useEffect( () => {
+        if( isLandscape === true ){
+            setIsCollapsed(true);
+        }
+    }, [isLandscape])
 
     useHotkeys('enter', () => { setIsCollapsed(!isCollapsed) })
 
@@ -53,7 +62,7 @@ const SharedPage = () => {
                     }
                     <FloatButton
                         type="primary"
-                        tooltip={isCollapsed ? <span>{t('TOOLTIP.FLOAT_COLLAPSED')}</span> : <span>{t('TOOLTIP.FLOAT')}</span>}
+                        tooltip={(isCollapsed && !isMobile) ? <span>{t('TOOLTIP.FLOAT_COLLAPSED')}</span> : <span>{t('TOOLTIP.FLOAT')}</span>}
                         icon={isCollapsed ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
                         onClick={() => setIsCollapsed(!isCollapsed)}
                         style={{ boxShadow : '0 10px 28px rgba(215, 0, 11, 0.34)' }}
