@@ -37,15 +37,15 @@ interface SharedHeaderProps {
 export const SharedHeader = ({ onSaveCaption } : SharedHeaderProps) => {
     const { t } = useTranslation('SharedPage');
 
-    const isMobile = useMediaQuery({
-        query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
+    const isShort = useMediaQuery({
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).short
     });
 
     return (
-        <Header style={isMobile ? sharedHeaderMobileStyle : sharedHeaderStyle}>
+        <Header style={isShort ? sharedHeaderMobileStyle : sharedHeaderStyle}>
             <Flex align='center' gap={12} justify='right' style={headerInnerStyle}>
                 {
-                    !isMobile &&
+                    !isShort &&
                     <>
                         <Button style={captionButtonStyle} icon={<DownloadOutlined />} onClick={() => onSaveCaption()}>{t('BUTTON.SAVE_CAPTION_JA')}</Button>
                         <Button style={captionButtonStyle} icon={<DownloadOutlined />} onClick={() => onSaveCaption('ko')}>{t('BUTTON.SAVE_CAPTION_KO')}</Button>

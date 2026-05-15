@@ -63,6 +63,9 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
     const isMobile = useMediaQuery({
         query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
     });
+    const isShort = useMediaQuery({
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).short
+    });
 
     const { backgroundColor, jaTextColor, koTextColor,  jaTextFontSize, koTextFontSize, jaFontFamily, koFontFamily, sortFont, fontShadow, jaFontWeight, koFontWeight } = useSelector( (_state : RootState) => _state.shared );
 
@@ -151,35 +154,35 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
 
     const controlItemStyle : CSSProperties = {
         flex : '0 0 2',
-        minWidth : isMobile ? 48 : 104,
+        minWidth : isShort ? 48 : 104,
         textAlign : 'center',
     }
 
     const controlButtonStyle : CSSProperties = {
-        width : isMobile ? 44 : 94,
-        height : isMobile ? 32 : 54,
+        width : isShort ? 44 : 94,
+        height : isShort ? 32 : 54,
         borderRadius : 6,
         background : 'rgba(255, 255, 255, 0.045)',
         border : '1px solid rgba(255, 255, 255, 0.12)',
         color : '#f5f5f5',
-        fontSize : isMobile ? 18 : 22,
+        fontSize : isShort ? 18 : 22,
         boxShadow : 'inset 0 1px 0 rgba(255, 255, 255, 0.04)',
     }
 
     const playButtonStyle : CSSProperties = {
-        width : isMobile ? 46 : 68,
-        height : isMobile ? 46 : 68,
+        width : isShort ? 46 : 68,
+        height : isShort ? 46 : 68,
         borderRadius : '50%',
         background : 'linear-gradient(180deg, #ff3046, #d7000b)',
         border : '1px solid rgba(255, 90, 110, 0.55)',
         color : '#ffffff',
-        fontSize : isMobile ? 24 : 30,
+        fontSize : isShort ? 24 : 30,
         boxShadow : '0 10px 28px rgba(215, 0, 11, 0.42)',
     }
 
     const dividerStyle : CSSProperties = {
         width : 1,
-        height : isMobile ? 38 : 74,
+        height : isShort ? 38 : 74,
         background : 'rgba(255, 255, 255, 0.10)',
     }
 
@@ -357,7 +360,7 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
                 }
                 </Flex>
                 {
-                    isCollapsed === true && isMobile &&
+                    isCollapsed === true && isShort &&
                     <FloatButton.Group
                         style={{
                             transform : `translate( 0%, calc(-100% - 16px) )`

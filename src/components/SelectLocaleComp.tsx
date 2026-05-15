@@ -37,7 +37,9 @@ const localeButtonStyle : CSSProperties = {
 const localeButtonStyleMobile : CSSProperties = {
     ...localeButtonStyle,
     height : 30,
-    minWidth : 48,
+    minWidth : 0,
+    padding : 0,
+    width : 32,
 }
 
 const activeLocaleButtonStyle : CSSProperties = {
@@ -50,14 +52,16 @@ const activeLocaleButtonStyle : CSSProperties = {
 const activeLocaleButtonStyleMobile : CSSProperties = {
     ...activeLocaleButtonStyle,
     height : 30,
-    minWidth : 48,
+    minWidth : 0,
+    padding : 0,
+    width : 32,
 }
 
 const SelectLocaleComp = () => {
     const { i18n } = useTranslation();
     
-    const isMobile = useMediaQuery({
-        query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
+    const isShort = useMediaQuery({
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).short
     });
 
     const handleLocaleChange = ( locale : 'ko' | 'ja' ) => {
@@ -67,27 +71,27 @@ const SelectLocaleComp = () => {
     const currentLocale = i18n.language;
 
     return(
-        <Flex style={ isMobile ? localeGroupStyleMobile : localeGroupStyle} align='center'>
+        <Flex style={ isShort ? localeGroupStyleMobile : localeGroupStyle} align='center'>
             <Button
                 style={currentLocale === 'ko' ? 
-                    isMobile ? activeLocaleButtonStyleMobile : activeLocaleButtonStyle : 
-                    isMobile ? localeButtonStyleMobile : localeButtonStyle
+                    isShort ? activeLocaleButtonStyleMobile : activeLocaleButtonStyle : 
+                    isShort ? localeButtonStyleMobile : localeButtonStyle
                 }
                 onClick={() => handleLocaleChange('ko')}
             >
             {
-                isMobile ? '한': '한국어'
+                isShort ? '한': '한국어'
             }
             </Button>
             <Button
                 style={currentLocale === 'ja' ? 
-                    isMobile ? activeLocaleButtonStyleMobile : activeLocaleButtonStyle : 
-                    isMobile ? localeButtonStyleMobile : localeButtonStyle
+                    isShort ? activeLocaleButtonStyleMobile : activeLocaleButtonStyle : 
+                    isShort ? localeButtonStyleMobile : localeButtonStyle
                 }
                 onClick={() => handleLocaleChange('ja')}
             >
             {
-                isMobile ? '日': '日本語'
+                isShort ? 'あ': '日本語'
             }
             </Button>
         </Flex>

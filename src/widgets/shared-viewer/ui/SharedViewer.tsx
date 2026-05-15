@@ -33,6 +33,9 @@ import { SharedTimelineList } from './SharedTimelineList';
 
 export const SharedViewer = ({ sharedData, isCollapsed } : SharedViewerProps ) => {
     const { videoId } = useContext(VideoContext);
+    const isShort = useMediaQuery({
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).short
+    });
     const isMobile = useMediaQuery({
         query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
     });
@@ -100,7 +103,7 @@ export const SharedViewer = ({ sharedData, isCollapsed } : SharedViewerProps ) =
 
     const mainPanelClassName = `shared-page-scrollless shared-main-panel${isCollapsed ? ' shared-main-collapsed' : ''}`;
 
-    if(isMobile){
+    if(isShort || isMobile){
         return(
             <>
                 <Flex vertical className="shared-page-scrollless" style={{ height : '100%', width : '100%', minWidth : 0, background : '#060606', overflow : 'hidden' }}>

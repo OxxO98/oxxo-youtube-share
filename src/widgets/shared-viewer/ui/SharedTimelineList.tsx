@@ -141,6 +141,12 @@ export const SharedTimelineList = ({ timeline, state, playerHandles } : SharedTi
     }
 
     const currentBunId = useMemo( () => { return moveTimeLine() }, [moveTimeLine])
+    
+    const activeMarkerStyleMobile : CSSProperties = {
+        ...activeMarkerStyle,
+        width : 20,
+        height : '70%'
+    }
 
     useEffect( () => {
         if( virtualRef.current !== null && currentBunId !== undefined ){
@@ -209,7 +215,7 @@ export const SharedTimelineList = ({ timeline, state, playerHandles } : SharedTi
                                         <div style={{ width : "100%" }} onClick={() => goToTimeLine(i)}>
                                             {
                                                 isActive &&
-                                                <span style={activeMarkerStyle}></span>
+                                                <span style={isMobile ? activeMarkerStyleMobile : activeMarkerStyle }></span>
                                             }
                                             <Flex align='center' style={{ width : '100%' }}>
                                                 {

@@ -28,9 +28,11 @@ declare global {
   }
   
   export interface MediaQueryContextInterface {
-    pc : string;
-    tablet : string;
+    large : string;
+    medium : string;
+    short : string;
     mobile : string;
+    mobileLandscape : string;
   }
 
 
