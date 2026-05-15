@@ -175,9 +175,10 @@ iframe {
   }
 
   .shared-video-frame {
-    width: min(100%, calc(177.778dvh - 42.667px));
-    max-width: calc(177.778dvh - 238.222px);
-    max-height: calc(100dvh - 158px);
+    width: 100%;
+    // width: min(100%, calc(177.778dvh - 42.667px));
+    // max-width: calc(177.778dvh - 238.222px);
+    // max-height: calc(100dvh - 158px);
     aspect-ratio: 16 / 9;
     overflow: hidden;
     background: #000;
@@ -192,8 +193,8 @@ iframe {
     }
 
     .shared-video-frame {
-      max-width: 177.778dvh;
-      max-height: calc(100dvh - 24px);
+      // max-width: 177.778dvh;
+      // max-height: calc(100dvh - 24px);
       border: none;
       border-radius: 0;
       box-shadow: none;
