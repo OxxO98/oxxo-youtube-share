@@ -40,12 +40,16 @@ export const SharedHeader = ({ onSaveCaption } : SharedHeaderProps) => {
     const isShort = useMediaQuery({
         query : useContext<MediaQueryContextInterface>(MediaQueryContext).short
     });
+    const isMobile = useMediaQuery({
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).short
+    });
+    const isResponsive = isShort || isMobile;
 
     return (
-        <Header style={isShort ? sharedHeaderMobileStyle : sharedHeaderStyle}>
+        <Header style={isResponsive ? sharedHeaderMobileStyle : sharedHeaderStyle}>
             <Flex align='center' gap={12} justify='right' style={headerInnerStyle}>
                 {
-                    !isShort &&
+                    !isResponsive &&
                     <>
                         <Button style={captionButtonStyle} icon={<DownloadOutlined />} onClick={() => onSaveCaption()}>{t('BUTTON.SAVE_CAPTION_JA')}</Button>
                         <Button style={captionButtonStyle} icon={<DownloadOutlined />} onClick={() => onSaveCaption('ko')}>{t('BUTTON.SAVE_CAPTION_KO')}</Button>

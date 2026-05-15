@@ -60,8 +60,8 @@ const activeLocaleButtonStyleMobile : CSSProperties = {
 const SelectLocaleComp = () => {
     const { i18n } = useTranslation();
     
-    const isShort = useMediaQuery({
-        query : useContext<MediaQueryContextInterface>(MediaQueryContext).short
+    const isMobile = useMediaQuery({
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
     });
 
     const handleLocaleChange = ( locale : 'ko' | 'ja' ) => {
@@ -71,27 +71,27 @@ const SelectLocaleComp = () => {
     const currentLocale = i18n.language;
 
     return(
-        <Flex style={ isShort ? localeGroupStyleMobile : localeGroupStyle} align='center'>
+        <Flex style={ isMobile ? localeGroupStyleMobile : localeGroupStyle} align='center'>
             <Button
                 style={currentLocale === 'ko' ? 
-                    isShort ? activeLocaleButtonStyleMobile : activeLocaleButtonStyle : 
-                    isShort ? localeButtonStyleMobile : localeButtonStyle
+                    isMobile ? activeLocaleButtonStyleMobile : activeLocaleButtonStyle : 
+                    isMobile ? localeButtonStyleMobile : localeButtonStyle
                 }
                 onClick={() => handleLocaleChange('ko')}
             >
             {
-                isShort ? '한': '한국어'
+                isMobile ? '한': '한국어'
             }
             </Button>
             <Button
                 style={currentLocale === 'ja' ? 
-                    isShort ? activeLocaleButtonStyleMobile : activeLocaleButtonStyle : 
-                    isShort ? localeButtonStyleMobile : localeButtonStyle
+                    isMobile ? activeLocaleButtonStyleMobile : activeLocaleButtonStyle : 
+                    isMobile ? localeButtonStyleMobile : localeButtonStyle
                 }
                 onClick={() => handleLocaleChange('ja')}
             >
             {
-                isShort ? 'あ': '日本語'
+                isMobile ? 'あ': '日本語'
             }
             </Button>
         </Flex>

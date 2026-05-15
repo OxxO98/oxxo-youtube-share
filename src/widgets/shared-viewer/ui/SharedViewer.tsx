@@ -39,6 +39,9 @@ export const SharedViewer = ({ sharedData, isCollapsed } : SharedViewerProps ) =
     const isMobile = useMediaQuery({
         query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
     });
+    const isLandscape = useMediaQuery({
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobileLandscape
+    });
 
     const splitterBoxRef = useRef<HTMLDivElement>(null);
 
@@ -103,7 +106,7 @@ export const SharedViewer = ({ sharedData, isCollapsed } : SharedViewerProps ) =
 
     const mainPanelClassName = `shared-page-scrollless shared-main-panel${isCollapsed ? ' shared-main-collapsed' : ''}`;
 
-    if(isShort || isMobile){
+    if(isShort || isMobile || isLandscape){
         return(
             <>
                 <Flex vertical className="shared-page-scrollless" style={{ height : '100%', width : '100%', minWidth : 0, background : '#060606', overflow : 'hidden' }}>
@@ -111,7 +114,7 @@ export const SharedViewer = ({ sharedData, isCollapsed } : SharedViewerProps ) =
                         <SharedTimelineCarousel timeline={sharedData.timeline} state={state} playerHandles={playerHandles} setPlayerRef={setPlayerRef} isCollapsed={isCollapsed}/>
                     </Flex>
                     {
-                    !isCollapsed &&
+                    !isCollapsed && !isLandscape &&
                     <div style={{ flex : '1 1 auto', minHeight : 0, width : '100%' }}>
                         <SharedTimelineList timeline={sharedData.timeline} state={state} playerHandles={playerHandles}/>
                     </div>

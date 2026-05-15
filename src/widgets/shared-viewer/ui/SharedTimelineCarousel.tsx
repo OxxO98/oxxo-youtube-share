@@ -303,7 +303,7 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
                 </SharedVideo>
                 <Flex style={{ padding : 18, paddingTop : isMobile ? 0 : 18, paddingBottom : isMobile ? 8 : 18 }}>
                 {
-                    isCollapsed === false &&
+                    !isCollapsed && !isMobile &&
                     <div style={controlPanelStyle}>
                         <div style={progressStyle}>
                             <Slider
@@ -360,7 +360,7 @@ export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlay
                 }
                 </Flex>
                 {
-                    isCollapsed === true && isShort &&
+                    isCollapsed && isShort &&
                     <FloatButton.Group
                         style={{
                             transform : `translate( 0%, calc(-100% - 16px) )`
