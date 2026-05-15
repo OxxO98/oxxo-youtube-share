@@ -11,6 +11,7 @@ export interface SharedVideoProps {
     setPlayerRef : ( player : HTMLVideoElement ) => void;
     state : ReactPlayerState;
     playerHandles : PlayerHandles;
+    style? : CSSProperties;
     children? : ReactNode;
 }
 

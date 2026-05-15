@@ -51,16 +51,13 @@ const SharedPage = () => {
                         sharedData !== null &&
                         <SharedViewer sharedData={sharedData} isCollapsed={isCollapsed}/>
                     }
-                    {
-                        !isLandscape &&
-                        <FloatButton
-                            type="primary"
-                            tooltip={isCollapsed ? <span>{t('TOOLTIP.FLOAT_COLLAPSED')}</span> : <span>{t('TOOLTIP.FLOAT')}</span>}
-                            icon={isCollapsed ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
-                            onClick={() => setIsCollapsed(!isCollapsed)}
-                            style={{ boxShadow : '0 10px 28px rgba(215, 0, 11, 0.34)' }}
-                        />
-                    }
+                    <FloatButton
+                        type="primary"
+                        tooltip={isCollapsed ? <span>{t('TOOLTIP.FLOAT_COLLAPSED')}</span> : <span>{t('TOOLTIP.FLOAT')}</span>}
+                        icon={isCollapsed ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
+                        onClick={() => setIsCollapsed(!isCollapsed)}
+                        style={{ boxShadow : '0 10px 28px rgba(215, 0, 11, 0.34)' }}
+                    />
                     </Content>
                 </Layout>
             </VideoContext.Provider>

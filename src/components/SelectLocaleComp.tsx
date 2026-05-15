@@ -8,58 +8,12 @@ import type { CSSProperties } from 'react';
 
 import { MediaQueryContext } from 'contexts/MediaQueryContext';
 
-const localeGroupStyle : CSSProperties = {
-    height : 42,
-    display : 'inline-flex',
-    overflow : 'hidden',
-    border : '1px solid rgba(255, 255, 255, 0.18)',
-    borderRadius : 6,
-    background : '#080809',
-}
-
-const localeGroupStyleMobile : CSSProperties = {
-    ...localeGroupStyle,
-    height : 32,
-}
-
-const localeButtonStyle : CSSProperties = {
-    height : 40,
-    minWidth : 94,
-    padding : '0 24px',
-    border : 'none',
-    borderRadius : 0,
-    background : 'transparent',
-    color : '#f5f5f5',
-    fontSize : 16,
-    fontWeight : 400,
-}
-
-const localeButtonStyleMobile : CSSProperties = {
-    ...localeButtonStyle,
-    height : 30,
-    minWidth : 0,
-    padding : 0,
-    width : 32,
-}
-
-const activeLocaleButtonStyle : CSSProperties = {
-    ...localeButtonStyle,
-    background : '#0e0e10',
-    color : '#ff3046',
-    boxShadow : 'inset 0 0 0 1px #d7000b',
-}
-
-const activeLocaleButtonStyleMobile : CSSProperties = {
-    ...activeLocaleButtonStyle,
-    height : 30,
-    minWidth : 0,
-    padding : 0,
-    width : 32,
-}
-
 const SelectLocaleComp = () => {
     const { i18n } = useTranslation();
     
+    const isShort = useMediaQuery({
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).short
+    });
     const isMobile = useMediaQuery({
         query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
     });
@@ -68,15 +22,40 @@ const SelectLocaleComp = () => {
         i18n.changeLanguage(locale);
     };
 
+    const localeGroupStyle : CSSProperties = {
+        height : isMobile ? 32 : isShort ? 32 : 42,
+        display : 'inline-flex',
+        overflow : 'hidden',
+        border : '1px solid rgba(255, 255, 255, 0.18)',
+        borderRadius : 6,
+        background : '#080809',
+    }
+
+    const localeButtonStyle : CSSProperties = {
+        height : isMobile ? 30 : isShort ? 30 : 40,
+        minWidth : isMobile ? 32 : 94,
+        padding : isMobile ? 0 : '0 24px',
+        border : 'none',
+        borderRadius : 0,
+        background : 'transparent',
+        color : '#f5f5f5',
+        fontSize : 16,
+        fontWeight : 400,
+    }
+
+    const activeLocaleButtonStyle : CSSProperties = {
+        ...localeButtonStyle,
+        background : '#0e0e10',
+        color : '#ff3046',
+        boxShadow : 'inset 0 0 0 1px #d7000b',
+    }
+
     const currentLocale = i18n.language;
 
     return(
-        <Flex style={ isMobile ? localeGroupStyleMobile : localeGroupStyle} align='center'>
+        <Flex style={localeGroupStyle} align='center'>
             <Button
-                style={currentLocale === 'ko' ? 
-                    isMobile ? activeLocaleButtonStyleMobile : activeLocaleButtonStyle : 
-                    isMobile ? localeButtonStyleMobile : localeButtonStyle
-                }
+                style={currentLocale === 'ko' ? activeLocaleButtonStyle : localeButtonStyle}
                 onClick={() => handleLocaleChange('ko')}
             >
             {
@@ -84,10 +63,7 @@ const SelectLocaleComp = () => {
             }
             </Button>
             <Button
-                style={currentLocale === 'ja' ? 
-                    isMobile ? activeLocaleButtonStyleMobile : activeLocaleButtonStyle : 
-                    isMobile ? localeButtonStyleMobile : localeButtonStyle
-                }
+                style={currentLocale === 'ja' ? activeLocaleButtonStyle : localeButtonStyle}
                 onClick={() => handleLocaleChange('ja')}
             >
             {

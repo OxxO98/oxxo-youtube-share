@@ -20,7 +20,7 @@ const areSharedVideoPropsEqual = ( prev : SharedVideoProps, next : SharedVideoPr
     );
 }
 
-export const SharedVideo = React.memo(({ setPlayerRef, state, playerHandles, children } : SharedVideoProps) => {
+export const SharedVideo = React.memo(({ setPlayerRef, state, playerHandles, style, children } : SharedVideoProps) => {
     const isMobile = useMediaQuery({
         query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
     });
@@ -44,7 +44,7 @@ export const SharedVideo = React.memo(({ setPlayerRef, state, playerHandles, chi
             <Flex
                 justify='center'
                 className="shared-video-shell"
-                style={{ padding : isResponsive ? '8px 18px' : '18px' }}
+                style={style}
             >
                 <div
                     className="shared-video-frame"
