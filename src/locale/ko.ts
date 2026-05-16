@@ -381,7 +381,8 @@ const SharedBunSettingModalComp : Locale['SharedBunSettingModalComp'] = {
     TITLE : '설정',
     BUTTON : {
         DONE : '확인',
-        CANCLE : '취소'
+        CANCLE : '취소',
+        RESET : '초기화'
     },
     CONTENTS : [
         '한국어 일본어 순서', '폰트 프리셋', '일본어 설정', '한국어 설정', '배경 설정', '테두리 설정'

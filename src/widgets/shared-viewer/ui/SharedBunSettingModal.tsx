@@ -1,8 +1,12 @@
-import { useState } from 'react';
+import { useState, useContext, useRef } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useMediaQuery } from 'react-responsive';
 
-import { Button, Col, ColorPicker, Divider, InputNumber, Modal, Row, Select, Slider, Switch } from 'antd';
+import { MediaQueryContext } from 'contexts/MediaQueryContext';
+
+import { Button, ColorPicker, Divider, Flex, InputNumber, Modal, Select, Slider, Switch } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import type { ColorPickerProps, GetProp } from 'antd';
 
@@ -13,14 +17,24 @@ import type { SharedBunSettingModalProps } from 'widgets/shared-viewer/model/typ
 
 type Color = GetProp<ColorPickerProps, 'value'>;
 
-const { setBackgroundColor, setJaTextColor, setKoTextColor, setJaFontSize, setKoFontSize, setSortFont, setJaFontFamily, setKoFontFamily, toggleFontShadow } = sharedActions;
+const { setBackgroundColor, setJaTextColor, setKoTextColor, setJaFontSize, setKoFontSize, setSortFont, setJaFontFamily, setKoFontFamily, toggleFontShadow, setDefault, setSharedState } = sharedActions;
 
 export const SharedBunSettingModal = ({ children, triggerStyle } : SharedBunSettingModalProps ) => {
     const { t } = useTranslation('SharedBunSettingModalComp');
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const isMobile = useMediaQuery({
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
+    });
+    const isShort = useMediaQuery({
+        query : useContext<MediaQueryContextInterface>(MediaQueryContext).short
+    });
+    const isResponsive = isMobile || isShort;
 
-    const { backgroundColor, jaTextColor, koTextColor, jaTextFontSize, koTextFontSize, sortFont, fontShadow, jaFonts, koFonts, jaFontFamily, koFontFamily } = useSelector( (_state : RootState ) => _state.shared );
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const originalSettingRef = useRef<RootState['shared'] | null>(null);
+
+    const sharedSetting = useSelector( (_state : RootState ) => _state.shared );
+    const { backgroundColor, jaTextColor, koTextColor, jaTextFontSize, koTextFontSize, sortFont, fontShadow, jaFonts, koFonts, jaFontFamily, koFontFamily } = sharedSetting;
 
     const presets = [
         { value : 0, label : t('FONTS_PRESETS.0'), ja : jaFonts[0].value, ko : koFonts[0].value },
@@ -33,16 +47,26 @@ export const SharedBunSettingModal = ({ children, triggerStyle } : SharedBunSett
     ]
 
     const showModal = () => {
+        originalSettingRef.current = sharedSetting;
         setIsModalOpen(true);
     };
 
     const handleOk = () => {
+        originalSettingRef.current = null;
         setIsModalOpen(false);
     };
 
     const handleCancel = () => {
+        if(originalSettingRef.current){
+            store.dispatch( setSharedState(originalSettingRef.current) );
+            originalSettingRef.current = null;
+        }
         setIsModalOpen(false);
     };
+
+    const handleSetDefault = () => {
+        store.dispatch( setDefault() );
+    }
 
     const handelJaFontSelectChange = (value : string) => {
         store.dispatch( setJaFontFamily(value) );
@@ -69,6 +93,8 @@ export const SharedBunSettingModal = ({ children, triggerStyle } : SharedBunSett
 
     const onSortChange = ( checked : boolean ) => {
         store.dispatch( setSortFont(checked) );
+        store.dispatch( setJaFontSize(koTextFontSize) );
+        store.dispatch( setKoFontSize(jaTextFontSize) );
     }
 
     const onBackgroundColorChange = ( color : Color, css : string ) => {
@@ -85,6 +111,104 @@ export const SharedBunSettingModal = ({ children, triggerStyle } : SharedBunSett
         store.dispatch( toggleFontShadow() );
     };
 
+    const settingRowStyle : CSSProperties = {
+        display : 'flex',
+        flexDirection : isResponsive ? 'column' : 'row',
+        alignItems : isResponsive ? 'stretch' : 'center',
+        gap : isResponsive ? 8 : 18,
+    };
+
+    const settingLabelStyle : CSSProperties = {
+        flex : isResponsive ? 'none' : '0 0 118px',
+        lineHeight : '32px',
+        fontWeight : 500,
+    };
+
+    const settingControlAreaStyle : CSSProperties = {
+        flex : 1,
+        minWidth : 0,
+    };
+
+    const sliderAreaStyle : CSSProperties = {
+        flex : '1 1 220px',
+        minWidth : isResponsive ? '100%' : 220,
+    };
+
+    const selectStyle : CSSProperties = {
+        width : isResponsive ? '100%' : 220,
+    };
+
+    const presetSelectStyle : CSSProperties = {
+        width : isResponsive ? '100%' : 180,
+    };
+
+    const colorControlStyle : CSSProperties = {
+        display : 'inline-flex',
+        alignItems : 'center',
+        minHeight : 32,
+    };
+
+    const renderSettingRow = (label : ReactNode, controlArea : ReactNode) => (
+        <div style={settingRowStyle}>
+            <div style={settingLabelStyle}>
+                {label}
+            </div>
+            <div style={settingControlAreaStyle}>
+                {controlArea}
+            </div>
+        </div>
+    );
+
+    const renderTextSetting = ({
+        label,
+        fontSize,
+        textColor,
+        fontFamily,
+        fontOptions,
+        onFontSizeChange,
+        onTextColorChange,
+        onFontSelectChange,
+    } : {
+        label : ReactNode;
+        fontSize : number;
+        textColor : string;
+        fontFamily : string;
+        fontOptions : { value : string, label : string, weight : string | number }[];
+        onFontSizeChange : (value : number | null) => void;
+        onTextColorChange : (color : Color, css : string) => void;
+        onFontSelectChange : (value : string) => void;
+    }) => renderSettingRow(
+        label,
+        <Flex vertical gap={10}>
+            <Flex align='center' gap={12} wrap='wrap'>
+                <div style={sliderAreaStyle}>
+                    <Slider
+                        min={10}
+                        max={60}
+                        onChange={onFontSizeChange}
+                        value={fontSize}
+                    />
+                </div>
+                <InputNumber
+                    min={10}
+                    max={60}
+                    style={{ width : 82 }}
+                    value={fontSize}
+                    onChange={onFontSizeChange}
+                />
+                <div style={colorControlStyle}>
+                    <ColorPicker value={textColor} onChange={onTextColorChange}/>
+                </div>
+            </Flex>
+            <Select
+                defaultValue={fontOptions[0].value}
+                value={fontFamily}
+                style={selectStyle}
+                onChange={onFontSelectChange}
+                options={fontOptions}/>
+        </Flex>
+    );
+
     return(
         <>
             <Button style={triggerStyle} onClick={showModal}>
@@ -92,128 +216,97 @@ export const SharedBunSettingModal = ({ children, triggerStyle } : SharedBunSett
             </Button>
 
             <Modal
+                style={{ top : 16 }}
+                styles={{
+                    container : {
+                        maxHeight : '90vh',
+                        display : 'flex',
+                        flexDirection : 'column',
+                    },
+                    body : {
+                        flex : 1,
+                        minHeight : 0,
+                        overflow : 'hidden',
+                        display : 'flex',
+                        flexDirection : 'column',
+                    },
+                }}
                 title={t('TITLE')}
                 closable={{ 'aria-label': 'Custom Close Button' }}
                 open={isModalOpen}
                 onCancel={handleCancel}
                 width={'min(860px, 92vw)'}
                 footer={[
-                    <Button onClick={handleCancel}>{t('BUTTON.CANCLE')}</Button>,
-                    <Button type='primary' onClick={handleOk}>{t('BUTTON.DONE')}</Button>
+                    <Flex justify='space-between' align='center'>
+                        <Button color='primary' variant='outlined' onClick={handleSetDefault}>{t('BUTTON.RESET')}</Button>
+
+                        <Flex gap={8}>
+                            <Button onClick={handleCancel}>{t('BUTTON.CANCLE')}</Button>
+                            <Button type='primary' onClick={handleOk}>{t('BUTTON.DONE')}</Button>
+                        </Flex>
+                    </Flex>
                 ]}
             >
                 {children}
-                <Row align='middle' gutter={[12, 12]}>
-                    <Col span={4}>
-                        {t('CONTENTS.0')}
-                    </Col>
-                    <Col span={4}>
+                <Flex vertical
+                    gap={isResponsive ? 14 : 16}
+                    style={{
+                        marginTop : children ? 16 : 0,
+                        flex : 1,
+                        minHeight : 0,
+                        overflowY : 'auto',
+                        paddingRight : 4,
+                    }}
+                >
+                    {renderSettingRow(
+                        t('CONTENTS.0'),
                         <Switch value={sortFont} onChange={onSortChange}/>
-                    </Col>
-                </Row>
-                <Divider />
-                <Row align='middle' gutter={[12, 12]}>
-                    <Col span={4}>
-                        {t('CONTENTS.1')}
-                    </Col>
-                    <Col span={4}>
+                    )}
+                    <Divider style={{ margin : 0 }} />
+                    {renderSettingRow(
+                        t('CONTENTS.1'),
                         <Select
                             defaultValue={presets[0].value}
-                            style={{ minWidth : 120 }}
+                            style={presetSelectStyle}
                             onChange={handelPresetChange}
                             options={presets}/>
-                    </Col>
-                </Row>
-                <Divider />
-                <Row align='middle' gutter={[12, 12]}>
-                    <Col span={4}>
-                        {t('CONTENTS.2')}
-                    </Col>
-                    <Col span={8}>
-                        <Slider
-                            min={10}
-                            max={60}
-                            onChange={onJaFontSizeChange}
-                            value={jaTextFontSize}
-                        />
-                    </Col>
-                    <Col span={4}>
-                        <InputNumber
-                            min={10}
-                            max={60}
-                            style={{ margin: '0 16px' }}
-                            value={jaTextFontSize}
-                            onChange={onJaFontSizeChange}
-                        />
-                    </Col>
-                    <Col span={4}>
-                        <ColorPicker value={jaTextColor} onChange={onJaTextColorChange}/>
-                    </Col>
-                </Row>
-                <Row align='middle' gutter={[12, 12]}>
-                    <Col offset={4}>
-                        <Select
-                            defaultValue={jaFonts[0].value}
-                            value={jaFontFamily}
-                            style={{ minWidth : 120 }}
-                            onChange={handelJaFontSelectChange}
-                            options={jaFonts}/>
-                    </Col>
-                </Row>
-                <Divider />
-                <Row align='middle' gutter={[12, 12]}>
-                    <Col span={4}>
-                        {t('CONTENTS.3')}
-                    </Col>
-                    <Col span={8}>
-                        <Slider
-                            min={10}
-                            max={60}
-                            onChange={onKoFontSizeChange}
-                            value={koTextFontSize}
-                        />
-                    </Col>
-                    <Col span={4}>
-                        <InputNumber
-                            min={10}
-                            max={60}
-                            style={{ margin: '0 16px' }}
-                            value={koTextFontSize}
-                            onChange={onKoFontSizeChange}
-                        />
-                    </Col>
-                    <Col span={4}>
-                        <ColorPicker value={koTextColor} onChange={onKoTextColorChange}/>
-                    </Col>
-                </Row>
-                <Row align='middle' gutter={[12, 12]}>
-                    <Col offset={4}>
-                        <Select
-                            defaultValue={koFonts[0].value}
-                            value={koFontFamily}
-                            style={{ minWidth : 120 }}
-                            onChange={handelKoFontSelectChange}
-                            options={koFonts}/>
-                    </Col>
-                </Row>
-                <Divider />
-                <Row align='middle' gutter={[12, 12]}>
-                    <Col span={4}>
-                        {t('CONTENTS.4')}
-                    </Col>
-                    <Col span={4}>
-                        <ColorPicker value={backgroundColor} onChange={onBackgroundColorChange}/>
-                    </Col>
-                </Row>
-                <Divider />
-                <Row>
-                    <Col span={4}>
-                        {t('CONTENTS.5')}
-                    </Col>
-                    <Col span={4}>
+                    )}
+                    <Divider style={{ margin : 0 }} />
+                    {renderTextSetting({
+                        label : t('CONTENTS.2'),
+                        fontSize : jaTextFontSize,
+                        textColor : jaTextColor,
+                        fontFamily : jaFontFamily,
+                        fontOptions : jaFonts,
+                        onFontSizeChange : onJaFontSizeChange,
+                        onTextColorChange : onJaTextColorChange,
+                        onFontSelectChange : handelJaFontSelectChange,
+                    })}
+                    <Divider style={{ margin : 0 }} />
+                    {renderTextSetting({
+                        label : t('CONTENTS.3'),
+                        fontSize : koTextFontSize,
+                        textColor : koTextColor,
+                        fontFamily : koFontFamily,
+                        fontOptions : koFonts,
+                        onFontSizeChange : onKoFontSizeChange,
+                        onTextColorChange : onKoTextColorChange,
+                        onFontSelectChange : handelKoFontSelectChange,
+                    })}
+                    <Divider style={{ margin : 0 }} />
+                    {renderSettingRow(
+                        t('CONTENTS.4'),
+                        <div style={colorControlStyle}>
+                            <ColorPicker value={backgroundColor} onChange={onBackgroundColorChange}/>
+                        </div>
+                    )}
+                    <Divider style={{ margin : 0 }} />
+                    {renderSettingRow(
+                        t('CONTENTS.5'),
                         <Switch value={fontShadow} onChange={onChange}/>
-                    </Col>
-                </Row>
+                    )}
+                    <Divider style={{ marginTop : 0, marginBottom : 16 }} />
+                </Flex>
             </Modal>
         </>
     )

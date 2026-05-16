@@ -1160,6 +1160,7 @@ declare global {
     BUTTON : {
       CANCLE : string;
       DONE : string;
+      RESET : string;
     }
     CONTENTS : string[];
     FONTS_PRESETS : string[];

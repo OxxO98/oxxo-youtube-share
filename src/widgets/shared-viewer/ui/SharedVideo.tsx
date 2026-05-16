@@ -1,12 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import ReactPlayer from 'react-player';
-import { useMediaQuery } from 'react-responsive';
 
 import { Flex } from 'antd'
 
 import type { SharedVideoProps } from 'widgets/shared-viewer/model/types';
-
-import { MediaQueryContext } from 'contexts/MediaQueryContext';
 
 const areSharedVideoPropsEqual = ( prev : SharedVideoProps, next : SharedVideoProps ) => {
     return (
@@ -21,13 +18,6 @@ const areSharedVideoPropsEqual = ( prev : SharedVideoProps, next : SharedVideoPr
 }
 
 export const SharedVideo = React.memo(({ setPlayerRef, state, playerHandles, style, children } : SharedVideoProps) => {
-    const isMobile = useMediaQuery({
-        query : useContext<MediaQueryContextInterface>(MediaQueryContext).mobile
-    });
-    const isShort = useMediaQuery({
-        query : useContext<MediaQueryContextInterface>(MediaQueryContext).short
-    });
-    const isResponsive = isMobile || isShort;
 
     const { handlePlay, handlePause, handleDurationChange } = playerHandles;
 
