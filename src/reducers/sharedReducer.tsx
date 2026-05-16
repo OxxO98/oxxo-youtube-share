@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit'
 
 //SharedPage 공유 페이지 통합
 type fonts = { value : string, label : string, weight : string | number }[];
@@ -37,7 +38,7 @@ const koFonts : fonts = [
 
 const jaFonts : fonts = [
     { value : "Noto Sans JP", label : "Noto Sans JP", weight : 800 },
-    { value : "Mochiy Pop One", label : "Mochiy Pop One", weight : 400 },
+    { value : "Mochiy Pop One", label : "Mochiy Pop One", weight : 'normal' },
     { value : "Dela Gothic One", label : "Dela Gothic One", weight : 400 },
     { value : "Sawarabi Gothic", label : "Sawarabi Gothic", weight : 400 },
     { value : "BIZ UDPGothic", label :  "BIZ UDPGothic", weight : 400 },
@@ -46,9 +47,9 @@ const jaFonts : fonts = [
     { value : "Zen Kurenaido", label : "Zen Kurenaido", weight : 400 }
 ]
 
-const initialState : SharedInitial = {
+const createInitialState = () : SharedInitial => ({
     backgroundColor : '#00000088',
-    jaTextColor : '#ffe600',
+    jaTextColor : '#ffc928',
     koTextColor : '#FFFFFF',
 
     jaTextFontSize : 20,
@@ -60,11 +61,13 @@ const initialState : SharedInitial = {
     koFontWeight : koFonts[0].weight,
 
     sortFont : true,
-    fontShadow : true,
+    fontShadow : false,
 
     jaFonts : jaFonts,
     koFonts : koFonts
-}
+})
+
+const initialState : SharedInitial = createInitialState();
 
 export const sharedSlice = createSlice({
     name : 'shared',
@@ -86,16 +89,34 @@ export const sharedSlice = createSlice({
             state.koTextFontSize = action.payload;
         },
         setJaFontFamily : (state, action) => {
+            const font = state.jaFonts.find(font => font.value === action.payload);
+
             state.jaFontFamily = action.payload;
+
+            if (font) {
+                state.jaFontWeight = font.weight;
+            }
         },
         setKoFontFamily : (state, action) => {
+            const font = state.koFonts.find(font => font.value === action.payload);
+
             state.koFontFamily = action.payload;
+
+            if (font) {
+                state.koFontWeight = font.weight;
+            }
         },
         setSortFont : (state, action) => {
             state.sortFont = action.payload;
         },
         toggleFontShadow : (state) => {
             state.fontShadow = !state.fontShadow 
+        },
+        setDefault : () => {
+            return createInitialState();
+        },
+        setSharedState : (_state, action : PayloadAction<SharedInitial>) => {
+            return action.payload;
         }
     }
 })

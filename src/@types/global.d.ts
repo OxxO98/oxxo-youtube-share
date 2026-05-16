@@ -28,9 +28,11 @@ declare global {
   }
   
   export interface MediaQueryContextInterface {
-    pc : string;
-    tablet : string;
+    large : string;
+    medium : string;
+    short : string;
     mobile : string;
+    mobileLandscape : string;
   }
 
 
@@ -811,6 +813,8 @@ declare global {
     SharedTimelineCarouselComp : SharedTimelineCarouselComp;
     SharedBunSettingModalComp : SharedBunSettingModalComp;
     SharedDictionaryComp : SharedDictionaryComp;
+
+    SharedTimelineList : SharedTimelineList;
   }
 
   export interface LayoutComp {
@@ -1132,6 +1136,10 @@ declare global {
       SAVE_CAPTION_JA : string;
       SAVE_CAPTION_KO : string;
     }
+    TOOLTIP : {
+      FLOAT : string;
+      FLOAT_COLLAPSED : string;
+    }
   }
 
   export interface SharedTimelineCarouselComp {
@@ -1152,6 +1160,7 @@ declare global {
     BUTTON : {
       CANCLE : string;
       DONE : string;
+      RESET : string;
     }
     CONTENTS : string[];
     FONTS_PRESETS : string[];
@@ -1160,6 +1169,13 @@ declare global {
   export interface SharedDictionaryComp {
     MESSAGE : {
       ERROR : string;
+    }
+  }
+
+  export interface SharedTimelineList {
+    HEADER : {
+      TITLE : string;
+      LENGTH : string;
     }
   }
   

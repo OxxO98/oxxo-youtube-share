@@ -357,6 +357,10 @@ const SharedPage : Locale['SharedPage'] = {
     BUTTON : {
         SAVE_CAPTION_JA : '日本語字幕で保存',
         SAVE_CAPTION_KO : '韓国語字幕で保存'
+    },
+    TOOLTIP : {
+        FLOAT : '動画だけ見る',
+        FLOAT_COLLAPSED : 'タイムラインと一緒に見る',
     }
 }
 
@@ -377,7 +381,8 @@ const SharedBunSettingModalComp : Locale['SharedBunSettingModalComp'] = {
     TITLE : '設定',
     BUTTON : {
         DONE : '確認',
-        CANCLE : '取り消し'
+        CANCLE : '取り消し',
+        RESET : 'リセット'
     },
     CONTENTS : [
         '表示順序', 'フォントプレセット', '日本語設定', '韓国語設定', '背景設定', '縁取り設定'
@@ -389,6 +394,13 @@ const SharedBunSettingModalComp : Locale['SharedBunSettingModalComp'] = {
 
 const SharedDictionaryComp : Locale['SharedDictionaryComp'] = {
     ...DictionaryComp
+}
+
+const SharedTimelineList : Locale['SharedTimelineList'] = {
+    HEADER : {
+        TITLE : 'タイムライン',
+        LENGTH : '個'
+    }
 }
 
 export default {
@@ -449,4 +461,6 @@ export default {
     SharedTimelineCarouselComp,
     SharedBunSettingModalComp,
     SharedDictionaryComp,
+
+    SharedTimelineList,
 } as Locale
