@@ -2,8 +2,6 @@
 
 일본어 YouTube 학습/번역 데이터를 공유 링크로 전달받아, 영상과 이중 자막 타임라인을 동기화해 보여주는 React 기반 공유 뷰어입니다. 공유 데이터는 URL 파라미터에 압축된 형태로 포함되거나 짧은 링크를 통해 서버에서 복원되며, 사용자는 영상 재생 중 일본어 원문, 후리가나, 한국어 번역, 사전 검색, 자막 파일 저장 기능을 사용할 수 있습니다.
 
-이 문서는 `src` 디렉터리의 프론트엔드 구현을 기준으로 작성했습니다.
-
 ## 기술 스택
 
 - **React 19 + TypeScript**: 컴포넌트 기반 UI와 전역 타입 선언을 활용한 타입 안정성 확보
@@ -274,11 +272,8 @@ npm test
 
 ## 향후 개선 가능성
 
-- 공유 데이터 decode 실패 시 사용자에게 원인을 보여주는 에러 UI 추가
-- 자막 저장 포맷을 SRT, VTT 등으로 분리하는 export 전략 확장
-- 플레이어 상태 업데이트를 `requestAnimationFrame` 또는 ReactPlayer 이벤트 중심으로 최적화
-- 사전 provider를 인터페이스화해 Naver 외 다른 일본어 사전도 선택 가능하게 확장
-- 현재 `src/@types/global.d.ts`에 집중된 전역 타입을 도메인별 타입 파일로 분리
+- 자막 저장에 한국어 발음을 추가하는 기능
+- 자막 스타일도 함께 export 하는 방식 고려
 
 # 편집 프로그램
 
@@ -286,4 +281,4 @@ npm test
 
 # Demo
 
-[demo](http://oxxo.ddns.net/?l=S4RfEYAlZAnZSWZI)
+[demo](http://oxxo.ddns.net/?l=z8Yuez8RJCRUfTpp)
