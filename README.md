@@ -1,6 +1,16 @@
-# YouTube Translate Share Frontend
+# YouTube Translate Share
+
+한국어 | [日本語](README_jpn.md)
 
 일본어 YouTube 학습/번역 데이터를 공유 링크로 전달받아, 영상과 이중 자막 타임라인을 동기화해 보여주는 React 기반 공유 뷰어입니다. 공유 데이터는 URL 파라미터에 압축된 형태로 포함되거나 짧은 링크를 통해 서버에서 복원되며, 사용자는 영상 재생 중 일본어 원문, 후리가나, 한국어 번역, 사전 검색, 자막 파일 저장 기능을 사용할 수 있습니다.
+
+## 편집 프로그램 Github Repository
+
+[편집 프로그램 Github](https://github.com/OxxO98/oxxo-youtube)
+
+## Demo Site
+
+[demo-stay-with-me](http://oxxo.ddns.net/?l=z8Yuez8RJCRUfTpp)
 
 ## 기술 스택
 
@@ -82,7 +92,7 @@ interface TextData {
 - 후리가나가 있는 일본어 자막 표시
 - 텍스트 선택 시 원문 offset 추적
 - 선택 범위 하이라이트/강조 처리를 위한 기반 데이터 제공
-- 동일 문장 내 일부 텍스트만 사전 검색 대상으로 추출
+- 동일 문장 내 후리가나를 제외한 텍스트만 사전 검색 대상으로 추출
 
 ### 4. 선택 텍스트 기반 일본어 사전 연동
 
@@ -104,8 +114,6 @@ interface TextData {
 - 모바일/짧은 화면: 영상과 캐러셀 중심의 세로 레이아웃으로 전환
 - 모바일 가로 모드: 영상 몰입형 레이아웃을 우선 적용
 - Enter 키 또는 FloatButton으로 헤더/사이드 패널을 접는 집중 모드 제공
-
-패널 크기는 `panelSize` 유틸과 상수값을 통해 최소/최대 폭을 제한해, 리사이즈 중에도 영상 영역과 타임라인 목록이 깨지지 않도록 설계되어 있습니다.
 
 ### 6. 자막 스타일 커스터마이징
 
@@ -196,41 +204,6 @@ src/
 | `reducers/sharedReducer.tsx`                | 자막 스타일 설정 상태 관리                                   |
 | `reducers/selectionReducer.tsx`             | 텍스트 선택 및 offset 상태 관리                              |
 
-## 데이터 흐름
-
-```txt
-URL Query
-  -> useSharedData
-    -> decodeSharedData
-      -> SharedData
-        -> VideoContext(videoId)
-        -> SharedViewer
-          -> useReactPlayerHook
-          -> SharedTimelineCarousel
-          -> SharedTimelineList
-          -> SharedDictionary
-```
-
-짧은 링크를 사용할 때는 다음 흐름이 추가됩니다.
-
-```txt
-?l={shortURL}
-  -> useAxiosGet('/longUrl')
-    -> ServerContext baseUrl
-      -> encoded shared data
-        -> decodeSharedData
-```
-
-## 상태 관리 설계
-
-Redux store는 세 가지 slice로 구성됩니다.
-
-- `reactPlayer`: 시작/종료 마커와 선택된 마커 상태
-- `selection`: 현재 선택 텍스트, 후리가나, 텍스트 offset, 강조 정보
-- `shared`: 공유 페이지 자막 스타일 설정
-
-플레이어의 실시간 재생 상태는 Redux에 올리지 않고 `useReactPlayerHook`의 로컬 상태로 유지합니다. 반면 여러 컴포넌트가 참조해야 하는 사용자 설정과 선택 정보는 Redux에 저장해 사전 패널, 자막 렌더러, 설정 모달이 같은 상태를 공유합니다.
-
 ## 키보드 인터랙션
 
 `useHandleKeyboard`와 `react-hotkeys-hook`을 통해 영상 학습에 필요한 단축키를 제공합니다.
@@ -243,42 +216,7 @@ Redux store는 세 가지 slice로 구성됩니다.
 - ArrowLeft / ArrowRight: 이전/다음 타임라인 문장 이동
 - Enter: 공유 페이지 집중 모드 토글
 
-## UI/UX 특징
-
-- 어두운 테마와 붉은 포인트 컬러를 Ant Design theme token으로 통일
-- 영상 위 자막은 viewport와 영상 비율을 고려해 동적으로 크기 제한
-- `rc-virtual-list`를 사용해 긴 타임라인도 일정한 렌더링 비용으로 표시
-- 모바일에서는 컨트롤을 FloatButton 그룹으로 축약해 영상 영역을 우선 확보
-- 전체 스크롤바를 숨기고 패널 내부 레이아웃을 고정해 영상 감상 흐름을 유지
-
-## 포트폴리오 관점의 구현 포인트
-
-- 압축 공유 데이터, 짧은 링크 API, 내부 타임라인 모델을 분리해 공유 링크 확장성을 확보했습니다.
-- ReactPlayer의 기본 컨트롤을 숨기고 직접 구현한 재생 상태/seek/단축키 컨트롤로 학습 도메인에 맞는 플레이어 경험을 만들었습니다.
-- 일본어 후리가나 렌더링을 단순 문자열 처리로 끝내지 않고, ruby 구조와 offset 기반 선택 추적까지 연결했습니다.
-- 선택 영역을 Redux 상태로 승격해 사전 iframe, 하이라이트, 텍스트 분석 기능이 같은 데이터를 바라보도록 설계했습니다.
-- 데스크톱 Splitter 레이아웃과 모바일 집중 모드를 분기해 같은 데이터 모델을 다양한 화면 조건에서 재사용합니다.
-- 자막 스타일 설정을 전역 상태로 관리해 preview와 실제 영상 오버레이의 표시 결과를 일관되게 유지합니다.
-
-## 실행 스크립트
-
-프로젝트 루트 기준으로 실행합니다.
-
-```bash
-npm start
-npm run build
-npm test
-```
-
-## 향후 개선 가능성
+## 향후 개선
 
 - 자막 저장에 한국어 발음을 추가하는 기능
 - 자막 스타일도 함께 export 하는 방식 고려
-
-# 편집 프로그램
-
-[편집 프로그램 Github](https://github.com/OxxO98/oxxo-youtube)
-
-# Demo
-
-[demo](http://oxxo.ddns.net/?l=z8Yuez8RJCRUfTpp)
