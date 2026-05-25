@@ -11,12 +11,15 @@ import { VideoContext } from 'contexts/VideoContext';
 import { MediaQueryContext } from 'contexts/MediaQueryContext';
 import { useTimeStamp } from 'hooks/VideoPlayHook';
 import { SharedViewer } from 'widgets/shared-viewer/ui/SharedViewer';
+import { store } from 'reducers/store';
+import { sharedActions } from 'reducers/sharedReducer';
 
 import { useSharedData } from '../model/useSharedData';
 import { SharedHeader } from './SharedHeader';
 import { sharedShellStyle } from './styles';
 
 const { Content } = Layout;
+const { applyPreset } = sharedActions;
 
 const SharedPage = () => {
     const { t } = useTranslation('SharedPage');
@@ -44,6 +47,16 @@ const SharedPage = () => {
             setIsCollapsed(false);
         }
     }, [isMobile, isLandscape])
+
+    useEffect( () => {
+        const preset = sharedData?.setting?.preset;
+
+        if(preset === undefined){
+            return;
+        }
+
+        store.dispatch( applyPreset(preset) );
+    }, [sharedData])
 
     useHotkeys('enter', () => { setIsCollapsed(!isCollapsed) })
 

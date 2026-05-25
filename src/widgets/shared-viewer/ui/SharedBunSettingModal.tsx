@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { useMediaQuery } from 'react-responsive';
 
 import { MediaQueryContext } from 'contexts/MediaQueryContext';
+import { SHARED_FONT_PRESETS } from 'entities/shared/config/fontPresets';
 
 import { Button, ColorPicker, Divider, Flex, InputNumber, Modal, Select, Slider, Switch } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
@@ -17,7 +18,7 @@ import type { SharedBunSettingModalProps } from 'widgets/shared-viewer/model/typ
 
 type Color = GetProp<ColorPickerProps, 'value'>;
 
-const { setBackgroundColor, setJaTextColor, setKoTextColor, setJaFontSize, setKoFontSize, setSortFont, setJaFontFamily, setKoFontFamily, toggleFontShadow, setDefault, setSharedState } = sharedActions;
+const { setBackgroundColor, setJaTextColor, setKoTextColor, setJaFontSize, setKoFontSize, setSortFont, setJaFontFamily, setKoFontFamily, applyPreset, toggleFontShadow, setDefault, setSharedState } = sharedActions;
 
 export const SharedBunSettingModal = ({ children, triggerStyle } : SharedBunSettingModalProps ) => {
     const { t } = useTranslation('SharedBunSettingModalComp');
@@ -36,15 +37,14 @@ export const SharedBunSettingModal = ({ children, triggerStyle } : SharedBunSett
     const sharedSetting = useSelector( (_state : RootState ) => _state.shared );
     const { backgroundColor, jaTextColor, koTextColor, jaTextFontSize, koTextFontSize, sortFont, fontShadow, jaFonts, koFonts, jaFontFamily, koFontFamily } = sharedSetting;
 
-    const presets = [
-        { value : 0, label : t('FONTS_PRESETS.0'), ja : jaFonts[0].value, ko : koFonts[0].value },
-        { value : 1, label : t('FONTS_PRESETS.1'), ja : jaFonts[4].value, ko : koFonts[2].value },
-        { value : 2, label : t('FONTS_PRESETS.2'), ja : jaFonts[1].value, ko : koFonts[3].value },
-        { value : 3, label : t('FONTS_PRESETS.3'), ja : jaFonts[7].value, ko : koFonts[5].value },
-        { value : 4, label : t('FONTS_PRESETS.4'), ja : jaFonts[7].value, ko : koFonts[6].value },
-        { value : 5, label : t('FONTS_PRESETS.5'), ja : jaFonts[6].value, ko : koFonts[4].value },
-        { value : 6, label : t('FONTS_PRESETS.6'), ja : jaFonts[6].value, ko : koFonts[7].value },
-    ]
+    const presets = SHARED_FONT_PRESETS.map( preset => ({
+        value : preset.value,
+        label : t(`FONTS_PRESETS.${preset.value}`),
+    }) );
+    const selectedPreset = SHARED_FONT_PRESETS.find( preset => (
+        preset.jaFontFamily === jaFontFamily &&
+        preset.koFontFamily === koFontFamily
+    ) )?.value;
 
     const showModal = () => {
         originalSettingRef.current = sharedSetting;
@@ -77,8 +77,7 @@ export const SharedBunSettingModal = ({ children, triggerStyle } : SharedBunSett
     }
 
     const handelPresetChange = (value : number) => {
-        store.dispatch( setJaFontFamily(presets[value].ja ) )
-        store.dispatch( setKoFontFamily(presets[value].ko ) )
+        store.dispatch( applyPreset(value) )
     }
 
     const onJaFontSizeChange = (value : number | null) => {
@@ -266,7 +265,7 @@ export const SharedBunSettingModal = ({ children, triggerStyle } : SharedBunSett
                     {renderSettingRow(
                         t('CONTENTS.1'),
                         <Select
-                            defaultValue={presets[0].value}
+                            value={selectedPreset}
                             style={presetSelectStyle}
                             onChange={handelPresetChange}
                             options={presets}/>

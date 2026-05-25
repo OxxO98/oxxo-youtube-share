@@ -9,5 +9,8 @@ export interface SharedTimeline {
 export interface SharedData {
     videoId : string;
     timeline : SharedTimeline[];
+    setting? : {
+        preset? : number;
+    }
 }
 

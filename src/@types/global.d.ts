@@ -649,6 +649,9 @@ declare global {
   export interface RES_SHARED_DATA {
     v : string; //videoId
     t : RES_SHARED_TIMELINE[]; //timeline
+    s? : {
+      p? : number;
+    }
   }
 
   export interface RES_JSON {

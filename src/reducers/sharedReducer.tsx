@@ -1,6 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
+import { getSharedFontPreset } from 'entities/shared/config/fontPresets';
+
 //SharedPage 공유 페이지 통합
 type fonts = { value : string, label : string, weight : string | number }[];
 
@@ -104,6 +106,27 @@ export const sharedSlice = createSlice({
 
             if (font) {
                 state.koFontWeight = font.weight;
+            }
+        },
+        applyPreset : (state, action : PayloadAction<number>) => {
+            const preset = getSharedFontPreset(action.payload);
+
+            if (preset === undefined) {
+                return;
+            }
+
+            const jaFont = state.jaFonts.find(font => font.value === preset.jaFontFamily);
+            const koFont = state.koFonts.find(font => font.value === preset.koFontFamily);
+
+            state.jaFontFamily = preset.jaFontFamily;
+            state.koFontFamily = preset.koFontFamily;
+
+            if (jaFont) {
+                state.jaFontWeight = jaFont.weight;
+            }
+
+            if (koFont) {
+                state.koFontWeight = koFont.weight;
             }
         },
         setSortFont : (state, action) => {
