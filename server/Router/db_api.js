@@ -211,7 +211,7 @@ async function getShortURL(req, res){
 }
 
 async function getVideos(req, res){
-    await db_connection(req, res, async(connection) => {
+    await db_connection(req, res, async (connection) => {
                 
         let query = `
             SELECT VIDEOID, SHORTURL
@@ -221,7 +221,7 @@ async function getVideos(req, res){
         let ret = await connection.execute(query);
 
         res.send({
-            data : { videos : ret.rows },
+            data : ret.rows,
             message : 'success'
         })
     })
