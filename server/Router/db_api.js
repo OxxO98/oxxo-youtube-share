@@ -17,10 +17,10 @@ async function _getShortURL(connection){
         checkQuery = `
             SELECT USERID, VIDEOID
             FROM URLS
-            WHERE SHORTURL='${shortURL}'
+            WHERE SHORTURL=?
         `
 
-        ret = await connection.execute(checkQuery);
+        ret = await connection.execute(checkQuery, [shortURL]);
     }while( ret.rows.length != 0);
 
     return shortURL;
@@ -37,10 +37,10 @@ async function _getUserId(connection) {
         checkQuery = `
             SELECT SHORTURL
             FROM URLS
-            WHERE USERID='${userId}'
+            WHERE USERID=?
         `;
 
-        ret = await connection.execute(checkQuery);
+        ret = await connection.execute(checkQuery, [userId]);
     } while( ret.rows.length != 0);
 
     return userId;
@@ -90,12 +90,12 @@ async function getLongURL(req, res){
 
         do{
             getQuery = `
-                SELECT DBMS_LOB.GETLENGTH(LONGURL) AS LEN, DBMS_LOB.SUBSTR(LONGURL, 4000, ${offset}) AS STR
+                SELECT DBMS_LOB.GETLENGTH(LONGURL) AS LEN, DBMS_LOB.SUBSTR(LONGURL, 4000, ?) AS STR
                 FROM URLS
-                WHERE SHORTURL='${shortURL}'
+                WHERE SHORTURL=?
             `
 
-            ret = await connection.execute(getQuery);
+            ret = await connection.execute(getQuery, [offset, shortURL]);
 
             longUrl += ret.rows[0]['STR'];
             offset += 4000;
@@ -129,10 +129,10 @@ async function insertLongURL(req, res){
         let existQuery = `
             SELECT SHORTURL
             FROM URLS
-            WHERE USERID='${_userId}' AND VIDEOID='${videoId}'
+            WHERE USERID=? AND VIDEOID=?
         `
 
-        let retExist = await connection.execute(existQuery);
+        let retExist = await connection.execute(existQuery, [_userId, videoId]);
 
         let shortURL;
         if(retExist.rows.length == 0){
@@ -143,10 +143,10 @@ async function insertLongURL(req, res){
 
             let query = `
                 INSERT INTO URLS(USERID, VIDEOID, LONGURL, SHORTURL)
-                VALUES ('${_userId}', '${videoId}', ${_chunk.join('||')}, '${shortURL}')
+                VALUES (?, ?, ?, ?)
             `
             
-            let _ret = await connection.execute(query);
+            let _ret = await connection.execute(query, [_userId, videoId, _chunk.join('||'), shortURL]);
         }
         else{
             //update
@@ -154,19 +154,19 @@ async function insertLongURL(req, res){
             
             let query = `
                 UPDATE URLS
-                SET LONGURL=${_chunk.join('||')}
-                WHERE USERID='${_userId}' AND VIDEOID='${videoId}'
+                SET LONGURL=?
+                WHERE USERID=? AND VIDEOID=?
             `
 
-            await connection.execute(query);
+            await connection.execute(query, [_chunk.join('||'), _userId, videoId]);
 
             let getShortQuery = `
                 SELECT SHORTURL
                 FROM URLS
-                WHERE USERID='${_userId}' AND VIDEOID='${videoId}'
+                WHERE USERID=? AND VIDEOID=?
             `;
 
-            let ret = await connection.execute(getShortQuery);
+            let ret = await connection.execute(getShortQuery, [_userId, videoId]);
 
             shortURL = ret.rows[0]['SHORTURL'];
         }
@@ -190,10 +190,10 @@ async function getShortURL(req, res){
         let query = `
             SELECT SHORTURL
             FROM URLS
-            WHERE USERID='${userId}' AND VIDEOID='${videoId}'
+            WHERE USERID=? AND VIDEOID=?
         `
 
-        let ret = await connection.execute(query);
+        let ret = await connection.execute(query, [userId, videoId]);
         
         if(ret.rows.length == 0){
             res.send({
@@ -210,11 +210,30 @@ async function getShortURL(req, res){
     })
 }
 
+async function getVideos(req, res){
+    await db_connection(req, res, async(connection) => {
+                
+        let query = `
+            SELECT VIDEOID, SHORTURL
+            FROM URLS
+        `
+
+        let ret = await connection.execute(query);
+
+        res.send({
+            data : { videos : ret.rows },
+            message : 'success'
+        })
+    })
+}
+
 router.get('/test', getTest);
 
 router.get('/shortUrl', getShortURL);
 
 router.get('/longUrl', getLongURL);
 router.post('/longUrl', insertLongURL);
+
+router.get('/videos', getVideos);
 
 export default router;
