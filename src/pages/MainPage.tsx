@@ -18,7 +18,7 @@ const MainPage = () => {
     useEffect( () => {
         let res = response;
         if( res !== null ){
-            console.log(res.data);
+            console.log(res);
             setVideos(res.data.map( (v) => {
                 return {
                     videoId : v['VIDEOID'],

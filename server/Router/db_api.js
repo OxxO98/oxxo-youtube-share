@@ -220,10 +220,8 @@ async function getVideos(req, res){
 
         let ret = await connection.execute(query);
 
-        console.log(ret.rows);
-
         res.send({
-            data : ret.rows,
+            data : { videos : ret.rows },
             message : 'success'
         })
     })
