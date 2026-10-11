@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useId, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMediaQuery } from 'react-responsive';
@@ -31,30 +31,90 @@ interface SharedSubtitlePreviewProps {
 const SharedSubtitlePreview = ({ timeline, style, sortFont, bunSelect, jaTextStyle, koTextStyle, activeRangeId } : SharedSubtitlePreviewProps ) => {
 
     const renderOrder = sortFont ? ['ko', 'ja'] : ['ja', 'ko'];
+    const wiggleFilterId = `subtitle-wiggle-${useId().replace(/:/g, '')}`;
+    const wiggleStyle : CSSProperties = {
+        filter : `url(#${wiggleFilterId})`
+    }
 
     return(
-        <Flex vertical justify='center' align='center' style={style}>
-            {
-                renderOrder.map( (lang) => {
-                    if( lang === 'ja' && bunSelect.ja ){
-                        return(
-                            <div id={activeRangeId} style={jaTextStyle}>
-                                <SharedBun textData={timeline.jaText}/>
-                            </div>
-                        )
-                    }
+        <>
+            <svg
+                aria-hidden='true'
+                width='0'
+                height='0'
+                style={{ position : 'absolute', pointerEvents : 'none' }}
+            >
+                <defs>
+                    <filter
+                        id={wiggleFilterId} x='-20%' y='-10%' width='140%' height='120%'
+                    >
+                        <feTurbulence
+                            type='fractalNoise'
+                            baseFrequency='0.01 10'
+                            numOctaves='2'
+                            seed='2'
+                            result='wiggleNoise'
+                        >
+                            <animate
+                                attributeName='seed'
+                                values='1;2;3;4;5'
+                                dur='0.45s'
+                                repeatCount='indefinite'
+                            />
+                        </feTurbulence>
+                        <feColorMatrix
+                            in='wiggleNoise'
+                            type='matrix'
+                            values='
+                                1 0 0 0 0
+                                0 0 0 0 0.5
+                                0 0 0 0 0
+                                0 0 0 0 1
+                            '
+                            result='horizontalNoise'
+                        />
+                        <feDisplacementMap
+                            in='SourceGraphic'
+                            in2='horizontalNoise'
+                            scale='10'
+                            xChannelSelector='R'
+                            yChannelSelector='G'
+                        >
+                            <animate
+                                attributeName='scale'
+                                values='0;0;50;0;0'
+                                dur='0.45s'
+                                repeatCount='indefinite'
+                            />
+                        </feDisplacementMap>
+                    </filter>
+                </defs>
+            </svg>
+            <Flex vertical justify='center' align='center' style={style}>
+                {
+                    renderOrder.map( (lang) => {
+                        if( lang === 'ja' && bunSelect.ja ){
+                            return(
+                                <div key={lang} id={activeRangeId} style={{ ...jaTextStyle }}>
+                                    <SharedBun textData={timeline.jaText}/>
+                                </div>
+                            )
+                        }
 
-                    if( lang === 'ko' && bunSelect.ko ){
-                        return(
-                            <div style={koTextStyle}>
-                                {timeline.koText}
-                            </div>
-                        )
-                    }
-                })
-            }
+                        if( lang === 'ko' && bunSelect.ko ){
+                            return(
+                                <div key={lang} style={{ ...koTextStyle }}>
+                                    {timeline.koText}
+                                </div>
+                            )
+                        }
+                    })
+                }
             </Flex>
+        </>
     )
+
+    //...wiggleStyle
 }
 
 export const SharedTimelineCarousel = ({ timeline, state, playerHandles, setPlayerRef, isCollapsed } : SharedTimelineCarouselProps ) => {

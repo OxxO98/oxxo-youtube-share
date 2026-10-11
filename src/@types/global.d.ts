@@ -379,6 +379,11 @@ declare global {
     shortURL : string;
   }
 
+  export type RES_GET_VIDEOS = {
+    VIDEOID : string;
+    SHORTURL : string;
+  }[]
+
   //REQUEST : POST, PUT, DELETE
   export type REQ_POST_TRANSLATE = {
     videoId : string;

@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { HotkeysProvider } from 'react-hotkeys-hook';
 
 //Page
+import { MainPage } from 'pages/MainPage';
 import { NotFoundPage } from 'pages/NotFoundPage';
 import { SharedPage } from 'pages/SharedPage';
 
