@@ -17,7 +17,7 @@ async function _getShortURL(connection){
         checkQuery = `
             SELECT USERID, VIDEOID
             FROM URLS
-            WHERE SHORTURL=?
+            WHERE SHORTURL=:shortURL
         `
 
         ret = await connection.execute(checkQuery, [shortURL]);
@@ -37,7 +37,7 @@ async function _getUserId(connection) {
         checkQuery = `
             SELECT SHORTURL
             FROM URLS
-            WHERE USERID=?
+            WHERE USERID=:userId
         `;
 
         ret = await connection.execute(checkQuery, [userId]);
@@ -90,9 +90,9 @@ async function getLongURL(req, res){
 
         do{
             getQuery = `
-                SELECT DBMS_LOB.GETLENGTH(LONGURL) AS LEN, DBMS_LOB.SUBSTR(LONGURL, 4000, ?) AS STR
+                SELECT DBMS_LOB.GETLENGTH(LONGURL) AS LEN, DBMS_LOB.SUBSTR(LONGURL, 4000, :offset) AS STR
                 FROM URLS
-                WHERE SHORTURL=?
+                WHERE SHORTURL=:shortURL
             `
 
             ret = await connection.execute(getQuery, [offset, shortURL]);
@@ -129,7 +129,7 @@ async function insertLongURL(req, res){
         let existQuery = `
             SELECT SHORTURL
             FROM URLS
-            WHERE USERID=? AND VIDEOID=?
+            WHERE USERID=:userId AND VIDEOID=:videoId
         `
 
         let retExist = await connection.execute(existQuery, [_userId, videoId]);
@@ -143,7 +143,7 @@ async function insertLongURL(req, res){
 
             let query = `
                 INSERT INTO URLS(USERID, VIDEOID, LONGURL, SHORTURL)
-                VALUES (?, ?, ?, ?)
+                VALUES (:userId, :videoId, :longURL, :shortURL)
             `
             
             let _ret = await connection.execute(query, [_userId, videoId, _chunk.join('||'), shortURL]);
@@ -154,8 +154,8 @@ async function insertLongURL(req, res){
             
             let query = `
                 UPDATE URLS
-                SET LONGURL=?
-                WHERE USERID=? AND VIDEOID=?
+                SET LONGURL=:longURL
+                WHERE USERID=:userId AND VIDEOID=:videoId
             `
 
             await connection.execute(query, [_chunk.join('||'), _userId, videoId]);
@@ -163,7 +163,7 @@ async function insertLongURL(req, res){
             let getShortQuery = `
                 SELECT SHORTURL
                 FROM URLS
-                WHERE USERID=? AND VIDEOID=?
+                WHERE USERID=:userID AND VIDEOID=:videoId
             `;
 
             let ret = await connection.execute(getShortQuery, [_userId, videoId]);
@@ -190,7 +190,7 @@ async function getShortURL(req, res){
         let query = `
             SELECT SHORTURL
             FROM URLS
-            WHERE USERID=? AND VIDEOID=?
+            WHERE USERID=:userId AND VIDEOID=:videoId
         `
 
         let ret = await connection.execute(query, [userId, videoId]);
