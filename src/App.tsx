@@ -52,6 +52,7 @@ const App = () => {
                     <HotkeysProvider initiallyActiveScopes={['settings']}>
                         <BrowserRouter>
                                 <Routes>
+                                    <Route path="/main" element={<MainPage/>}/>
                                     <Route path="/" element={<SharedPage/>}/>
                                     <Route path="*" element={<NotFoundPage/>}/>
                                 </Routes>
