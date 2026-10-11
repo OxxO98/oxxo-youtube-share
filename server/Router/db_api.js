@@ -5,7 +5,6 @@ const router = express.Router();
 import db_connection from './core/db_connection.js'
 
 import { nanoid } from "nanoid";
-import { message } from 'antd';
 
 async function _getShortURL(connection){
     let shortURL;
@@ -221,8 +220,10 @@ async function getVideos(req, res){
 
         let ret = await connection.execute(query);
 
+        console.log(ret.rows);
+
         res.send({
-            data : { videos : ret.rows },
+            data : ret.rows,
             message : 'success'
         })
     })
